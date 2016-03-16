@@ -14,6 +14,7 @@ import {
   GraphQLID,
   GraphQLInt,
   GraphQLList,
+  GraphQLEnumType,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
@@ -24,7 +25,7 @@ import {
 import {
   connectionArgs,
   connectionDefinitions,
-  connectionFromArray,
+  //connectionFromArray,
   connectionFromPromisedArray,
   fromGlobalId,
   globalIdField,
@@ -32,134 +33,8 @@ import {
   nodeDefinitions,
 } from 'graphql-relay';
 
-import {
-  // Import methods that your schema can use to interact with your database
-  User,
-  Widget,
-  getUser,
-  getViewer,
-  getWidget,
-  getWidgets,
-} from './database';
-
-
-import uaSession from './opcua';
+import uaSession, {opcua} from './opcua';
 import merge from 'merge';
-/**
- * We get the node interface and field from the Relay library.
- *
- * The first method defines the way we resolve an ID to its object.
- * The second defines the way we resolve an object to its GraphQL type.
- */
- /*
-var {nodeInterface, nodeField} = nodeDefinitions(
-  (globalId) => {
-    var {type, id} = fromGlobalId(globalId);
-    if (type === 'User') {
-      return getUser(id);
-    } else if (type === 'Widget') {
-      return getWidget(id);
-    } else {
-      return null;
-    }
-  },
-  (obj) => {
-    if (obj instanceof User) {
-      return userType;
-    } else if (obj instanceof Widget)  {
-      return widgetType;
-    } else {
-      return null;
-    }
-  }
-);
-
-
-console.log("nodeint ", nodeInterface);
-
-
-*/
-
-
-
-
-/**
- * Define your own types here
- */
-
-var userType = new GraphQLObjectType({
-  name: 'User',
-  description: 'A person who uses our app',
-  fields: () => ({
-    id: globalIdField('User'),
-    widgets: {
-      type: widgetConnection,
-      description: 'A person\'s collection of widgets',
-      args: connectionArgs,
-      resolve: (_, args) => connectionFromArray(getWidgets(), args),
-    },
-  }),
-  //interfaces: [nodeInterface],
-});
-
-var widgetType = new GraphQLObjectType({
-  name: 'Widget',
-  description: 'A shiny widget',
-  fields: () => ({
-    id: globalIdField('Widget'),
-    name: {
-      type: GraphQLString,
-      description: 'The name of the widget',
-    },
-  }),
-  //interfaces: [nodeInterface],
-});
-
-/**
- * Define your own connection types here
- */
-var {connectionType: widgetConnection} =
-  connectionDefinitions({name: 'Widget', nodeType: widgetType});
-
-/**
- * This is the type that will be the root of our query,
- * and the entry point into our schema.
- */
-var queryType = new GraphQLObjectType({
-  name: 'Query',
-  fields: () => ({
-    node: nodeField,
-    // Add your own root fields here
-    viewer: {
-      type: userType,
-      resolve: () => getViewer(),
-    },
-  }),
-});
-
-/**
- * This is the type that will be the root of our mutations,
- * and the entry point into performing writes in our schema.
- */
-var mutationType = new GraphQLObjectType({
-  name: 'Mutation',
-  fields: () => ({
-    // Add your own mutations here
-  })
-});
-
-/**
- * Finally, we construct our schema (whose starting query type is the query
- * type we defined above) and export it.
- */
-/*export var Schema = new GraphQLSchema({
-  query: queryType,
-  // Uncomment the following after adding some mutation fields:
-  // mutation: mutationType
-});*/
-
-
-
 
 
 
@@ -168,23 +43,29 @@ var {nodeInterface, nodeField} = nodeDefinitions(
     var {type, id} = fromGlobalId(globalId);
     if (type === 'ReferenceDescription') {
       return getReference(id);
-    } else {
+    } else
+    if (type === 'UANode') {
+      return getUANode(id);
+    }
+    if (type === 'Count') {
+      return getCount(id);
+    }
+    else {
       return null;
     }
   },
   (obj) => {
-    return ReferenceDescriptionType;
-    if (obj instanceof User) {
-      return userType;
-    } else if (obj instanceof Widget)  {
-      return widgetType;
-    } else {
-      return null;
+    if(obj.type === 'ReferenceDescriptionType') {
+      return ReferenceDescriptionType;
+    }
+    else if(obj.type === 'UANodeType') {
+      return UANodeType;
+    }
+    else if(obj.type === 'CountType') {
+      return CountType;
     }
   }
 );
-
-console.log("nodeint ", nodeInterface);
 
 // http://node-opcua.github.io/api_doc/classes/QualifiedName.html
 const QualifiedNameType = new GraphQLObjectType({
@@ -207,7 +88,7 @@ const LocalizedTextType = new GraphQLObjectType({
 
 
 const BooleanValueType = new GraphQLObjectType({
-  name: 'BooleanValue',
+  name: 'BooleanValueChangethis',
   fields: {
     value: { type: GraphQLBoolean },
     dataType: { type: GraphQLString },
@@ -257,19 +138,6 @@ const StatusCodeType = new GraphQLObjectType({
 
 
 
-// http://node-opcua.github.io/api_doc/classes/DataValue.html
-const DataValueType = new GraphQLObjectType({
-  name: 'DataValue',
-  fields: {
-    serverPicoseconds: { type: GraphQLInt },
-    serverTimestamp: { type: GraphQLString }, //needs type
-    sourcePicoseconds: { type: GraphQLInt },
-    sourceTimestamp: { type: GraphQLString }, //needs type
-    value: { type: ValueType }, //needs type
-    stringValue: { type: GraphQLString },
-    statusCode: { type: StatusCodeType } //needs type
-  }
-});
 
 const ExpandedNodeIdType = new GraphQLObjectType({
   name: 'ExpandedNodeId',
@@ -282,61 +150,128 @@ const ExpandedNodeIdType = new GraphQLObjectType({
   }
 });
 
+const genericValueType = (type, name)=> new GraphQLObjectType({
+  name: name,
+  fields: {
+    dataType: { type: GraphQLString },
+    arrayType: { type: GraphQLString },
+    value: {type: type}
+  }
+});
+
+const genericResultType = (type, name)=> new GraphQLObjectType({
+  name: name,
+  fields: {
+    value: { type: type },
+    stringValue: { type: GraphQLString },
+    statusCode: { type: StatusCodeType },
+    serverPicoseconds: { type: GraphQLInt },
+    serverTimestamp: { type: GraphQLString }, //needs type
+    sourcePicoseconds: { type: GraphQLInt }
+  }
+});
+
+
+
+const QualifiedNameValueType = genericValueType(QualifiedNameType, 'QualifiedNameValue');
+const QualifiedNameResultType = genericResultType(QualifiedNameValueType, 'QualifiedNameResult');
+
+
+const LocalizedTextValueType = genericValueType(LocalizedTextType, 'LocalizedTextValue');
+const LocalizedTextResultType = genericResultType(LocalizedTextValueType, 'LocalizedTextResult');
+
+
+const ExpandedNodeIdValueType = genericValueType(ExpandedNodeIdType, 'ExpandedNodeIdValue');
+const ExpandedNodeIdResultType = genericResultType(ExpandedNodeIdValueType, 'ExpandedNodeIdResult');
+
+const NodeClassEnumValueType = genericValueType(new GraphQLEnumType({
+  name: 'NodeClass',
+  values: {
+    Unspecified: { value: 0 },  // No classes are selected.
+    Object: { value: 1 },  // The node is an object.
+    Variable: { value: 2 },  // The node is a variable.
+    Method: { value: 4 },  // The node is a method.
+    ObjectType: { value: 8 },  // The node is an object type.
+    VariableType: { value: 16 },  // The node is an variable type.
+    ReferenceType: { value: 32 },  // The node is a reference type.
+    DataType: { value: 64 },  // The node is a data type.
+    View: { value: 128 }   // The node is a view.
+  }
+}), 'NodeClassEnumValue');
+const NodeClassEnumResultType = genericResultType(NodeClassEnumValueType, 'NodeClassEnumValueResult');
+
+
+
+const IntResultType = genericResultType(genericValueType(GraphQLInt, 'IntValue'), 'IntResult');
+const BooleanResultType = genericResultType(genericValueType(GraphQLBoolean, 'BooleanValue'), 'BooleanResult');
+const StringResultType = genericResultType(genericValueType(GraphQLString, 'StringValue'), 'StringResult');
+const FloatResultType = genericResultType(genericValueType(GraphQLFloat, 'FloatValue'), 'FloatResult');
+const IntListResultType = genericResultType(genericValueType(new GraphQLList(GraphQLInt), 'IntListValue'), 'IntListResult');
+
+const DataValueResultType = genericResultType(genericValueType(ValueType, 'DataValue'), 'DataValueResult');
+
+
+const getProperty = (type, attributeId) => ({
+  type: type,
+  resolve: ({id})=> new Promise(function(resolve, reject){
+    const nodesToRead = [
+      {
+        nodeId: id,
+        attributeId: attributeId
+      }
+    ];
+    uaSession().read(nodesToRead, function(err, _nodesToRead, results) {
+        if (!err) {
+            var ret = results[0];
+            console.log(JSON.stringify(results[0], null, '\t'));
+            resolve(merge(true, ret, {stringValue: JSON.stringify(ret.value ? ret.value.value : null)}));
+        }
+        else {
+          reject(err);
+        }
+    });
+  })
+});
+
 
 //  http://node-opcua.github.io/api_doc/classes/ReferenceDescription.html
-const _NodeType = new GraphQLObjectType({
-  name: '_Node',
+const UANodeType = new GraphQLObjectType({
+  name: 'UANode',
   fields: ()=>({
-    id: globalIdField('Node'),
-    NodeId: { type: GraphQLString }, //1,
-    NodeClass: { type: GraphQLString }, //2,
-    BrowseName: { type: GraphQLString }, //3,
-    DisplayName: { type: GraphQLString }, //4,
-    Description: { type: GraphQLString }, //5,
-    WriteMask: { type: GraphQLString }, //6,
-    UserWriteMask: { type: GraphQLString }, //7,
-    IsAbstract: { type: GraphQLString }, //8,
-    Symmetric: { type: GraphQLString }, //9,
-    InverseName: { type: GraphQLString }, //10,
-    ContainsNoLoops: { type: GraphQLString }, //11,
-    EventNotifier: { type: GraphQLString }, //12,
-    Value: { type: GraphQLString }, //13,
-    DataType: { type: GraphQLString }, //14,
-    ValueRank: { type: GraphQLString }, //15,
-    ArrayDimensions: { type: GraphQLString }, //16,
-    AccessLevel: { type: GraphQLString }, //17,
-    UserAccessLevel: { type: GraphQLString }, //18,
-    MinimumSamplingInterval: { type: GraphQLString }, //19,
-    Historizing: { type: GraphQLString }, //20,
-    Executable: { type: GraphQLString }, //21,
-    UserExecutable: { type: GraphQLString }, //22,
-    
-
-    value: {
-        type: DataValueType,
-        resolve: (reference) =>new Promise(function(resolve, reject){
-            uaSession().readVariableValue(reference.nodeId, function(err, dataValue) {
-              if (!err) {
-                  console.log(JSON.stringify(dataValue));
-                  resolve(merge(true, dataValue, {stringValue: JSON.stringify(dataValue.value ? dataValue.value.value : null)}));
-              }
-              else {
-                  reject(err);
-              }
-            });
-
-        })
-    },
+    id: globalIdField('UANode'),
+    nodeId: getProperty(ExpandedNodeIdResultType, opcua.AttributeIds.NodeId), //1
+    nodeClass: getProperty(IntResultType, opcua.AttributeIds.NodeClass), //2
+    nodeClassEnum: getProperty(NodeClassEnumResultType, opcua.AttributeIds.NodeClass), //2
+    browseName: getProperty(QualifiedNameResultType, opcua.AttributeIds.BrowseName), //3
+    displayName: getProperty(LocalizedTextResultType, opcua.AttributeIds.DisplayName), //4
+    description: getProperty(LocalizedTextResultType, opcua.AttributeIds.Description), //5,
+    writeMask: getProperty(IntResultType, opcua.AttributeIds.WriteMask), //6,
+    userWriteMask: getProperty(IntResultType, opcua.AttributeIds.UserWriteMask), //7,
+    isAbstract: getProperty(BooleanResultType, opcua.AttributeIds.IsAbstract), //8,
+    symmetric: getProperty(BooleanResultType, opcua.AttributeIds.Symmetric), //9,
+    inverseName: getProperty(LocalizedTextResultType, opcua.AttributeIds.InverseName), //5,
+    containsNoLoops: getProperty(BooleanResultType, opcua.AttributeIds.ContainsNoLoops), //11,
+    eventNotifier: getProperty(IntResultType, opcua.AttributeIds.EventNotifier), //12,
+    dataValue: getProperty(DataValueResultType, opcua.AttributeIds.DataValue), //13,
+    dataType: getProperty(StringResultType, opcua.AttributeIds.DataType), //14,
+    valueRank: getProperty(IntResultType, opcua.AttributeIds.ValueRank), //15,
+    arrayDimensions: getProperty(IntListResultType, opcua.AttributeIds.ArrayDimensions), //16,  IntListResultType
+    accessLevel: getProperty(IntResultType, opcua.AttributeIds.AccessLevel), //17,
+    userAccessLevel: getProperty(IntResultType, opcua.AttributeIds.UserAccessLevel), //18,
+    minimumSamplingInterval: getProperty(FloatResultType, opcua.AttributeIds.MinimumSamplingInterval), //19,
+    historizing: getProperty(BooleanResultType, opcua.AttributeIds.Historizing), //20,
+    executable: getProperty(BooleanResultType, opcua.AttributeIds.Executable), //21,
+    userExecutable: getProperty(BooleanResultType, opcua.AttributeIds.UserExecutable), //22,
     references: {
       type: ReferenceConnection,
       args: connectionArgs,
-      resolve: (reference, args) => connectionFromPromisedArray(
+      resolve: ({id}, args) => connectionFromPromisedArray(
         new Promise(function(resolve, reject){
-            uaSession().browse(reference.nodeId, function(err, browseResult){
+            uaSession().browse(id, function(err, browseResult){
               if(!err) {
                 resolve(browseResult[0].references.map(r=>{
                   r.id = r.nodeId.toString();
-                  console.log('@@@', r.id);
+                  console.log('@@@', JSON.stringify(r, null, '\t'));
                   return r;
                 }));
               }
@@ -347,7 +282,7 @@ const _NodeType = new GraphQLObjectType({
           }),
         args
       )
-    },
+    }
   }),
   interfaces: [nodeInterface]  
     
@@ -367,43 +302,13 @@ const ReferenceDescriptionType = new GraphQLObjectType({
     nodeClass: { type: GraphQLString },
     nodeId: { type: ExpandedNodeIdType }, //??
     referenceTypeId: { type: GraphQLString },
-    typeDefinition: { type: GraphQLString }, //??
-    value: {
-        type: DataValueType,
-        resolve: (reference) =>new Promise(function(resolve, reject){
-            uaSession().readVariableValue(reference.nodeId, function(err, dataValue) {
-              if (!err) {
-                  console.log(JSON.stringify(dataValue));
-                  resolve(merge(true, dataValue, {stringValue: JSON.stringify(dataValue.value ? dataValue.value.value : null)}));
-              }
-              else {
-                  reject(err);
-              }
-            });
-
-        })
-    },
-    references: {
-      type: ReferenceConnection,
-      args: connectionArgs,
-      resolve: (reference, args) => connectionFromPromisedArray(
-        new Promise(function(resolve, reject){
-            uaSession().browse(reference.nodeId, function(err, browseResult){
-              if(!err) {
-                resolve(browseResult[0].references.map(r=>{
-                  r.id = r.nodeId.toString();
-                  console.log('@@@', r.id);
-                  return r;
-                }));
-              }
-              else {
-                reject(err);
-              }
-            });
-          }),
-        args
-      )
-    },
+    typeDefinition: { type: GraphQLString },
+    uaNode: {
+      type: UANodeType,
+      resolve: (reference) => {
+        return getUANode(reference.nodeId);
+      }
+    }
 
   }),
   interfaces: [nodeInterface]  
@@ -414,25 +319,29 @@ const ReferenceDescriptionType = new GraphQLObjectType({
 var {connectionType: ReferenceConnection} =
   connectionDefinitions({name: 'Reference', nodeType: ReferenceDescriptionType});
 
+var {connectionType: NodeConnection} =
+  connectionDefinitions({name: 'Node', nodeType: UANodeType});
+
+
 
 const getReference = (nodeId)=> {
   return new Promise(function(resolve, reject){
       //seems a little nuts have to browse twice...
        uaSession().browse(nodeId, function(err, browseResult){
         if(!err) {
-            console.log(JSON.stringify(browseResult, null, '\t'));
             const firstChild = browseResult[0].references.filter((r)=>r.isForward)[0];
-            console.log("here it is", firstChild.nodeId.toString());
-            console.log("jsoned", JSON.stringify(firstChild.nodeId));
-            console.log("jsoned", JSON.stringify(Object.keys(firstChild.nodeId)));
-            console.log(firstChild.nodeId.identifierType.toString());
-            uaSession().browse(firstChild.nodeId, function(err, browseResult2){
-              console.log(nodeId.toString());
-              const res = browseResult2[0].references.filter((f)=>!f.isForward)[0];
-              res.id = nodeId;
-              console.log('---', nodeId);
-              //resolve(merge(true, browseResult2[0].references.filter((f)=>!f.isForward)[0], {id: nodeId.toString()}));
-              resolve(res);
+            uaSession().browse(firstChild.nodeId, function(err2, browseResult2){
+              if(!err2)
+              {
+                const res = browseResult2[0].references.filter((f)=>!f.isForward)[0];
+                res.id = nodeId;
+                res.type = 'ReferenceDescriptionType';
+                resolve(res);  
+              }
+              else {
+                reject(err2);
+              }
+              
             });
         }
         else {
@@ -443,36 +352,111 @@ const getReference = (nodeId)=> {
   });
 };
 
+const getUANode = (nodeId)=> {
+  return {
+    id: nodeId,
+    type: 'UANodeType'
+  };
+};
+
+
+const getCount = (id, count)=> {
+  return {
+    id: id,
+    count: count,
+    type: 'CountType'
+  };
+};
+
+
+const CountType = new GraphQLObjectType({
+  name: 'Count',
+  fields: {
+    id: globalIdField('Count'),
+    count: { type: GraphQLInt }
+  }
+});
+
+
+var UpdateCountMutation = mutationWithClientMutationId({
+  name: 'UpdateCount',
+  inputFields: {
+    //clientMutationId: { type: new GraphQLNonNull(GraphQLID) },
+    id: { type: new GraphQLNonNull(GraphQLID) },
+  },
+  outputFields: {
+    count: {
+      type: CountType,
+      resolve: (payload) => {
+        console.log('okkkk', payload);
+        return payload;
+      },
+    }
+  },
+  mutateAndGetPayload: (all) => {
+    console.log('mutate id', all);
+    var countId = fromGlobalId(all.id).id;
+    console.log('got here');
+    count += 1;
+    console.log(countId);
+    console.log('VBACK!!');
+    return new Promise(function(resolve, reject){
+        setTimeout(()=>resolve(getCount(countId, count)), 1000);
+     });
+    return getCount(countId, count);
+   
+  },
+});
+
+
+
 
 /**
  * This is the type that will be the root of our query,
  * and the entry point into our schema.
  */
+var count = 0;
+
 var queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
     node: nodeField,
-    // Add your own root fields here
-    user: {
-        type: ReferenceDescriptionType,
-        args: {
-          nodeId: { type: GraphQLString },
-        },
-        resolve: function (_, args) {
-          return getReference(args.nodeId || 'RootFolder');
+    uaNode: {
+      type: UANodeType,
+      args: {
+        nodeId: {
+          name: 'nodeId',
+          type: GraphQLString
         }
+      },
+      resolve: function (_, {nodeId}) {
+        return getUANode(nodeId || 'RootFolder');
       }
-  }),
+    },
+    count: {
+      type: CountType,
+      args: {
+        id: {
+          name: 'id',
+          type: GraphQLString
+        }
+      },
+      resolve: function (_, {id}) {
+        return getCount(id, count);
+      }
+    }
+  })
 });
 
 /**
  * This is the type that will be the root of our mutations,
  * and the entry point into performing writes in our schema.
  */
-var mutationType = new GraphQLObjectType({
+const mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     // Add your own mutations here
+    updateCount: UpdateCountMutation
   })
 });
 
@@ -488,5 +472,5 @@ var mutationType = new GraphQLObjectType({
 export var Schema = new GraphQLSchema({
   query: queryType,
   // Uncomment the following after adding some mutation fields:
-  // mutation: mutationType
+  mutation: mutationType
 });

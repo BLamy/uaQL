@@ -4,7 +4,14 @@ export default class extends Relay.Route {
   static queries = {
     viewer: () => Relay.QL`
       query {
-        user(nodeId:"RootFolder")
+        uaNode(nodeId:"ns=2;i=10216")
+
+      }
+    `,
+    count: () => Relay.QL`
+      query {
+        count(id:"ns=2;i=10216")
+        
       }
     `,
   };

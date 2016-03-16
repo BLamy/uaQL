@@ -54,7 +54,7 @@ async.series([
 
        session.browse(browseDescription, function(err, browseResult){
         if(!err) {
-            console.log(" with browse desciptipon::", JSON.stringify(browseResult, null, '\t'));
+            //console.log(" with browse desciptipon::", JSON.stringify(browseResult, null, '\t'));
             
         }
     callback(err);
@@ -66,7 +66,7 @@ async.series([
     function(callback) {
        session.browse('ns=0;i=85', function(err, browseResult){
         if(!err) {
-            console.log( JSON.stringify(browseResult, null, '\t'));
+            //console.log( JSON.stringify(browseResult, null, '\t'));
             
         }
     callback(err);
@@ -121,7 +121,7 @@ async.series([
 function(callback) {
       session.readVariableValue('ns=2;i=10845', function(err, dataValue) {
       if (!err) {
-          console.log(' free mem % = ', dataValue.toString());
+          //console.log(' free mem % = ', dataValue.toString());
       }
           callback(err);
       });
@@ -133,12 +133,12 @@ function(callback) {
         session.readAllAttributes(['ns=0;i=84', 'ns=0;i=85'], function(err, nodestoread, results) {
 
             if (!err) {
-                nodestoread.forEach((node, i)=>{
+            /*    nodestoread.forEach((node, i)=>{
                     console.log(JSON.stringify({
                       attribute: opcua.AttributeNameById[node.attributeId],
                       node: node, 
                       result: results[i]}, null, '\t'));
-                });
+                }); */
                 
             }
            callback(err);
@@ -150,13 +150,12 @@ function(callback) {
         var nodesToRead = [
             {
                  nodeId: 'ns=0;i=84',
-                 attributeId: opcua.AttributeIds.BrowseName
+                 attributeId: opcua.AttributeIds.NodeClass
             }
         ];
         session.read(nodesToRead, function(err, _nodesToRead, results) {
             if (!err) {
-                console.log(' browsename atts = ', JSON.stringify(results[0]));
-                console.log(' bname atts = ', results[0]);
+                console.log(' browsename atts = ', JSON.stringify(results[0], null, '\t'));
             }
            callback(err);
         });
@@ -164,7 +163,7 @@ function(callback) {
     },
 
 
-function(callback) {
+  function(callback) {
         var nodesToRead = [
             {
                  nodeId: 'ns=0;i=84',
@@ -243,3 +242,4 @@ function(err) {
 
 
 export default function(){ return session; }
+export {opcua as opcua}
