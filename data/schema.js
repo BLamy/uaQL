@@ -485,9 +485,8 @@ const UANodeType = new GraphQLObjectType({
     references: {
       type: ReferenceConnection,
       args: connectionArgs,
-      resolve: ({id}, {bollox}) => connectionFromPromisedArray(
+      resolve: ({id}, args) => connectionFromPromisedArray(
         new Promise(function(resolve, reject){
-          console.log(bollox);
             uaSession().browse(id, function(err, browseResult){
               if(!err) {
                 resolve(browseResult[0].references.map(r=>{

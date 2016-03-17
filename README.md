@@ -76,7 +76,28 @@ fragment giles on DataValueResult {
   "data": {
     "uaNode": {
       "id": "VUFOb2RlOm5zPTI7aT0xMDc1Nw==",
-      "references": null,
+      "references": {
+        "edges": [
+          {
+            "node": {
+              "id": "UmVmZXJlbmNlRGVzY3JpcHRpb246bnM9MDtpPTY4",
+              "browseName": {
+                "namespaceIndex": 0,
+                "name": "PropertyType"
+              }
+            }
+          },
+          {
+            "node": {
+              "id": "UmVmZXJlbmNlRGVzY3JpcHRpb246bnM9MjtpPTEwNzU2",
+              "browseName": {
+                "namespaceIndex": 2,
+                "name": "ScalarMethod1"
+              }
+            }
+          }
+        ]
+      },
       "outputArguments": null,
       "dataType": {
         "value": {
@@ -110,7 +131,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=Boolean",
                     "jsonValue": "{\"text\":\"Boolean\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:31 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -132,7 +153,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=SByte",
                     "jsonValue": "{\"text\":\"SByte\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -154,7 +175,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=Byte",
                     "jsonValue": "{\"text\":\"Byte\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -176,7 +197,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=Int16",
                     "jsonValue": "{\"text\":\"Int16\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -198,7 +219,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=UInt16",
                     "jsonValue": "{\"text\":\"UInt16\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -220,7 +241,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=Int32",
                     "jsonValue": "{\"text\":\"Int32\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -242,7 +263,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=UInt32",
                     "jsonValue": "{\"text\":\"UInt32\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -264,7 +285,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=Int64",
                     "jsonValue": "{\"text\":\"Int64\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -286,7 +307,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=UInt64",
                     "jsonValue": "{\"text\":\"UInt64\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -308,7 +329,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=Float",
                     "jsonValue": "{\"text\":\"Float\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -330,7 +351,7 @@ fragment giles on DataValueResult {
                     "stringValue": "locale=null text=Double",
                     "jsonValue": "{\"text\":\"Double\"}",
                     "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:16:32 GMT+0000 (GMT Standard Time)",
+                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
                     "sourcePicoseconds": 0
                   }
                 }
@@ -341,18 +362,7 @@ fragment giles on DataValueResult {
         }
       }
     }
-  },
-  "errors": [
-    {
-      "message": "args is not defined",
-      "locations": [
-        {
-          "line": 3,
-          "column": 3
-        }
-      ]
-    }
-  ]
+  }
 }
 
 ````
