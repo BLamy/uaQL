@@ -10,6 +10,7 @@ const endpointUrl = 'opc.tcp://opcua.demo-this.com:51210/UA/SampleServer';
 
 var session;
 
+console.log(JSON.parse(JSON.stringify(new opcua.Variant({name: 'yay', dataType: opcua.DataType.UInt32, value: 10}))));
 
 // this is largely bollocks
 async.series([
@@ -128,17 +129,37 @@ function(callback) {
     },
 
 
+function(callback) {
+
+  var methodsToCall = [ {
+      objectId: 'ns=4;i=1287',
+      methodId: 'ns=4;i=1343'      
+  }];
+
+
+  session.call(methodsToCall, function(err, results) {
+      if (!err) {
+          console.log('call success!', JSON.stringify(results, null, '\t'));          
+      }
+     callback(err);
+  } );
+               
+},
+
+
+
+
 
   function(callback) {
-        session.readAllAttributes(['ns=0;i=84', 'ns=0;i=85'], function(err, nodestoread, results) {
+        session.readAllAttributes(['ns=2;i=10756'], function(err, nodestoread, results) {
 
             if (!err) {
-            /*    nodestoread.forEach((node, i)=>{
+               /* nodestoread.forEach((node, i)=>{
                     console.log(JSON.stringify({
                       attribute: opcua.AttributeNameById[node.attributeId],
-                      node: node, 
+                      node: node,
                       result: results[i]}, null, '\t'));
-                }); */
+                });*/
                 
             }
            callback(err);

@@ -3,30 +3,17 @@
 import React from 'react';
 import Relay from 'react-relay';
 
+var value = 0;
 
 class CountMutation extends Relay.Mutation {
-  // This method should return a GraphQL operation that represents
-  // the mutation to be performed. This presumes that the server
-  // implements a mutation type named ‘likeStory’.
   getMutation() {
-    console.log('getting...');
     return Relay.QL`mutation {updateCount}`;
   }
-  // Use this method to prepare the variables that will be used as
-  // input to the mutation. Our ‘likeStory’ mutation takes exactly
-  // one variable as input – the ID of the story to like.
   getVariables() {
-    console.log('getting');
-    console.log('sending id:', this.props.count.id);
-    return {id: this.props.count.id};
+    return {
+      id: this.props.count.id
+    };
   }
-  // Use this method to design a ‘fat query’ – one that represents every
-  // field in your data model that could change as a result of this mutation.
-  // Liking a story could affect the likers count, the sentence that
-  // summarizes who has liked a story, and the fact that the viewer likes the
-  // story or not. Relay will intersect this query with a ‘tracked query’
-  // that represents the data that your application actually uses, and
-  // instruct the server to include only those fields in its response.
   getFatQuery() {
     return Relay.QL`
       fragment on UpdateCountPayload {
@@ -34,17 +21,11 @@ class CountMutation extends Relay.Mutation {
       }
     `;
   }
-  // These configurations advise Relay on how to handle the LikeStoryPayload
-  // returned by the server. Here, we tell Relay to use the payload to
-  // change the fields of a record it already has in the store. The
-  // key-value pairs of ‘fieldIDs’ associate field names in the payload
-  // with the ID of the record that we want updated.
   getConfigs() {
     return [{
       type: 'FIELDS_CHANGE',
       fieldIDs: {
         count: this.props.count.id
-        //id:this.props.counter.id
       },
     }];
   }
@@ -57,11 +38,7 @@ class CountMutation extends Relay.Mutation {
       }
     };
   }
-  // This mutation has a hard dependency on the story's ID. We specify this
-  // dependency declaratively here as a GraphQL query fragment. Relay will
-  // use this fragment to ensure that the story's ID is available wherever
-  // this mutation is used.
-  static fragments = {
+ static fragments = {
     count: () => Relay.QL`
       fragment on Count {
         count
@@ -71,27 +48,123 @@ class CountMutation extends Relay.Mutation {
   };
 }
 
+class UaNodeMutation extends Relay.Mutation {
+  getMutation() {
+    return Relay.QL`mutation {updateUANode}`;
+  }
+  getVariables() {
+    return {
+      id: this.props.viewer.id,
+      value: value,
+      dataType: this.props.viewer.dataValue.value.dataType 
+    };
+  }
+  getFatQuery() {
+    return Relay.QL`
+      fragment on UpdateUANodePayload {
+        uaNode
+      }
+    `;
+  }
+  getConfigs() {
+    return [{
+      type: 'FIELDS_CHANGE',
+      fieldIDs: {
+        uaNode: this.props.viewer.id
+      },
+    }];
+  }
+  static fragments = {
+    viewer: () => Relay.QL`
+      fragment on UANode {
+        dataValue{
+          stringValue
+          value{
+            dataType
+          }
+        }
+      }
+    `,
+  };
+}
+
+class CallUAMethodMutation extends Relay.Mutation {
+  getMutation() {
+    return Relay.QL`mutation {callUAMethod}`;
+  }
+  getVariables() {
+    return {
+      id: this.props.viewer.id,
+      parent: this.props.viewer.parent.id
+    };
+  }
+  getFatQuery() {
+    return Relay.QL`
+      fragment on CallUAMethodPayload {
+        uaNode {outputArguments}
+      }
+    `;
+  }
+  getConfigs() {
+    return [{
+      type: 'FIELDS_CHANGE',
+      fieldIDs: {
+        uaNode: this.props.viewer.id
+      },
+    }];
+  }
+  static fragments = {
+    viewer: () => Relay.QL`
+      fragment on UANode {
+        parent {id}
+      }
+    `,
+  };
+}
+
+
+
+
+var onFailure = (transaction) => {
+  var error = transaction.getError() || new Error('Mutation failed.');
+  alert(error);
+};
+
 
 
 class App extends React.Component {
    _handleCount = () => {
     // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
-    Relay.Store.commitUpdate(new CountMutation({count: this.props.count}));
+    Relay.Store.commitUpdate(new UaNodeMutation({viewer: this.props.viewer}), {onFailure});
+    value++;
   }
+  _handleMethod = () => {
+    // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
+    Relay.Store.commitUpdate(new CallUAMethodMutation({viewer: this.props.viewer}), {onFailure});
+  }
+
   render() {
     return (
       <div>
         <h1>Widget list</h1>
         <button onClick={this._handleCount}>Like this</button>
+        <button onClick={this._handleMethod}>Method Call</button>
+        
         <h2>{this.props.viewer.id}</h2>
+        <h2>{this.props.viewer.nodeId.stringValue}</h2>
         <h2>{this.props.count.count}</h2>
         {this.props.viewer.browseName.value.value.name}
+        {this.props.viewer.dataValue.stringValue}
         <ul>
           {this.props.viewer.references.edges.map(r=>
             <li>{r.node.browseName.name} {r.node.uaNode.id}</li>
           )}
         </ul>
-        
+        <ul>
+          {(this.props.viewer.outputArguments || []).map(arg=>
+            <li>{arg.dataType} {arg.value.value}</li>
+          )}
+        </ul>
       </div>
     );
   }
@@ -107,8 +180,16 @@ export default Relay.createContainer(App, {
     `,
     viewer: () => Relay.QL`
       fragment on UANode {
-        id     
-        browseName{value{value{name}}}  
+        id
+        parent {id}
+        nodeId{stringValue}    
+        dataValue{
+          stringValue
+          value{
+            dataType
+          }
+        }  
+        browseName{value{value{name}}}    
         references(first: 10) {
           edges {
             node {
@@ -118,10 +199,20 @@ export default Relay.createContainer(App, {
               uaNode {
                 id
               }
-
             }
           }
-        } 
+        },
+        outputArguments {
+          dataType
+          arrayType
+          value {
+            ... on BooleanArgumentValue {value}  
+            ... on IntArgumentValue {value}  
+            ... on Int64ArgumentValue {value}  
+            ... on FloatArgumentValue {value}  
+            ... on StringArgumentValue {value}  
+          }  
+        }
       }
     `,
   },
