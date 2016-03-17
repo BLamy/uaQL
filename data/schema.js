@@ -99,7 +99,7 @@ const StatusCodeType = new GraphQLObjectType({
   fields: {
     value: {type: GraphQLInt },
     description: {type: GraphQLString },
-    name: {type: GraphQLString }
+    name: {type: GraphQLString, description: 'really?'}
   }
 });
 
@@ -111,7 +111,7 @@ const ExpandedNodeIdType = new GraphQLObjectType({
     namespace: {type: GraphQLInt },
     namespaceUri: {type: GraphQLString }, //needs type
     serverIndex: {type: GraphQLInt },
-    node: {type: UANodeType, resolve: getUANode}
+    uaNode: {type: UANodeType, resolve: getUANode}
   })
 });
 
@@ -225,48 +225,49 @@ const typedValue = new GraphQLUnionType({
   resolveType(value){
     //console.log("here", value);
     console.log('typing valuejson = ', JSON.stringify(value, null, '\t'));
-   
-    if (value.arrayType.toString() === 'Array') {
+     if(value.arrayType && value.dataType) {
+      if (value.arrayType.toString() === 'Array') {
+          switch(value.dataType.toString()){
+            case 'Boolean': return BooleanTypedArrayValueType;
+            case 'SByte': return SByteTypedArrayValueType;
+            case 'Byte': return ByteTypedArrayValueType;
+            case 'Int16': return Int16TypedArrayValueType;
+            case 'UInt16': return UInt16TypedArrayValueType;
+            case 'Int32': return Int32TypedArrayValueType;
+            case 'UInt32': return UInt32TypedArrayValueType;
+            case 'Int64': return Int64TypedArrayValueType;
+            case 'UInt64': return UInt64TypedArrayValueType;
+            case 'Float': return FloatTypedArrayValueType;
+            case 'Double': return DoubleTypedArrayValueType;
+            case 'String': return StringTypedArrayValueType;
+            case 'DateTime': return DateTimeTypedArrayValueType;
+            case 'Guid': return GuidTypedArrayValueType;
+            case 'ByteString': return ByteStringTypedArrayValueType;
+            //will be more to it than this ?? extension point?
+            case 'ExtensionObject': return MethodParameterTypedArrayValueType;
+          }
+      }
+      else {
         switch(value.dataType.toString()){
-          case 'Boolean': return BooleanTypedArrayValueType;
-          case 'SByte': return SByteTypedArrayValueType;
-          case 'Byte': return ByteTypedArrayValueType;
-          case 'Int16': return Int16TypedArrayValueType;
-          case 'UInt16': return UInt16TypedArrayValueType;
-          case 'Int32': return Int32TypedArrayValueType;
-          case 'UInt32': return UInt32TypedArrayValueType;
-          case 'Int64': return Int64TypedArrayValueType;
-          case 'UInt64': return UInt64TypedArrayValueType;
-          case 'Float': return FloatTypedArrayValueType;
-          case 'Double': return DoubleTypedArrayValueType;
-          case 'String': return StringTypedArrayValueType;
-          case 'DateTime': return DateTimeTypedArrayValueType;
-          case 'Guid': return GuidTypedArrayValueType;
-          case 'ByteString': return ByteStringTypedArrayValueType;
-          //will be more to it than this ?? extension point?
-          case 'ExtensionObject': return MethodParameterTypedArrayValueType;
+            case 'Boolean': return BooleanTypedValueType;
+            case 'SByte': return SByteTypedValueType;
+            case 'Byte': return ByteTypedValueType;
+            case 'Int16': return Int16TypedValueType;
+            case 'UInt16': return UInt16TypedValueType;
+            case 'Int32': return Int32TypedValueType;
+            case 'UInt32': return UInt32TypedValueType;
+            case 'Int64': return Int64TypedValueType;
+            case 'UInt64': return UInt64TypedValueType;
+            case 'Float': return FloatTypedValueType;
+            case 'Double': return DoubleTypedValueType;
+            case 'String': return StringTypedValueType;
+            case 'DateTime': return DateTimeTypedValueType;
+            case 'Guid': return GuidTypedValueType;
+            case 'ByteString': return ByteStringTypedValueType;
+          }
         }
+      }
     }
-    else {
-      switch(value.dataType.toString()){
-          case 'Boolean': return BooleanTypedValueType;
-          case 'SByte': return SByteTypedValueType;
-          case 'Byte': return ByteTypedValueType;
-          case 'Int16': return Int16TypedValueType;
-          case 'UInt16': return UInt16TypedValueType;
-          case 'Int32': return Int32TypedValueType;
-          case 'UInt32': return UInt32TypedValueType;
-          case 'Int64': return Int64TypedValueType;
-          case 'UInt64': return UInt64TypedValueType;
-          case 'Float': return FloatTypedValueType;
-          case 'Double': return DoubleTypedValueType;
-          case 'String': return StringTypedValueType;
-          case 'DateTime': return DateTimeTypedValueType;
-          case 'Guid': return GuidTypedValueType;
-          case 'ByteString': return ByteStringTypedValueType;
-        }
-    }
-  }
 });
 
 
@@ -520,8 +521,8 @@ const ReferenceDescriptionType = new GraphQLObjectType({
     isForward: {type: GraphQLBoolean},
     nodeClass: {type: GraphQLString },
     nodeId: {type: ExpandedNodeIdType }, //??
-    referenceTypeId: {type: GraphQLString },
-    typeDefinition: {type: GraphQLString },
+    referenceTypeId: {type: ExpandedNodeIdType },
+    typeDefinition: {type: ExpandedNodeIdType },
     uaNode: {
       type: UANodeType,
       resolve: (reference) => {

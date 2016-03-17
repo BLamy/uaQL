@@ -1,368 +1,371 @@
 # GraphQL server for OPC UA
 
+
+## query..
 ````
-{uaNode(nodeId:"ns=2;i=10757") {
-  id
+{uaNode(nodeId:"ns=2;i=10756") {
+  ... showNode
   references(first:10) {
     edges {
       node {
-        id
+        referenceTypeId {
+          uaNode {
+            ... showNode  
+          }
+        }
+        typeDefinition {
+          uaNode {
+            ... showNode
+          }
+        }
         browseName {
-          namespaceIndex
           name
+        }
+        uaNode {
+          ... showNode
+          dataType {
+            ... expandedNodeIdResult
+          }
+          dataValue {
+            stringValue
+            typedValue {
+              ... on MethodParameterTypedArrayValue {
+                value {
+                  name
+                }
+              }
+              
+            }
+          }
         }
       }
     }
   }
-  outputArguments {
-    dataType
-    arrayType
-    value {
-        ... on BooleanArgumentValue {value}  
-    }  
-  }
-  dataType {
-   value {
-     dataType
-     arrayType
-    value {
-      identifierType
-      value
-      namespace
-      namespaceUri
-      serverIndex
-    }
-   }
-  }
-  dataValue {
-    ...giles
-  }
-  
-}}
+}
+}
 
-fragment giles on DataValueResult {
-  jsonValue
-    typedValue {
-        ... on BooleanTypedValue {value}
-        ... on MethodParameterTypedArrayValue {value {
-          name
-          arrayDimensions
-          dataType {
-            identifierType
-            value
-            namespace
-            namespaceUri
-            serverIndex
-            node {
-              id
-              displayName {
-                stringValue
-                jsonValue
-                serverPicoseconds
-                serverTimestamp
-                sourcePicoseconds
-              }
-            }
-          } 
-          valueRank
-        }}
-      
+fragment loctext on LocalizedTextResult {
+  value {
+    value {
+      text
+    }
+  }
+}
+
+fragment showNode on UANode {
+  displayName {
+    ... loctext
+  }  
+}
+
+fragment expandedNodeId on ExpandedNodeId {
+    uaNode {
+      ... showNode    
     }
 }
+
+fragment expandedNodeIdResult on ExpandedNodeIdResult {
+  value {
+    value {
+      ... expandedNodeId
+    }
+  }  
+}
 ````
+## result..
 
 ````
 {
   "data": {
     "uaNode": {
-      "id": "VUFOb2RlOm5zPTI7aT0xMDc1Nw==",
+      "displayName": {
+        "value": {
+          "value": {
+            "text": "ScalarMethod1"
+          }
+        }
+      },
       "references": {
         "edges": [
           {
             "node": {
-              "id": "UmVmZXJlbmNlRGVzY3JpcHRpb246bnM9MDtpPTY4",
+              "referenceTypeId": {
+                "uaNode": {
+                  "displayName": {
+                    "value": {
+                      "value": {
+                        "text": "HasProperty"
+                      }
+                    }
+                  }
+                }
+              },
+              "typeDefinition": {
+                "uaNode": {
+                  "displayName": {
+                    "value": {
+                      "value": {
+                        "text": "PropertyType"
+                      }
+                    }
+                  }
+                }
+              },
               "browseName": {
-                "namespaceIndex": 0,
-                "name": "PropertyType"
+                "name": "InputArguments"
+              },
+              "uaNode": {
+                "displayName": {
+                  "value": {
+                    "value": {
+                      "text": "InputArguments"
+                    }
+                  }
+                },
+                "dataType": {
+                  "value": {
+                    "value": {
+                      "uaNode": {
+                        "displayName": {
+                          "value": {
+                            "value": {
+                              "text": "Argument"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "dataValue": {
+                  "stringValue": "{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: BooleanIn\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=1\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: SByteIn\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=2\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: ByteIn\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=3\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: Int16In\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=4\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: UInt16In\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=5\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: Int32In\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=6\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: UInt32In\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=7\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: Int64In\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=8\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: UInt64In\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=9\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: FloatIn\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=10\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: DoubleIn\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=11\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};",
+                  "typedValue": {
+                    "value": [
+                      {
+                        "name": "BooleanIn"
+                      },
+                      {
+                        "name": "SByteIn"
+                      },
+                      {
+                        "name": "ByteIn"
+                      },
+                      {
+                        "name": "Int16In"
+                      },
+                      {
+                        "name": "UInt16In"
+                      },
+                      {
+                        "name": "Int32In"
+                      },
+                      {
+                        "name": "UInt32In"
+                      },
+                      {
+                        "name": "Int64In"
+                      },
+                      {
+                        "name": "UInt64In"
+                      },
+                      {
+                        "name": "FloatIn"
+                      },
+                      {
+                        "name": "DoubleIn"
+                      }
+                    ]
+                  }
+                }
               }
             }
           },
           {
             "node": {
-              "id": "UmVmZXJlbmNlRGVzY3JpcHRpb246bnM9MjtpPTEwNzU2",
+              "referenceTypeId": {
+                "uaNode": {
+                  "displayName": {
+                    "value": {
+                      "value": {
+                        "text": "HasProperty"
+                      }
+                    }
+                  }
+                }
+              },
+              "typeDefinition": {
+                "uaNode": {
+                  "displayName": {
+                    "value": {
+                      "value": {
+                        "text": "PropertyType"
+                      }
+                    }
+                  }
+                }
+              },
               "browseName": {
-                "namespaceIndex": 2,
+                "name": "OutputArguments"
+              },
+              "uaNode": {
+                "displayName": {
+                  "value": {
+                    "value": {
+                      "text": "OutputArguments"
+                    }
+                  }
+                },
+                "dataType": {
+                  "value": {
+                    "value": {
+                      "uaNode": {
+                        "displayName": {
+                          "value": {
+                            "value": {
+                              "text": "Argument"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "dataValue": {
+                  "stringValue": "{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: BooleanOut\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=1\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: SByteOut\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=2\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: ByteOut\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=3\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: Int16Out\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=4\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: UInt16Out\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=5\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: Int32Out\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=6\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: UInt32Out\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=7\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: Int64Out\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=8\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: UInt64Out\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=9\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: FloatOut\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=10\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};,{\u001b[36m /*Argument*/\u001b[39m\n\u001b[33m name                         \u001b[39m \u001b[36m/* String                           */\u001b[39m: DoubleOut\n\u001b[33m dataType                     \u001b[39m \u001b[36m/* NodeId                           */\u001b[39m: ns=0;i=11\n\u001b[33m valueRank                    \u001b[39m \u001b[36m/* Int32                            */\u001b[39m: -1\n\u001b[33m arrayDimensions              \u001b[39m \u001b[36m/* UInt32                        [] */\u001b[39m: [ ] (l=0)\n\u001b[33m description                  \u001b[39m \u001b[36m/* LocalizedText                    */\u001b[39m: \u001b[32mlocale=null text=null\u001b[39m\n};",
+                  "typedValue": {
+                    "value": [
+                      {
+                        "name": "BooleanOut"
+                      },
+                      {
+                        "name": "SByteOut"
+                      },
+                      {
+                        "name": "ByteOut"
+                      },
+                      {
+                        "name": "Int16Out"
+                      },
+                      {
+                        "name": "UInt16Out"
+                      },
+                      {
+                        "name": "Int32Out"
+                      },
+                      {
+                        "name": "UInt32Out"
+                      },
+                      {
+                        "name": "Int64Out"
+                      },
+                      {
+                        "name": "UInt64Out"
+                      },
+                      {
+                        "name": "FloatOut"
+                      },
+                      {
+                        "name": "DoubleOut"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "referenceTypeId": {
+                "uaNode": {
+                  "displayName": {
+                    "value": {
+                      "value": {
+                        "text": "HasTypeDefinition"
+                      }
+                    }
+                  }
+                }
+              },
+              "typeDefinition": {
+                "uaNode": {
+                  "displayName": {
+                    "value": {
+                      "value": {
+                        "text": "ScalarMethod1"
+                      }
+                    }
+                  }
+                }
+              },
+              "browseName": {
                 "name": "ScalarMethod1"
+              },
+              "uaNode": {
+                "displayName": {
+                  "value": {
+                    "value": {
+                      "text": "ScalarMethod1"
+                    }
+                  }
+                },
+                "dataType": {
+                  "value": null
+                },
+                "dataValue": {
+                  "stringValue": null,
+                  "typedValue": null
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "referenceTypeId": {
+                "uaNode": {
+                  "displayName": {
+                    "value": {
+                      "value": {
+                        "text": "HasComponent"
+                      }
+                    }
+                  }
+                }
+              },
+              "typeDefinition": {
+                "uaNode": {
+                  "displayName": {
+                    "value": {
+                      "value": {
+                        "text": "MethodTestType"
+                      }
+                    }
+                  }
+                }
+              },
+              "browseName": {
+                "name": "MethodTest"
+              },
+              "uaNode": {
+                "displayName": {
+                  "value": {
+                    "value": {
+                      "text": "MethodTest"
+                    }
+                  }
+                },
+                "dataType": {
+                  "value": null
+                },
+                "dataValue": {
+                  "stringValue": null,
+                  "typedValue": null
+                }
               }
             }
           }
         ]
-      },
-      "outputArguments": null,
-      "dataType": {
-        "value": {
-          "dataType": "NodeId",
-          "arrayType": "Scalar",
-          "value": {
-            "identifierType": "NUMERIC",
-            "value": "296",
-            "namespace": 0,
-            "namespaceUri": null,
-            "serverIndex": null
-          }
-        }
-      },
-      "dataValue": {
-        "jsonValue": "[{\"name\":\"BooleanIn\",\"dataType\":\"ns=0;i=1\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"SByteIn\",\"dataType\":\"ns=0;i=2\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"ByteIn\",\"dataType\":\"ns=0;i=3\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"Int16In\",\"dataType\":\"ns=0;i=4\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"UInt16In\",\"dataType\":\"ns=0;i=5\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"Int32In\",\"dataType\":\"ns=0;i=6\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"UInt32In\",\"dataType\":\"ns=0;i=7\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"Int64In\",\"dataType\":\"ns=0;i=8\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"UInt64In\",\"dataType\":\"ns=0;i=9\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"FloatIn\",\"dataType\":\"ns=0;i=10\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}},{\"name\":\"DoubleIn\",\"dataType\":\"ns=0;i=11\",\"valueRank\":-1,\"arrayDimensions\":[],\"description\":{}}]",
-        "typedValue": {
-          "value": [
-            {
-              "name": "BooleanIn",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "1",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT0x",
-                  "displayName": {
-                    "stringValue": "locale=null text=Boolean",
-                    "jsonValue": "{\"text\":\"Boolean\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "SByteIn",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "2",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT0y",
-                  "displayName": {
-                    "stringValue": "locale=null text=SByte",
-                    "jsonValue": "{\"text\":\"SByte\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "ByteIn",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "3",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT0z",
-                  "displayName": {
-                    "stringValue": "locale=null text=Byte",
-                    "jsonValue": "{\"text\":\"Byte\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "Int16In",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "4",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT00",
-                  "displayName": {
-                    "stringValue": "locale=null text=Int16",
-                    "jsonValue": "{\"text\":\"Int16\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "UInt16In",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "5",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT01",
-                  "displayName": {
-                    "stringValue": "locale=null text=UInt16",
-                    "jsonValue": "{\"text\":\"UInt16\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "Int32In",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "6",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT02",
-                  "displayName": {
-                    "stringValue": "locale=null text=Int32",
-                    "jsonValue": "{\"text\":\"Int32\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "UInt32In",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "7",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT03",
-                  "displayName": {
-                    "stringValue": "locale=null text=UInt32",
-                    "jsonValue": "{\"text\":\"UInt32\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "Int64In",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "8",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT04",
-                  "displayName": {
-                    "stringValue": "locale=null text=Int64",
-                    "jsonValue": "{\"text\":\"Int64\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "UInt64In",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "9",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT05",
-                  "displayName": {
-                    "stringValue": "locale=null text=UInt64",
-                    "jsonValue": "{\"text\":\"UInt64\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "FloatIn",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "10",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT0xMA==",
-                  "displayName": {
-                    "stringValue": "locale=null text=Float",
-                    "jsonValue": "{\"text\":\"Float\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            },
-            {
-              "name": "DoubleIn",
-              "arrayDimensions": [],
-              "dataType": {
-                "identifierType": "NUMERIC",
-                "value": "11",
-                "namespace": 0,
-                "namespaceUri": null,
-                "serverIndex": null,
-                "node": {
-                  "id": "VUFOb2RlOm5zPTA7aT0xMQ==",
-                  "displayName": {
-                    "stringValue": "locale=null text=Double",
-                    "jsonValue": "{\"text\":\"Double\"}",
-                    "serverPicoseconds": 0,
-                    "serverTimestamp": "Thu Mar 17 2016 19:21:25 GMT+0000 (GMT Standard Time)",
-                    "sourcePicoseconds": 0
-                  }
-                }
-              },
-              "valueRank": -1
-            }
-          ]
-        }
       }
     }
   }
 }
-
 ````
