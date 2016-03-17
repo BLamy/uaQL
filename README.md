@@ -1,4 +1,6 @@
-# GraphQL server for OPC UA
+# GraphQL schema for OPC UA
+
+exposes https://github.com/node-opcua/node-opcua as a graphQL schema
 
 ## browsing..
 
