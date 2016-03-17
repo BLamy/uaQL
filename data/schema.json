@@ -144,7 +144,7 @@
         {
           "kind": "OBJECT",
           "name": "UANode",
-          "description": null,
+          "description": "An OPCUA node",
           "fields": [
             {
               "name": "id",
@@ -164,7 +164,7 @@
             },
             {
               "name": "nodeId",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -176,7 +176,7 @@
             },
             {
               "name": "nodeClass",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -188,7 +188,7 @@
             },
             {
               "name": "nodeClassEnum",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -200,7 +200,7 @@
             },
             {
               "name": "browseName",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -212,7 +212,7 @@
             },
             {
               "name": "displayName",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -224,7 +224,7 @@
             },
             {
               "name": "description",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -236,7 +236,7 @@
             },
             {
               "name": "writeMask",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -248,7 +248,7 @@
             },
             {
               "name": "userWriteMask",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -260,7 +260,7 @@
             },
             {
               "name": "isAbstract",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -272,7 +272,7 @@
             },
             {
               "name": "symmetric",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -284,7 +284,7 @@
             },
             {
               "name": "inverseName",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -296,7 +296,7 @@
             },
             {
               "name": "containsNoLoops",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -308,7 +308,7 @@
             },
             {
               "name": "eventNotifier",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -320,7 +320,7 @@
             },
             {
               "name": "dataValue",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -332,7 +332,7 @@
             },
             {
               "name": "dataType",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -344,7 +344,7 @@
             },
             {
               "name": "valueRank",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -356,7 +356,7 @@
             },
             {
               "name": "arrayDimensions",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -368,7 +368,7 @@
             },
             {
               "name": "accessLevel",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -380,7 +380,7 @@
             },
             {
               "name": "userAccessLevel",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -392,7 +392,7 @@
             },
             {
               "name": "minimumSamplingInterval",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -404,7 +404,7 @@
             },
             {
               "name": "historizing",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -416,7 +416,7 @@
             },
             {
               "name": "executable",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -428,7 +428,7 @@
             },
             {
               "name": "userExecutable",
-              "description": null,
+              "description": "DOcument this!",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -456,7 +456,7 @@
             },
             {
               "name": "parent",
-              "description": null,
+              "description": "the parent - this is wrong as a node can have more than one parent??",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -468,7 +468,7 @@
             },
             {
               "name": "references",
-              "description": null,
+              "description": "references are typed links to other nodes",
               "args": [
                 {
                   "name": "after",
@@ -686,7 +686,7 @@
         {
           "kind": "OBJECT",
           "name": "ExpandedNodeId",
-          "description": null,
+          "description": "http://node-opcua.github.io/api_doc/classes/ExpandedNodeId.html",
           "fields": [
             {
               "name": "identifierType",
@@ -779,7 +779,7 @@
         {
           "kind": "OBJECT",
           "name": "StatusCode",
-          "description": null,
+          "description": "http://node-opcua.github.io/api_doc/classes/StatusCode.html",
           "fields": [
             {
               "name": "value",
@@ -807,7 +807,7 @@
             },
             {
               "name": "name",
-              "description": "really?",
+              "description": null,
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -1110,62 +1110,62 @@
         {
           "kind": "ENUM",
           "name": "NodeClass",
-          "description": null,
+          "description": "Node class enumeration",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
           "enumValues": [
             {
               "name": "Unspecified",
-              "description": null,
+              "description": "No classes are selected.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "Object",
-              "description": null,
+              "description": "The node is an object.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "Variable",
-              "description": null,
+              "description": "The node is a variable.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "Method",
-              "description": null,
+              "description": "The node is a method.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "ObjectType",
-              "description": null,
+              "description": "The node is an object type.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "VariableType",
-              "description": null,
+              "description": "The node is an variable type.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "ReferenceType",
-              "description": null,
+              "description": "The node is a reference type.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "DataType",
-              "description": null,
+              "description": "The node is a data type.",
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
               "name": "View",
-              "description": null,
+              "description": "The node is a view.",
               "isDeprecated": false,
               "deprecationReason": null
             }
@@ -1317,7 +1317,7 @@
         {
           "kind": "OBJECT",
           "name": "QualifiedName",
-          "description": null,
+          "description": "http://node-opcua.github.io/api_doc/classes/QualifiedName.html",
           "fields": [
             {
               "name": "namespaceIndex",
@@ -1494,7 +1494,7 @@
         {
           "kind": "OBJECT",
           "name": "LocalizedText",
-          "description": null,
+          "description": "http://node-opcua.github.io/api_doc/classes/LocalizedText.html",
           "fields": [
             {
               "name": "text",
@@ -2788,7 +2788,7 @@
         {
           "kind": "OBJECT",
           "name": "MethodParameter",
-          "description": null,
+          "description": "Required parameter for a method call",
           "fields": [
             {
               "name": "name",
@@ -2797,6 +2797,58 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "ExpandedNodeId",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "valueRank",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayDimensions",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "description",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "LocalizedText",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -3301,7 +3353,7 @@
         {
           "kind": "OBJECT",
           "name": "ReferenceDescription",
-          "description": null,
+          "description": "http://node-opcua.github.io/api_doc/classes/ReferenceDescription.html",
           "fields": [
             {
               "name": "id",
@@ -3405,7 +3457,7 @@
             },
             {
               "name": "uaNode",
-              "description": null,
+              "description": "The UANode that the reference points to",
               "args": [],
               "type": {
                 "kind": "OBJECT",

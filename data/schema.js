@@ -1,12 +1,4 @@
 'use strict';
-/**
- *  Copyright (c) 2015, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- */
 
 import {
   GraphQLBoolean,
@@ -66,25 +58,35 @@ var {nodeInterface, nodeField} = nodeDefinitions(
   }
 );
 
-// http://node-opcua.github.io/api_doc/classes/QualifiedName.html
+
 const QualifiedNameType = new GraphQLObjectType({
   name: 'QualifiedName',
+  description: 'http://node-opcua.github.io/api_doc/classes/QualifiedName.html',
   fields: {
-    namespaceIndex: {type: GraphQLInt },
-    name: {type: GraphQLString }
+    namespaceIndex: {
+      type: GraphQLInt
+    },
+    name: {
+      type: GraphQLString
+    }
   }
 });
 
-// http://node-opcua.github.io/api_doc/classes/QualifiedName.html
+
 const LocalizedTextType = new GraphQLObjectType({
   name: 'LocalizedText',
+  description: 'http://node-opcua.github.io/api_doc/classes/LocalizedText.html',
   fields: {
-    text: {type: GraphQLString },
-    locale: {type: GraphQLString } // says localId??
+    text: {
+      type: GraphQLString
+    },
+    locale: {
+      type: GraphQLString
+    }
   }
 });
 
-const genericTypedValueType = (name, type) => new GraphQLObjectType({
+const genericTypedValueType = (type, name) => new GraphQLObjectType({
   name: name,
   fields: {
     value: {
@@ -96,136 +98,183 @@ const genericTypedValueType = (name, type) => new GraphQLObjectType({
 
 const StatusCodeType = new GraphQLObjectType({
   name: 'StatusCode',
+  description: 'http://node-opcua.github.io/api_doc/classes/StatusCode.html',
   fields: {
-    value: {type: GraphQLInt },
-    description: {type: GraphQLString },
-    name: {type: GraphQLString, description: 'really?'}
+    value: {
+      type: GraphQLInt
+    },
+    description: {
+      type: GraphQLString
+    },
+    name: {
+      type: GraphQLString
+    }
   }
 });
 
 const ExpandedNodeIdType = new GraphQLObjectType({
   name: 'ExpandedNodeId',
+  description: 'http://node-opcua.github.io/api_doc/classes/ExpandedNodeId.html',
   fields: ()=>({
-    identifierType: {type: GraphQLString },
-    value: {type: GraphQLString }, //needs type
-    namespace: {type: GraphQLInt },
-    namespaceUri: {type: GraphQLString }, //needs type
-    serverIndex: {type: GraphQLInt },
-    uaNode: {type: UANodeType, resolve: getUANode}
+    identifierType: {
+      type: GraphQLString
+    },
+    value: {
+      type: GraphQLString
+    }, //needs type
+    namespace: {
+      type: GraphQLInt
+    },
+    namespaceUri: {
+      type: GraphQLString
+    }, //needs type
+    serverIndex: {
+      type: GraphQLInt
+    },
+    uaNode: {
+      type: UANodeType,
+      resolve: getUANode
+    }
   })
 });
 
 const genericValueType = (type, name)=> new GraphQLObjectType({
   name: name,
   fields: {
-    dataType: {type: GraphQLString },
-    arrayType: {type: GraphQLString },
-    value: {type: type}
+    dataType: {
+      type: GraphQLString
+    },
+    arrayType: {
+      type: GraphQLString
+    },
+    value: {
+      type: type
+    }
   }
 });
 
 const genericResultType = (type, name)=> new GraphQLObjectType({
   name: name,
   fields: {
-    value: {type: type },
-    stringValue: {type: GraphQLString },
-    jsonValue: {type: GraphQLString },
-    statusCode: {type: StatusCodeType },
-    serverPicoseconds: {type: GraphQLInt },
-    serverTimestamp: {type: GraphQLString }, //needs type
-    sourcePicoseconds: {type: GraphQLInt }
+    value: {
+      type: type
+    },
+    stringValue: {
+      type: GraphQLString
+    },
+    jsonValue: {
+      type: GraphQLString
+    },
+    statusCode: {
+      type: StatusCodeType
+    },
+    serverPicoseconds: {
+      type: GraphQLInt
+    },
+    serverTimestamp: {
+      type: GraphQLString
+    }, //needs type
+    sourcePicoseconds: {
+      type: GraphQLInt
+    }
   }
 });
 
-const BooleanTypedValueType = genericTypedValueType('BooleanTypedValue', GraphQLBoolean );
-const SByteTypedValueType = genericTypedValueType('SByteTypedValue', GraphQLInt );
-const ByteTypedValueType = genericTypedValueType('ByteTypedValue', GraphQLInt );
-const Int16TypedValueType = genericTypedValueType('Int16TypedValue', GraphQLInt );
-const UInt16TypedValueType = genericTypedValueType('UInt16TypedValue', GraphQLInt );
-const Int32TypedValueType = genericTypedValueType('Int32TypedValue', GraphQLInt );
-const UInt32TypedValueType = genericTypedValueType('UInt32TypedValue', GraphQLInt );
-const Int64TypedValueType = genericTypedValueType('Int64TypedValue', GraphQLInt );
-const UInt64TypedValueType = genericTypedValueType('UInt64TypedValue', GraphQLInt );
-const FloatTypedValueType = genericTypedValueType('FloatTypedValue', GraphQLFloat );
-const DoubleTypedValueType = genericTypedValueType('DoubleTypedValue', GraphQLFloat );
-const StringTypedValueType = genericTypedValueType('StringTypedValue', GraphQLString );
-const DateTimeTypedValueType = genericTypedValueType('DateTimeTypedValue', GraphQLString );
-const GuidTypedValueType = genericTypedValueType('GuidTypedValue', GraphQLString );
-const ByteStringTypedValueType = genericTypedValueType('ByteStringTypedValue', GraphQLString );
+const BooleanTypedValueType = genericTypedValueType(GraphQLBoolean, 'BooleanTypedValue');
+const SByteTypedValueType = genericTypedValueType(GraphQLInt, 'SByteTypedValue');
+const ByteTypedValueType = genericTypedValueType(GraphQLInt, 'ByteTypedValue');
+const Int16TypedValueType = genericTypedValueType(GraphQLInt, 'Int16TypedValue');
+const UInt16TypedValueType = genericTypedValueType(GraphQLInt, 'UInt16TypedValue');
+const Int32TypedValueType = genericTypedValueType(GraphQLInt, 'Int32TypedValue');
+const UInt32TypedValueType = genericTypedValueType(GraphQLInt, 'UInt32TypedValue');
+const Int64TypedValueType = genericTypedValueType(GraphQLInt, 'Int64TypedValue');
+const UInt64TypedValueType = genericTypedValueType(GraphQLInt, 'UInt64TypedValue');
+const FloatTypedValueType = genericTypedValueType(GraphQLFloat, 'FloatTypedValue');
+const DoubleTypedValueType = genericTypedValueType(GraphQLFloat, 'DoubleTypedValue');
+const StringTypedValueType = genericTypedValueType(GraphQLString, 'StringTypedValue');
+const DateTimeTypedValueType = genericTypedValueType(GraphQLString, 'DateTimeTypedValue');
+const GuidTypedValueType = genericTypedValueType(GraphQLString, 'GuidTypedValue');
+const ByteStringTypedValueType = genericTypedValueType(GraphQLString, 'ByteStringTypedValue');
 
-const BooleanTypedArrayValueType = genericTypedValueType('BooleanTypedArrayValue', new GraphQLList(GraphQLBoolean) );
-const SByteTypedArrayValueType = genericTypedValueType('SByteTypedArrayValue', new GraphQLList(GraphQLInt) );
-const ByteTypedArrayValueType = genericTypedValueType('ByteTypedArrayValue', new GraphQLList(GraphQLInt) );
-const Int16TypedArrayValueType = genericTypedValueType('Int16TypedArrayValue', new GraphQLList(GraphQLInt) );
-const UInt16TypedArrayValueType = genericTypedValueType('UInt16TypedArrayValue', new GraphQLList(GraphQLInt) );
-const Int32TypedArrayValueType = genericTypedValueType('Int32TypedArrayValue', new GraphQLList(GraphQLInt) );
-const UInt32TypedArrayValueType = genericTypedValueType('UInt32TypedArrayValue', new GraphQLList(GraphQLInt) );
-const Int64TypedArrayValueType = genericTypedValueType('Int64TypedArrayValue', new GraphQLList(GraphQLInt) );
-const UInt64TypedArrayValueType = genericTypedValueType('UInt64TypedArrayValue', new GraphQLList(GraphQLInt) );
-const FloatTypedArrayValueType = genericTypedValueType('FloatTypedArrayValue', new GraphQLList(GraphQLFloat) );
-const DoubleTypedArrayValueType = genericTypedValueType('DoubleTypedArrayValue', new GraphQLList(GraphQLFloat) );
-const StringTypedArrayValueType = genericTypedValueType('StringTypedArrayValue', new GraphQLList(GraphQLString) );
-const DateTimeTypedArrayValueType = genericTypedValueType('DateTimeTypedArrayValue', new GraphQLList(GraphQLString) );
-const GuidTypedArrayValueType = genericTypedValueType('GuidTypedArrayValue', new GraphQLList(GraphQLString) );
-const ByteStringTypedArrayValueType = genericTypedValueType('ByteStringTypedArrayValue', new GraphQLList(GraphQLString) );
+const BooleanTypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLBoolean), 'BooleanTypedArrayValue');
+const SByteTypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLInt), 'SByteTypedArrayValue');
+const ByteTypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLInt), 'ByteTypedArrayValue');
+const Int16TypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLInt), 'Int16TypedArrayValue');
+const UInt16TypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLInt), 'UInt16TypedArrayValue');
+const Int32TypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLInt), 'Int32TypedArrayValue');
+const UInt32TypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLInt), 'UInt32TypedArrayValue');
+const Int64TypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLInt), 'Int64TypedArrayValue');
+const UInt64TypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLInt), 'UInt64TypedArrayValue');
+const FloatTypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLFloat), 'FloatTypedArrayValue');
+const DoubleTypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLFloat), 'DoubleTypedArrayValue');
+const StringTypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLString), 'StringTypedArrayValue');
+const DateTimeTypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLString), 'DateTimeTypedArrayValue' );
+const GuidTypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLString), 'GuidTypedArrayValue');
+const ByteStringTypedArrayValueType = genericTypedValueType(new GraphQLList(GraphQLString), 'ByteStringTypedArrayValue');
 
 
 const MethodParameterType = new GraphQLObjectType({
   name: 'MethodParameter',
+  description: 'Required parameter for a method call',
   fields: {
-    name: {type: GraphQLString },
-    dataType: {type: ExpandedNodeIdType },
-    valueRank: {type: GraphQLInt },
-    arrayDimensions: {type: new GraphQLList(GraphQLInt)},
-    description : {type: LocalizedTextType}
-
+    name: {
+      type: GraphQLString
+    },
+    dataType: {
+      type: ExpandedNodeIdType
+    },
+    valueRank: {
+      type: GraphQLInt
+    },
+    arrayDimensions: {
+      type: new GraphQLList(GraphQLInt)
+    },
+    description: {
+      type: LocalizedTextType
+    }
   }
 });
-const MethodParameterTypedArrayValueType = genericTypedValueType('MethodParameterTypedArrayValue', new GraphQLList(MethodParameterType) );
 
+const MethodParameterTypedArrayValueType = genericTypedValueType(new GraphQLList(MethodParameterType), 'MethodParameterTypedArrayValue' );
 
 const typedValue = new GraphQLUnionType({
   name: 'typedValue',
   types: [
-        BooleanTypedValueType,
-        SByteTypedValueType,
-        ByteTypedValueType,
-        Int16TypedValueType,
-        UInt16TypedValueType,
-        Int32TypedValueType,
-        UInt32TypedValueType,
-        Int64TypedValueType,
-        UInt64TypedValueType,
-        FloatTypedValueType,
-        DoubleTypedValueType,
-        StringTypedValueType,
-        DateTimeTypedValueType,
-        GuidTypedValueType,
-        ByteStringTypedValueType,
+    BooleanTypedValueType,
+    SByteTypedValueType,
+    ByteTypedValueType,
+    Int16TypedValueType,
+    UInt16TypedValueType,
+    Int32TypedValueType,
+    UInt32TypedValueType,
+    Int64TypedValueType,
+    UInt64TypedValueType,
+    FloatTypedValueType,
+    DoubleTypedValueType,
+    StringTypedValueType,
+    DateTimeTypedValueType,
+    GuidTypedValueType,
+    ByteStringTypedValueType,
 
-        BooleanTypedArrayValueType,
-        SByteTypedArrayValueType,
-        ByteTypedArrayValueType,
-        Int16TypedArrayValueType,
-        UInt16TypedArrayValueType,
-        Int32TypedArrayValueType,
-        UInt32TypedArrayValueType,
-        Int64TypedArrayValueType,
-        UInt64TypedArrayValueType,
-        FloatTypedArrayValueType,
-        DoubleTypedArrayValueType,
-        StringTypedArrayValueType,
-        DateTimeTypedArrayValueType,
-        GuidTypedArrayValueType,
-        ByteStringTypedArrayValueType,
-        MethodParameterTypedArrayValueType
-
-
-        ],
+    BooleanTypedArrayValueType,
+    SByteTypedArrayValueType,
+    ByteTypedArrayValueType,
+    Int16TypedArrayValueType,
+    UInt16TypedArrayValueType,
+    Int32TypedArrayValueType,
+    UInt32TypedArrayValueType,
+    Int64TypedArrayValueType,
+    UInt64TypedArrayValueType,
+    FloatTypedArrayValueType,
+    DoubleTypedArrayValueType,
+    StringTypedArrayValueType,
+    DateTimeTypedArrayValueType,
+    GuidTypedArrayValueType,
+    ByteStringTypedArrayValueType,
+    MethodParameterTypedArrayValueType
+  ],
   resolveType(value){
-    //console.log("here", value);
-    console.log('typing valuejson = ', JSON.stringify(value, null, '\t'));
-     if(value.arrayType && value.dataType) {
+    if(value.arrayType && value.dataType) {
       if (value.arrayType.toString() === 'Array') {
           switch(value.dataType.toString()){
             case 'Boolean': return BooleanTypedArrayValueType;
@@ -274,7 +323,9 @@ const typedValue = new GraphQLUnionType({
 const typedArgumentValue = (type, name) => new GraphQLObjectType({
   name: name,
   fields: {
-    value: {type: type}
+    value: {
+      type: type
+    }
   }
 });
 
@@ -342,9 +393,15 @@ const TypedArgumentValueType = new GraphQLUnionType({
 const ArgumentValueType = new GraphQLObjectType({
   name: 'ArgumentValueType',
   fields: {
-    dataType: {type: GraphQLString},
-    arrayType: {type: GraphQLString},
-    value: {type: TypedArgumentValueType}
+    dataType: {
+      type: GraphQLString
+    },
+    arrayType: {
+      type: GraphQLString
+    },
+    value: {
+      type: TypedArgumentValueType
+    }
   }
 });
 
@@ -352,14 +409,30 @@ const ArgumentValueType = new GraphQLObjectType({
 const genericTypedResultType = (type, name)=> new GraphQLObjectType({
   name: name,
   fields: {
-    value: {type: type },
-    typedValue: {type: typedValue},
-    stringValue: {type: GraphQLString },
-    jsonValue: {type: GraphQLString },
-    statusCode: {type: StatusCodeType },
-    serverPicoseconds: {type: GraphQLInt },
-    serverTimestamp: {type: GraphQLString }, //needs type
-    sourcePicoseconds: {type: GraphQLInt }
+    value: {
+      type: type
+    },
+    typedValue: {
+      type: typedValue
+    },
+    stringValue: {
+      type: GraphQLString
+    },
+    jsonValue: {
+      type: GraphQLString
+    },
+    statusCode: {
+      type: StatusCodeType
+    },
+    serverPicoseconds: {
+      type: GraphQLInt
+    },
+    serverTimestamp: {
+      type: GraphQLString
+    }, //needs type
+    sourcePicoseconds: {
+      type: GraphQLInt
+    }
   }
 });
 
@@ -379,22 +452,48 @@ const ExpandedNodeIdResultType = genericResultType(ExpandedNodeIdValueType, 'Exp
 
 const NodeClassEnumValueType = genericValueType(new GraphQLEnumType({
   name: 'NodeClass',
+  description: 'Node class enumeration',
   values: {
-    Unspecified: {value: 0 },  // No classes are selected.
-    Object: {value: 1 },  // The node is an object.
-    Variable: {value: 2 },  // The node is a variable.
-    Method: {value: 4 },  // The node is a method.
-    ObjectType: {value: 8 },  // The node is an object type.
-    VariableType: {value: 16 },  // The node is an variable type.
-    ReferenceType: {value: 32 },  // The node is a reference type.
-    DataType: {value: 64 },  // The node is a data type.
-    View: {value: 128 }   // The node is a view.
+    Unspecified: {
+      value: 0,
+      description: 'No classes are selected.'
+    },
+    Object: {
+      value: 1,
+      description: 'The node is an object.'
+    },
+    Variable: {
+      value: 2,
+      description: 'The node is a variable.'
+    },
+    Method: {
+      value: 4,
+      description: 'The node is a method.'
+    },
+    ObjectType: {
+      value: 8,
+      description: 'The node is an object type.'
+    },
+    VariableType: {
+      value: 16,
+      description: 'The node is an variable type.'
+    },
+    ReferenceType: {
+      value: 32,
+      description: 'The node is a reference type.'
+    },
+    DataType: {
+      value: 64,
+      description: 'The node is a data type.'
+    },
+    View: {
+      value: 128,
+      description: 'The node is a view.'
+    }
   }
 }), 'NodeClassEnumValue');
+
 const NodeClassEnumResultType = genericResultType(NodeClassEnumValueType, 'NodeClassEnumValueResult');
-
-
-
 const IntResultType = genericResultType(genericValueType(GraphQLInt, 'IntValue'), 'IntResult');
 const BooleanResultType = genericResultType(genericValueType(GraphQLBoolean, 'BooleanValue'), 'BooleanResult');
 const StringResultType = genericResultType(genericValueType(GraphQLString, 'StringValue'), 'StringResult');
@@ -406,6 +505,7 @@ const DataValueResultType = genericTypedResultType(genericValueType(GraphQLStrin
 
 const getProperty = (type, attributeId) => ({
   type: type,
+  description: 'DOcument this!',
   resolve: ({id})=> new Promise(function(resolve, reject){
     console.log('getting propery', id);
     const nodesToRead = [
@@ -437,6 +537,7 @@ const getProperty = (type, attributeId) => ({
 //  http://node-opcua.github.io/api_doc/classes/ReferenceDescription.html
 const UANodeType = new GraphQLObjectType({
   name: 'UANode',
+  description: 'An OPCUA node',
   fields: ()=>({
     id: globalIdField('UANode'),
     nodeId: getProperty(ExpandedNodeIdResultType, opcua.AttributeIds.NodeId), //1
@@ -463,8 +564,8 @@ const UANodeType = new GraphQLObjectType({
     executable: getProperty(BooleanResultType, opcua.AttributeIds.Executable), //21,
     userExecutable: getProperty(BooleanResultType, opcua.AttributeIds.UserExecutable), //22,
     outputArguments: {type: new GraphQLList(ArgumentValueType)},
-    //prob wrong - can have multiple parents?
     parent: {
+      description: 'the parent - this is wrong as a node can have more than one parent??',
       type: ReferenceDescriptionType,
       resolve: ({id}) => new Promise(function(resolve, reject){
         uaSession().browse(id, function(err, browseResult){
@@ -485,6 +586,7 @@ const UANodeType = new GraphQLObjectType({
     },
     references: {
       type: ReferenceConnection,
+      description: 'references are typed links to other nodes',
       args: connectionArgs,
       resolve: ({id}, args) => connectionFromPromisedArray(
         new Promise(function(resolve, reject){
@@ -511,20 +613,35 @@ const UANodeType = new GraphQLObjectType({
 
 
 
-//  http://node-opcua.github.io/api_doc/classes/ReferenceDescription.html
 const ReferenceDescriptionType = new GraphQLObjectType({
   name: 'ReferenceDescription',
+  description: 'http://node-opcua.github.io/api_doc/classes/ReferenceDescription.html',
   fields: ()=>({
     id: globalIdField('ReferenceDescription'),
-    browseName: {type: QualifiedNameType},
-    displayName: {type: LocalizedTextType},
-    isForward: {type: GraphQLBoolean},
-    nodeClass: {type: GraphQLString },
-    nodeId: {type: ExpandedNodeIdType }, //??
-    referenceTypeId: {type: ExpandedNodeIdType },
-    typeDefinition: {type: ExpandedNodeIdType },
+    browseName: {
+      type: QualifiedNameType
+    },
+    displayName: {
+      type: LocalizedTextType
+    },
+    isForward: {
+      type: GraphQLBoolean
+    },
+    nodeClass: {
+      type: GraphQLString
+    },
+    nodeId: {
+      type: ExpandedNodeIdType
+    }, //??
+    referenceTypeId: {
+      type: ExpandedNodeIdType
+    },
+    typeDefinition: {
+      type: ExpandedNodeIdType
+    },
     uaNode: {
       type: UANodeType,
+      description: 'The UANode that the reference points to',
       resolve: (reference) => {
         return getUANode(reference.nodeId);
       }
