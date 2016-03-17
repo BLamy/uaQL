@@ -1,5 +1,8 @@
 # GraphQL server for OPC UA
 
+## browsing..
+
+opc.tcp://opcua.demo-this.com:51210/UA/SampleServer
 
 ## query..
 ````
