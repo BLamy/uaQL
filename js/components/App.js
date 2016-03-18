@@ -71,16 +71,16 @@ class CallUAMethodMutation extends Relay.Mutation {
       }
     }];
   }
-  static fragments = {
+  
+ /* static fragments = {
     viewer: () => Relay.QL`
       fragment on UANode {
         id
       }
     `
   };
+*/
 }
-
-
 
 
 var onFailure = (transaction) => {
@@ -149,7 +149,7 @@ export default Relay.createContainer(App, {
           }
         }  
         browseName{value{value{name}}}    
-        references(first: 10) {
+        references(first:2 browseDirection: Forward, nodeClasses: [Variable] referenceTypeId: "HasProperty"  results:[ReferenceType, NodeClass]) {
           edges {
             node {
               browseName {
