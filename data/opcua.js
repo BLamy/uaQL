@@ -6,7 +6,13 @@ const client = new opcua.OPCUAClient();
 
 const endpointUrl = 'opc.tcp://opcua.demo-this.com:51210/UA/SampleServer';
 
-
+//opc.tcp://opcserver.mAutomation.net:4841  mFactor Engineering
+//opc.tcp://commsvr.com:51234/UA/CAS_UA_Server  CommServer
+//opc.tcp://uademo.prosysopc.com:53530/OPCUA/ prosys OPC
+//opc.tcp://opcua.demo-this.com:51210/UA/SampleServer opclabs
+//opc.tcp://opcua.demo-this.com:51211/UA/SampleServer opclabs
+//opc.tcp://opcua.demo-this.com:51212/UA/SampleServer opclabs
+//opc.tcp://demo.ascolab.com:4841
 
 var session;
 

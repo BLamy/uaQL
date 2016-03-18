@@ -38,9 +38,6 @@ var {nodeInterface, nodeField} = nodeDefinitions(
     if (type === 'UANode') {
       return getUANode(id);
     }
-    if (type === 'Count') {
-      return getCount(id);
-    }
     else {
       return null;
     }
@@ -51,9 +48,6 @@ var {nodeInterface, nodeField} = nodeDefinitions(
     }
     else if(obj.type === 'UANodeType') {
       return UANodeType;
-    }
-    else if(obj.type === 'CountType') {
-      return CountType;
     }
   }
 );
@@ -699,51 +693,6 @@ const getUANode = (nodeId, outputArguments)=> {
 };
 
 
-const getCount = (id, count)=> {
-  return {
-    id: id,
-    count: count,
-    type: 'CountType'
-  };
-};
-
-
-const CountType = new GraphQLObjectType({
-  name: 'Count',
-  fields: {
-    id: globalIdField('Count'),
-    count: {type: GraphQLInt }
-  }
-});
-
-
-const UpdateCountMutation = mutationWithClientMutationId({
-  name: 'UpdateCount',
-  inputFields: {
-    //clientMutationId: {type: new GraphQLNonNull(GraphQLID) },
-    id: {type: new GraphQLNonNull(GraphQLID) },
-  },
-  outputFields: {
-    count: {
-      type: CountType,
-      resolve: (payload) => {
-        return payload;
-      },
-    }
-  },
-  mutateAndGetPayload: (all) => {
-    console.log('mutate id', all);
-    var countId = fromGlobalId(all.id).id;
-    console.log('got here');
-    count += 1;
-    console.log(countId);
-    console.log('VBACK!!');
-    return new Promise(function(resolve, reject){
-        setTimeout(()=>resolve(getCount(countId, count)), 1000);
-     });
-   
-  },
-});
 
 
 const CallUAMethodMutation = mutationWithClientMutationId({
@@ -878,7 +827,6 @@ var UpdateUANodeMutation = mutationWithClientMutationId({
  * This is the type that will be the root of our query,
  * and the entry point into our schema.
  */
-var count = 0;
 
 var queryType = new GraphQLObjectType({
   name: 'Query',
@@ -886,6 +834,7 @@ var queryType = new GraphQLObjectType({
     node: nodeField,
     uaNode: {
       type: UANodeType,
+      description: 'Gets a ua node from it\'s nodeId or the root folder',
       args: {
         nodeId: {
           name: 'nodeId',
@@ -896,18 +845,6 @@ var queryType = new GraphQLObjectType({
         return getUANode(nodeId || 'RootFolder');
       }
     },
-    count: {
-      type: CountType,
-      args: {
-        id: {
-          name: 'id',
-          type: GraphQLString
-        }
-      },
-      resolve: function (_, {id}) {
-        return getCount(id, count);
-      }
-    }
   })
 });
 
@@ -919,7 +856,6 @@ const mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     // Add your own mutations here
-    updateCount: UpdateCountMutation,
     updateUANode: UpdateUANodeMutation,
     callUAMethod: CallUAMethodMutation
   })
