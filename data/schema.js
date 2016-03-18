@@ -1,5 +1,5 @@
 'use strict';
-
+console.log("lk-qwsjxbljqwkbhsxdlqwjkbd", 1 << 0, 0 << 2, 0 << 3, 0 << 4);
 import {
   GraphQLBoolean,
   GraphQLFloat,
@@ -27,8 +27,7 @@ import {
 
 import uaSession, {opcua} from './opcua';
 import merge from 'merge';
-
-
+import extend from 'util-extend';
 var {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     var {type, id} = fromGlobalId(globalId);
@@ -339,8 +338,7 @@ const TypedArgumentValueType = new GraphQLUnionType({
     StringArgumentValueType
   ],
   resolveType(value){
-    console.log("here", value);
-   
+    
     if (value.arrayType.toString() === 'Array') {
         switch(value.dataType.toString()){
           case 'Boolean': return BooleanTypedArrayValueType;
@@ -444,8 +442,63 @@ const LocalizedTextResultType = genericResultType(LocalizedTextValueType, 'Local
 const ExpandedNodeIdValueType = genericValueType(ExpandedNodeIdType, 'ExpandedNodeIdValue');
 const ExpandedNodeIdResultType = genericResultType(ExpandedNodeIdValueType, 'ExpandedNodeIdResult');
 
-const NodeClassEnumValueType = genericValueType(new GraphQLEnumType({
-  name: 'NodeClass',
+const ResultMaskEnumType = new GraphQLEnumType({
+    name: 'ResultMaskEnum',
+    description: 'results required for a reference',
+    values: {
+      ReferenceType: {
+        value: 0x01,
+        description: 'Reference type.'
+      },
+      IsForward: {
+        value: 0x02,
+        description: 'Is forward.'
+      },
+      NodeClass: {
+        value: 0x04,
+        description: 'Node class.'
+      },
+      BrowseName: {
+        value: 0x08,
+        description: 'Browse name.'
+      },
+      DisplayName: {
+        value: 0x10,
+        description: 'Display name.'
+      },
+      TypeDefinition: {
+        value: 0x20,
+        description: 'Type definition.'
+      }
+    }
+});
+
+const BrowseDirectionEnumType = new GraphQLEnumType({
+  name: 'BrowseDirectionEnum',
+  description: 'Browse direction enumeration.',
+  values: {
+    Invalid: {
+      value: -1,
+      description: 'Invalid.'
+    },
+    Forward: {
+      value: 0,
+      description: 'Browse forward.'
+    },
+    Inverse: {
+      value: 1,
+      description: 'Browse backward.'
+    },
+    Both: {
+      value: 2,
+      description: 'Browse forward and backward.'
+    }
+  }
+});
+
+
+const NodeClassEnumType = new GraphQLEnumType({
+  name: 'NodeClassEnum',
   description: 'Node class enumeration',
   values: {
     Unspecified: {
@@ -485,7 +538,9 @@ const NodeClassEnumValueType = genericValueType(new GraphQLEnumType({
       description: 'The node is a view.'
     }
   }
-}), 'NodeClassEnumValue');
+});
+
+const NodeClassEnumValueType = genericValueType(NodeClassEnumType, 'NodeClassEnumValue');
 
 const NodeClassEnumResultType = genericResultType(NodeClassEnumValueType, 'NodeClassEnumValueResult');
 const IntResultType = genericResultType(genericValueType(GraphQLInt, 'IntValue'), 'IntResult');
@@ -501,7 +556,6 @@ const getProperty = (type, attributeId) => ({
   type: type,
   description: 'DOcument this!',
   resolve: ({id})=> new Promise(function(resolve, reject){
-    console.log('getting propery', id);
     const nodesToRead = [
       {
         nodeId: id,
@@ -509,20 +563,19 @@ const getProperty = (type, attributeId) => ({
       }
     ];
     uaSession().read(nodesToRead, function(err, _nodesToRead, results) {
-      console.log('got back');
-        if (!err) {
-          const value = results[0].value ? results[0].value.value : null;
-          const arrayType = results[0].value ? results[0].value.arrayType : null;
-          const dataType = results[0].value ? results[0].value.dataType : null;
-          const stringValue = ()=> value !== null && value !== undefined ? value.toString() : null;
-          const jsonValue = ()=> JSON.stringify(value);
+      if (!err) {
+        const value = results[0].value ? results[0].value.value : null;
+        const arrayType = results[0].value ? results[0].value.arrayType : null;
+        const dataType = results[0].value ? results[0].value.dataType : null;
+        const stringValue = ()=> value !== null && value !== undefined ? value.toString() : null;
+        const jsonValue = ()=> JSON.stringify(value);
 
-          const ret = merge(results[0], {typedValue: {value, arrayType, dataType}, stringValue, jsonValue});
-          resolve(ret);
-        }
-        else {
-          reject(err);
-        }
+        const ret = merge(results[0], {typedValue: {value, arrayType, dataType}, stringValue, jsonValue});
+        resolve(ret);
+      }
+      else {
+        reject(err);
+      }
     });
   })
 });
@@ -558,33 +611,45 @@ const UANodeType = new GraphQLObjectType({
     executable: getProperty(BooleanResultType, opcua.AttributeIds.Executable), //21,
     userExecutable: getProperty(BooleanResultType, opcua.AttributeIds.UserExecutable), //22,
     outputArguments: {type: new GraphQLList(ArgumentValueType)},
-    parent: {
-      description: 'the parent - this is wrong as a node can have more than one parent??',
-      type: ReferenceDescriptionType,
-      resolve: ({id}) => new Promise(function(resolve, reject){
-        uaSession().browse(id, function(err, browseResult){
-          if(!err) {
-            resolve(browseResult[0].references
-              .filter(r=>!r.isForward)
-              .map(r=>{
-                r.id = r.nodeId.toString();
-                return r;
-              })[0]
-            );
-          }
-          else {
-            reject(err);
-          }
-        });
-      })
-    },
     references: {
       type: ReferenceConnection,
       description: 'references are typed links to other nodes',
-      args: connectionArgs,
+      args: extend({
+        referenceTypeId: {
+          type: GraphQLString,
+          description: 'Filter by the reference type.'
+        },
+        browseDirection: {
+          type: BrowseDirectionEnumType,
+          description: 'Browse direction.'
+        },
+        nodeClasses: {
+          type: new GraphQLList(NodeClassEnumType),
+          description: 'Node classes to include.'
+        },
+        results: {
+          type: new GraphQLList(ResultMaskEnumType),
+          description: 'Results to include.'
+        },
+        includeSubtypes: {
+          type: GraphQLBoolean,
+          description: 'Include subtypes.'
+        }
+      }, connectionArgs),
       resolve: ({id}, args) => connectionFromPromisedArray(
         new Promise(function(resolve, reject){
-            uaSession().browse(id, function(err, browseResult){
+            const {referenceTypeId, browseDirection, nodeClasses, includeSubtypes, results} = args;
+            console.log(nodeClasses);
+            const browseDescription = {
+              nodeId: id,
+              referenceTypeId,
+              browseDirection: browseDirection || 0,
+              includeSubtypes: includeSubtypes,
+              nodeClassMask: nodeClasses ? nodeClasses.reduce(((p, c)=>p | c), 0) : 0,
+              resultMask: results ? results.reduce(((p, c)=>p | c), 0) : 63
+            };
+            
+            uaSession().browse([browseDescription], function(err, browseResult){
               if(!err) {
                 resolve(browseResult[0].references.map(r=>{
                   r.id = r.nodeId.toString();
@@ -737,32 +802,27 @@ const CallUAMethodMutation = mutationWithClientMutationId({
     }];
 
     return new Promise(function(resolve, reject){
-        try{
-          uaSession().call(methodsToCall, function(err, results) {
-              if(!err) {
-                console.log(JSON.stringify(results, null, '\t'));
-                if(results[0].statusCode.value)
-                {
-                  reject(results[0].statusCode);
-                }
-                else
-                {
-                  console.log(results[0].outputArguments[0].dataType);
-                  resolve(getUANode(fromGlobalId(id).id, results[0].outputArguments.map(arg=>merge(arg, {value: { value: arg.value, dataType: arg.dataType, arrayType: arg.arrayType}}))));  
-                }
-                
-                
-              } else {
-                console.log(err);
-                reject(err);
-              }
+      try{
+        uaSession().call(methodsToCall, function(err, results) {
+          if(!err) {
+            if(results[0].statusCode.value)
+            {
+              reject(results[0].statusCode);
             }
-          );
-        }
-        catch(err){
-            console.log('errrrr', err);
+            else
+            {
+              resolve(getUANode(fromGlobalId(id).id, results[0].outputArguments.map(arg=>merge(arg, {value: { value: arg.value, dataType: arg.dataType, arrayType: arg.arrayType}}))));  
+            }
+            
+            
+          } else {
             reject(err);
-        }
+          }
+        });
+      }
+      catch(err){
+          reject(err);
+      }
         
     });
   },
@@ -830,6 +890,7 @@ var UpdateUANodeMutation = mutationWithClientMutationId({
 
 var queryType = new GraphQLObjectType({
   name: 'Query',
+  description: 'root graphql query, everything starts from here',
   fields: () => ({
     node: nodeField,
     uaNode: {
@@ -838,6 +899,7 @@ var queryType = new GraphQLObjectType({
       args: {
         nodeId: {
           name: 'nodeId',
+          description: 'the node id to fetch if blank fetches "RootFolder"',
           type: GraphQLString
         }
       },

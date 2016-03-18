@@ -12,7 +12,7 @@
         {
           "kind": "OBJECT",
           "name": "Query",
-          "description": null,
+          "description": "root graphql query, everything starts from here",
           "fields": [
             {
               "name": "node",
@@ -47,7 +47,7 @@
               "args": [
                 {
                   "name": "nodeId",
-                  "description": null,
+                  "description": "the node id to fetch if blank fetches \"RootFolder\"",
                   "type": {
                     "kind": "SCALAR",
                     "name": "String",
@@ -432,24 +432,12 @@
               "deprecationReason": null
             },
             {
-              "name": "parent",
-              "description": "the parent - this is wrong as a node can have more than one parent??",
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "ReferenceDescription",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
               "name": "references",
               "description": "references are typed links to other nodes",
               "args": [
                 {
-                  "name": "after",
-                  "description": null,
+                  "name": "referenceTypeId",
+                  "description": "Filter by the reference type.",
                   "type": {
                     "kind": "SCALAR",
                     "name": "String",
@@ -458,7 +446,55 @@
                   "defaultValue": null
                 },
                 {
-                  "name": "first",
+                  "name": "browseDirection",
+                  "description": "Browse direction.",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "BrowseDirectionEnum",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "nodeClasses",
+                  "description": "Node classes to include.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeClassEnum",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "results",
+                  "description": "Results to include.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "ResultMaskEnum",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "includeSubtypes",
+                  "description": "Include subtypes.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "last",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -478,11 +514,21 @@
                   "defaultValue": null
                 },
                 {
-                  "name": "last",
+                  "name": "first",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
                     "name": "Int",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "after",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -1072,7 +1118,7 @@
               "args": [],
               "type": {
                 "kind": "ENUM",
-                "name": "NodeClass",
+                "name": "NodeClassEnum",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -1086,7 +1132,7 @@
         },
         {
           "kind": "ENUM",
-          "name": "NodeClass",
+          "name": "NodeClassEnum",
           "description": "Node class enumeration",
           "fields": null,
           "inputFields": null,
@@ -3328,132 +3374,85 @@
           "possibleTypes": null
         },
         {
-          "kind": "OBJECT",
-          "name": "ReferenceDescription",
-          "description": "http://node-opcua.github.io/api_doc/classes/ReferenceDescription.html",
-          "fields": [
-            {
-              "name": "id",
-              "description": "The ID of an object",
-              "args": [],
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "browseName",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "QualifiedName",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "displayName",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "LocalizedText",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "isForward",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "nodeClass",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "nodeId",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "ExpandedNodeId",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "referenceTypeId",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "ExpandedNodeId",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "typeDefinition",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "ExpandedNodeId",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "uaNode",
-              "description": "The UANode that the reference points to",
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "UANode",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
+          "kind": "ENUM",
+          "name": "BrowseDirectionEnum",
+          "description": "Browse direction enumeration.",
+          "fields": null,
           "inputFields": null,
-          "interfaces": [
+          "interfaces": null,
+          "enumValues": [
             {
-              "kind": "INTERFACE",
-              "name": "Node",
-              "ofType": null
+              "name": "Invalid",
+              "description": "Invalid.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "Forward",
+              "description": "Browse forward.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "Inverse",
+              "description": "Browse backward.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "Both",
+              "description": "Browse forward and backward.",
+              "isDeprecated": false,
+              "deprecationReason": null
             }
           ],
-          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "ResultMaskEnum",
+          "description": "results required for a reference",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "ReferenceType",
+              "description": "Reference type.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "IsForward",
+              "description": "Is forward.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "NodeClass",
+              "description": "Node class.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "BrowseName",
+              "description": "Browse name.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "DisplayName",
+              "description": "Display name.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "TypeDefinition",
+              "description": "Type definition.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
           "possibleTypes": null
         },
         {
@@ -3602,6 +3601,135 @@
           ],
           "inputFields": null,
           "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ReferenceDescription",
+          "description": "http://node-opcua.github.io/api_doc/classes/ReferenceDescription.html",
+          "fields": [
+            {
+              "name": "id",
+              "description": "The ID of an object",
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "browseName",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "QualifiedName",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "displayName",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "LocalizedText",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "isForward",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "nodeClass",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "nodeId",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "ExpandedNodeId",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "referenceTypeId",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "ExpandedNodeId",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "typeDefinition",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "ExpandedNodeId",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "uaNode",
+              "description": "The UANode that the reference points to",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "UANode",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "Node",
+              "ofType": null
+            }
+          ],
           "enumValues": null,
           "possibleTypes": null
         },

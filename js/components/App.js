@@ -5,48 +5,6 @@ import Relay from 'react-relay';
 
 var value = 0;
 
-class CountMutation extends Relay.Mutation {
-  getMutation() {
-    return Relay.QL`mutation {updateCount}`;
-  }
-  getVariables() {
-    return {
-      id: this.props.count.id
-    };
-  }
-  getFatQuery() {
-    return Relay.QL`
-      fragment on UpdateCountPayload {
-        count
-      }
-    `;
-  }
-  getConfigs() {
-    return [{
-      type: 'FIELDS_CHANGE',
-      fieldIDs: {
-        count: this.props.count.id
-      },
-    }];
-  }
-  getOptimisticResponse() {
-    return {
-      count: {
-        id: this.props.count.id,
-        count: this.props.count.count + 1
-        
-      }
-    };
-  }
- static fragments = {
-    count: () => Relay.QL`
-      fragment on Count {
-        count
-        id
-      }
-    `,
-  };
-}
 
 class UaNodeMutation extends Relay.Mutation {
   getMutation() {
@@ -56,7 +14,7 @@ class UaNodeMutation extends Relay.Mutation {
     return {
       id: this.props.viewer.id,
       value: value,
-      dataType: this.props.viewer.dataValue.value.dataType 
+      dataType: this.props.viewer.dataValue.value.dataType
     };
   }
   getFatQuery() {
@@ -71,7 +29,7 @@ class UaNodeMutation extends Relay.Mutation {
       type: 'FIELDS_CHANGE',
       fieldIDs: {
         uaNode: this.props.viewer.id
-      },
+      }
     }];
   }
   static fragments = {
@@ -84,7 +42,7 @@ class UaNodeMutation extends Relay.Mutation {
           }
         }
       }
-    `,
+    `
   };
 }
 
@@ -95,7 +53,7 @@ class CallUAMethodMutation extends Relay.Mutation {
   getVariables() {
     return {
       id: this.props.viewer.id,
-      parent: this.props.viewer.parent.id
+      parent: this.props.viewer.parent.edges[0].node.uaNode.id
     };
   }
   getFatQuery() {
@@ -110,15 +68,15 @@ class CallUAMethodMutation extends Relay.Mutation {
       type: 'FIELDS_CHANGE',
       fieldIDs: {
         uaNode: this.props.viewer.id
-      },
+      }
     }];
   }
   static fragments = {
     viewer: () => Relay.QL`
       fragment on UANode {
-        parent {id}
+        id
       }
-    `,
+    `
   };
 }
 
@@ -152,7 +110,6 @@ class App extends React.Component {
         
         <h2>{this.props.viewer.id}</h2>
         <h2>{this.props.viewer.nodeId.stringValue}</h2>
-        <h2>{this.props.count.count}</h2>
         {this.props.viewer.browseName.value.value.name}
         {this.props.viewer.dataValue.stringValue}
         <ul>
@@ -172,16 +129,18 @@ class App extends React.Component {
 
 export default Relay.createContainer(App, {
   fragments: {
-    count: ()=> Relay.QL`
-      fragment on Count {
-        count
-        id
-      }
-    `,
     viewer: () => Relay.QL`
       fragment on UANode {
         id
-        parent {id}
+        parent: references(first:1 referenceTypeId: "HasComponent" browseDirection: Inverse, results:[ReferenceType, NodeClass]) {
+          edges {
+            node {
+              uaNode {
+                id
+              }
+            }
+          }
+        }
         nodeId{stringValue}    
         dataValue{
           stringValue
@@ -214,6 +173,6 @@ export default Relay.createContainer(App, {
           }  
         }
       }
-    `,
-  },
+    `
+  }
 });
