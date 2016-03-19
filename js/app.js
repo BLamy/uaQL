@@ -13,9 +13,10 @@ var socket = io.connect('http://localhost:3001');
 socket.on('connect', ()=>{
 socket.emit('join', 'room1');
 });
-socket.on('update', (data)=>document.getElementById('io').innerText =  data.value);
+socket.on('update', (data: string)=>
+    document.getElementById('io').innerText = data.value);
 
-socket.on('news', function (data) {
+socket.on('news', function (data: string) {
     alert(JSON.stringify(data));
     socket.emit('my other event', { my: 'data' });
 });

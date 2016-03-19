@@ -1,10 +1,22 @@
 'use strict';
 import opcua from 'node-opcua';
 import async from 'async';
-const client = new opcua.OPCUAClient();
 import Rx from 'rx';
 
 const endpointUrl = 'opc.tcp://opcua.demo-this.com:51210/UA/SampleServer';
+
+
+function logAllEmitterEvents(eventEmitter)
+{
+    var emitToLog = eventEmitter.emit;
+
+    eventEmitter.emit = function () {
+        var event = arguments[0];
+        console.log("event emitted: " + event, JSON.stringify(arguments, null, '\t'));
+        emitToLog.apply(eventEmitter, arguments);
+    };
+}
+
 
 //opc.tcp://opcserver.mAutomation.net:4841  mFactor Engineering
 //opc.tcp://commsvr.com:51234/UA/CAS_UA_Server  CommServer
@@ -14,299 +26,87 @@ const endpointUrl = 'opc.tcp://opcua.demo-this.com:51210/UA/SampleServer';
 //opc.tcp://opcua.demo-this.com:51212/UA/SampleServer opclabs
 //opc.tcp://demo.ascolab.com:4841
 
-var session;
-
-if(false)
-// this is largely bollocks
-async.series([
-
-    // step 1 : connect to
-    function(callback) {
-        client.connect(endpointUrl, function (err) {
-          if(err) {
-              console.log(' cannot connect to endpoint :', endpointUrl );
-          } else {
-              console.log('connected !');
-          }
-          callback(err);
-        });
-    }
-
-    ,
-
-    // step 2 : createSession
-    function(callback) {
-        client.createSession( function(err, _session) {
-            if(!err) {
-                session = _session;
-            }
-        callback(err);
-        });
-    },
-
-
-
-
-
-    // step 3.0 : browse
-    function(callback) {
-
-      var browseDescription = {
-         nodeId: "ns=0;i=84",
-         referenceTypeId: "ns=0;i=35",
-         browseDirection: 2
-      };
-
-
-       session.browse(browseDescription, function(err, browseResult){
-        if(!err) {
-            //console.log(" with browse desciptipon::", JSON.stringify(browseResult, null, '\t'));
-            
-        }
-    callback(err);
-        });
-    },
-
-
-    // step 3 : browse
-    function(callback) {
-       session.browse('ns=0;i=85', function(err, browseResult){
-        if(!err) {
-            //console.log( JSON.stringify(browseResult, null, '\t'));
-            
-        }
-    callback(err);
-        });
-    },
-
-
-/*
-    // step 4 : read a variable with readVariableValue
-    function(callback) {
-      session.readVariableValue('ns=2;i=10845', function(err, dataValue) {
-      if (!err) {
-          //console.log(' free mem % = ', dataValue.toString());
-      }
-          callback(err);
-      });
-    },
-
-    // step 4' : read a variable with read
-    function(callback) {
-        var nodesToRead = [
-            {
-                 nodeId: 'ns=0;i=84',
-                 attributeId: opcua.AttributeIds.BrowseName
-            }
-        ];
-        session.read(nodesToRead, function(err, _nodesToRead, results) {
-            if (!err) {
-                console.log(' bname atts = ', JSON.stringify(results[0]));
-                console.log(' bname atts = ', results[0]);
-            }
-           callback(err);
-        });
-               
-    },
-
-
-// step 4.5' : read a variable with read
-    function(callback) {
-        session.readAllAttributes(['ns=0;i=84'], function(err, results) {
-
-            if (!err) {
-                console.log(' all atts = ', results[0]);
-            }
-           callback(err);
-        } );
-               
-    },
-
-*/
-
-function(callback) {
-      session.readVariableValue('ns=2;i=10845', function(err, dataValue) {
-      if (!err) {
-          //console.log(' free mem % = ', dataValue.toString());
-      }
-          callback(err);
-      });
-    },
-
-
-function(callback) {
-
-  var methodsToCall = [ {
-      objectId: 'ns=4;i=1287',
-      methodId: 'ns=4;i=1343'      
-  }];
-
-
-  session.call(methodsToCall, function(err, results) {
-      if (!err) {
-          console.log('call success!', JSON.stringify(results, null, '\t'));          
-      }
-     callback(err);
-  } );
-               
-},
-
-
-
-
-
-  function(callback) {
-        session.readAllAttributes(['ns=2;i=10756'], function(err, nodestoread, results) {
-
-            if (!err) {
-               /* nodestoread.forEach((node, i)=>{
-                    console.log(JSON.stringify({
-                      attribute: opcua.AttributeNameById[node.attributeId],
-                      node: node,
-                      result: results[i]}, null, '\t'));
-                });*/
-                
-            }
-           callback(err);
-        } );
-               
-    },
-
-  function(callback) {
-        var nodesToRead = [
-            {
-                 nodeId: 'ns=0;i=84',
-                 attributeId: opcua.AttributeIds.NodeClass
-            }
-        ];
-        session.read(nodesToRead, function(err, _nodesToRead, results) {
-            if (!err) {
-                console.log(' browsename atts = ', JSON.stringify(results[0], null, '\t'));
-            }
-           callback(err);
-        });
-               
-    },
-
-
-  function(callback) {
-        var nodesToRead = [
-            {
-                 nodeId: 'ns=0;i=84',
-                 attributeId: opcua.AttributeIds.DisplayName
-            }
-        ];
-        session.read(nodesToRead, function(err, _nodesToRead, results) {
-            if (!err) {
-                console.log(' displayname atts = ', JSON.stringify(results[0]));
-                console.log(' dname atts = ', results[0]);
-            }
-           callback(err);
-        });
-               
-    },
-
-
-
-    // step 5: install a subscription and install a monitored item for 10 seconds
-    function(callback) {
-       const subscription = new opcua.ClientSubscription(session, {
-          requestedPublishingInterval: 1000,
-          requestedLifetimeCount: 10,
-          requestedMaxKeepAliveCount: 2,
-          maxNotificationsPerPublish: 10,
-          publishingEnabled: true,
-          priority: 10
-      });
-
-      subscription.on('started', function(){
-          console.log('subscription started for 2 seconds - subscriptionId=', subscription.subscriptionId);
-      }).on('keepalive', function(){
-          //console.log('keepalive');
-      }).on('terminated', function(){
-          callback();
-      });
-
-      setTimeout(function(){
-          //subscription.terminate();
-      }, 2000000);
-
-      // install monitored item
-      var monitoredItem = subscription.monitor({
-          nodeId: opcua.resolveNodeId('ns=2;i=10844'),
-          attributeId: opcua.AttributeIds.Value
-      },
-      {
-          samplingInterval: 100,
-          discardOldest: true,
-          queueSize: 10
-      },
-      opcua.read_service.TimestampsToReturn.Both
-      );
-      console.log('-------------------------------------');
-
-      monitoredItem.on('changed', function(){
-         //console.log(' % free mem = ',dataValue.value.value);
-      });
-    }
-/*
-    // close session
-    function(callback) {
-        _'closing session'
-    }
-*/
-],
-function(err) {
-    if (err) {
-        console.log(' failure ', err);
-    } else {
-        console.log('done!');
-    }
-    client.disconnect(function(){});
-});
-
-
+//provides an observable with the current session - reactivates and reconnects as required
+//todo subscriptions should go through this and be reinstated on reconnect
 class OpcUaConnector {
   constructor(){
-    //the last connection state
-var subject = new Rx.ReplaySubject(2 /* buffer size */);
-
-
+    var session;
     const observable = new Rx.ReplaySubject(1);
-    this.session = () => observable;
-    const client = new opcua.OPCUAClient();
+    var ss=0;
+    this.session2 = () => observable;
+    this.session = () => observable.where(s=>{
+      if(s){
+        console.log('yes s was ok', ss++);
+        return true;
+      }
+      console.log('no s', ss++);
+
+      });
+    var client;
+    
     const connect = ()=> {
-      observable.onNext(null);
+      client = new opcua.OPCUAClient({requestedSessionTimeout:1000});
+      client.once('close', ()=> {
+        observable.onNext(false);
+        connect();   
+      });
+      client.once('start_reconnection', ()=> {
+        observable.onNext(false);
+        session.close(()=>{
+          console.log("START RECONNECTION seen disconnecting");
+          client.disconnect(()=>console.log('DISCONNECTED'));   
+          console.log("START RECONNECTION seen disconnection called");
+        });
+        
+      });
+      logAllEmitterEvents(client);
+      console.log('there is no session available');
+      
+      console.log('connecting..');
       client.connect(endpointUrl, (err) => {
         if(!err){
-          console.log('connected...');
+          console.log('connected');
+          console.log('creating session..');
           client.createSession( function(err, _session) {
             if(!err){
-                observable.onNext(_session);
-                console.log('session created!!!!!!!');
-                
+                session = _session;
+                observable.onNext(()=>session);
+                console.log('session created');
             } else
             {
-              client.disconnect(function(){});
+              client.disconnect();
             }
-            
           });
         }
         else {
-          console.log('not connected');
+          console.log('connection failed', err);
           connect();
         }
       });
     };
-
-    client.on('close', ()=> {
-      connect();
-    });
+    //attempt to reactivate if fails connect
+    const reactivate = ()=> {
+      console.log('no session');
+      observable.onNext(null);
+      console.log('reactivating..');
+      client.reactivateSession(session, (err)=>{
+        if(!err){
+          console.log('reactivated');
+          observer.onNext(session);
+        }
+        else
+        {
+          console.log('failed to reactivate', err);
+          connect();
+        }
+      });
+    };
     
     connect();
   }
 }
 
-
-export default new OpcUaConnector().session;
-export {opcua as opcua};
+const connector = new OpcUaConnector();
+const session2 = connector.session2;
+export default connector.session;
+export {opcua as opcua, session2 as session2};

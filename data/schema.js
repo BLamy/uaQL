@@ -24,7 +24,7 @@ import {
   nodeDefinitions,
 } from 'graphql-relay';
 
-import uaSession, {opcua} from './opcua';
+import uaSession, {opcua, session2} from './opcua';
 import merge from 'merge';
 import extend from 'util-extend';
 var {nodeInterface, nodeField} = nodeDefinitions(
@@ -44,7 +44,9 @@ var {nodeInterface, nodeField} = nodeDefinitions(
   }
 );
 
-
+uaSession().subscribe(d=>{
+  if(d){console.log('owt');}else{console.log('nowt');}
+});
 const QualifiedNameType = new GraphQLObjectType({
   name: 'QualifiedName',
   description: 'http://node-opcua.github.io/api_doc/classes/QualifiedName.html',
@@ -555,9 +557,9 @@ const getProperty = (type, attributeId) => ({
         attributeId: attributeId
       }
     ];
-    
-    uaSession().subscribe(session=>
-      session.read(nodesToRead, function(err, _nodesToRead, results) {
+    session2().take(1).subscribe(x=>{if(x){console.log('yes x');}else{console.log('nox');}});
+    uaSession().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
+      session().read(nodesToRead, function(err, _nodesToRead, results) {
         if (!err) {
           const value = results[0].value ? results[0].value.value : null;
           const arrayType = results[0].value ? results[0].value.arrayType : null;
@@ -571,7 +573,8 @@ const getProperty = (type, attributeId) => ({
         else {
           reject(err);
         }
-      })
+      }),
+      reject
     );
   })
 });
@@ -635,7 +638,6 @@ const UANodeType = new GraphQLObjectType({
       resolve: ({id}, args) => connectionFromPromisedArray(
         new Promise(function(resolve, reject){
             const {referenceTypeId, browseDirection, nodeClasses, includeSubtypes, results} = args;
-            console.log(nodeClasses);
             const browseDescription = {
               nodeId: id,
               referenceTypeId,
@@ -644,9 +646,8 @@ const UANodeType = new GraphQLObjectType({
               nodeClassMask: nodeClasses ? nodeClasses.reduce(((p, c)=>p | c), 0) : 0,
               resultMask: results ? results.reduce(((p, c)=>p | c), 0) : 63
             };
-            uaSession().subscribe(session=>
-
-              session.browse([browseDescription], function(err, browseResult){
+            uaSession().take(1).timeout(3000, new Error('Timeout, try later...')).subscribe(session=>
+              session().browse([browseDescription], function(err, browseResult){
                 if(!err) {
                   resolve(browseResult[0].references.map(r=>{
                     r.id = r.nodeId.toString();
@@ -656,7 +657,8 @@ const UANodeType = new GraphQLObjectType({
                 else {
                   reject(err);
                 }
-              })
+              }),
+              reject
             );
           }),
         args
@@ -773,8 +775,8 @@ const CallUAMethodMutation = mutationWithClientMutationId({
 
     return new Promise(function(resolve, reject){
       try{
-        uaSession().subscribe(session=>
-          session.call(methodsToCall, function(err, results) {
+        uaSession().take(1).timeout(3000, new Error('Timeout, try later....')).subscribe(session=>
+          session().call(methodsToCall, function(err, results) {
             if(!err) {
               if(results[0].statusCode.value)
               {
@@ -784,12 +786,11 @@ const CallUAMethodMutation = mutationWithClientMutationId({
               {
                 resolve(getUANode(fromGlobalId(id).id, results[0].outputArguments.map(arg=>merge(arg, {value: { value: arg.value, dataType: arg.dataType, arrayType: arg.arrayType}}))));  
               }
-              
-              
             } else {
               reject(err);
             }
-          })
+          }),
+          reject
         );
       }
       catch(err){
@@ -824,28 +825,22 @@ var UpdateUANodeMutation = mutationWithClientMutationId({
   },
   mutateAndGetPayload: ({id, value, dataType}) => {
     var nodeId = fromGlobalId(id).id;
-    console.log('nid', nodeId);
-    console.log('value', value);
-    console.log('dataType', dataType);
-   
     return new Promise(function(resolve, reject){
         try{
-          uaSession().subscribe(session=>
-            session.writeSingleNode(nodeId, new opcua.Variant({dataType: dataType, value: value}), (err, statusCode) => 
+          uaSession().take(1).timeout(3000).subscribe(session=>
+            session().writeSingleNode(nodeId, new opcua.Variant({dataType: dataType, value: value}), (err, statusCode) => 
               {
                   if(!err) {
-                    console.log('resolving: ', JSON.stringify(statusCode));
                     resolve(getUANode(nodeId));
                   } else {
-                    console.log(err);
                     reject(err);
                   }
                 }
-              )
+              ),
+            reject
             );
         }
         catch(err){
-            console.log('errrrr', err);
             reject(err);
         }
         
