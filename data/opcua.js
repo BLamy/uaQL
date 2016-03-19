@@ -2,7 +2,7 @@
 import opcua from 'node-opcua';
 import async from 'async';
 const client = new opcua.OPCUAClient();
-
+import Rx from 'rx';
 
 const endpointUrl = 'opc.tcp://opcua.demo-this.com:51210/UA/SampleServer';
 
@@ -16,8 +16,7 @@ const endpointUrl = 'opc.tcp://opcua.demo-this.com:51210/UA/SampleServer';
 
 var session;
 
-console.log(JSON.parse(JSON.stringify(new opcua.Variant({name: 'yay', dataType: opcua.DataType.UInt32, value: 10}))));
-
+if(false)
 // this is largely bollocks
 async.series([
 
@@ -267,6 +266,47 @@ function(err) {
 });
 
 
+class OpcUaConnector {
+  constructor(){
+    //the last connection state
+var subject = new Rx.ReplaySubject(2 /* buffer size */);
 
-export default function(){ return session; }
-export {opcua as opcua}
+
+    const observable = new Rx.ReplaySubject(1);
+    this.session = () => observable;
+    const client = new opcua.OPCUAClient();
+    const connect = ()=> {
+      observable.onNext(null);
+      client.connect(endpointUrl, (err) => {
+        if(!err){
+          console.log('connected...');
+          client.createSession( function(err, _session) {
+            if(!err){
+                observable.onNext(_session);
+                console.log('session created!!!!!!!');
+                
+            } else
+            {
+              client.disconnect(function(){});
+            }
+            
+          });
+        }
+        else {
+          console.log('not connected');
+          connect();
+        }
+      });
+    };
+
+    client.on('close', ()=> {
+      connect();
+    });
+    
+    connect();
+  }
+}
+
+
+export default new OpcUaConnector().session;
+export {opcua as opcua};

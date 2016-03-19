@@ -1,5 +1,4 @@
 'use strict';
-console.log("lk-qwsjxbljqwkbhsxdlqwjkbd", 1 << 0, 0 << 2, 0 << 3, 0 << 4);
 import {
   GraphQLBoolean,
   GraphQLFloat,
@@ -31,9 +30,6 @@ import extend from 'util-extend';
 var {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     var {type, id} = fromGlobalId(globalId);
-    if (type === 'ReferenceDescription') {
-      return getReference(id);
-    } else
     if (type === 'UANode') {
       return getUANode(id);
     }
@@ -42,10 +38,7 @@ var {nodeInterface, nodeField} = nodeDefinitions(
     }
   },
   (obj) => {
-    if(obj.type === 'ReferenceDescriptionType') {
-      return ReferenceDescriptionType;
-    }
-    else if(obj.type === 'UANodeType') {
+    if(obj.type === 'UANodeType') {
       return UANodeType;
     }
   }
@@ -562,21 +555,24 @@ const getProperty = (type, attributeId) => ({
         attributeId: attributeId
       }
     ];
-    uaSession().read(nodesToRead, function(err, _nodesToRead, results) {
-      if (!err) {
-        const value = results[0].value ? results[0].value.value : null;
-        const arrayType = results[0].value ? results[0].value.arrayType : null;
-        const dataType = results[0].value ? results[0].value.dataType : null;
-        const stringValue = ()=> value !== null && value !== undefined ? value.toString() : null;
-        const jsonValue = ()=> JSON.stringify(value);
+    
+    uaSession().subscribe(session=>
+      session.read(nodesToRead, function(err, _nodesToRead, results) {
+        if (!err) {
+          const value = results[0].value ? results[0].value.value : null;
+          const arrayType = results[0].value ? results[0].value.arrayType : null;
+          const dataType = results[0].value ? results[0].value.dataType : null;
+          const stringValue = ()=> value !== null && value !== undefined ? value.toString() : null;
+          const jsonValue = ()=> JSON.stringify(value);
 
-        const ret = merge(results[0], {typedValue: {value, arrayType, dataType}, stringValue, jsonValue});
-        resolve(ret);
-      }
-      else {
-        reject(err);
-      }
-    });
+          const ret = merge(results[0], {typedValue: {value, arrayType, dataType}, stringValue, jsonValue});
+          resolve(ret);
+        }
+        else {
+          reject(err);
+        }
+      })
+    );
   })
 });
 
@@ -648,18 +644,20 @@ const UANodeType = new GraphQLObjectType({
               nodeClassMask: nodeClasses ? nodeClasses.reduce(((p, c)=>p | c), 0) : 0,
               resultMask: results ? results.reduce(((p, c)=>p | c), 0) : 63
             };
-            
-            uaSession().browse([browseDescription], function(err, browseResult){
-              if(!err) {
-                resolve(browseResult[0].references.map(r=>{
-                  r.id = r.nodeId.toString();
-                  return r;
-                }));
-              }
-              else {
-                reject(err);
-              }
-            });
+            uaSession().subscribe(session=>
+
+              session.browse([browseDescription], function(err, browseResult){
+                if(!err) {
+                  resolve(browseResult[0].references.map(r=>{
+                    r.id = r.nodeId.toString();
+                    return r;
+                  }));
+                }
+                else {
+                  reject(err);
+                }
+              })
+            );
           }),
         args
       )
@@ -720,34 +718,6 @@ var {connectionType: NodeConnection} =
 
 
 
-const getReference = (nodeId)=> {
-  return new Promise(function(resolve, reject){
-      //seems a little nuts have to browse twice...
-       uaSession().browse(nodeId, function(err, browseResult){
-        if(!err) {
-            const firstChild = browseResult[0].references.filter((r)=>r.isForward)[0];
-            uaSession().browse(firstChild.nodeId, function(err2, browseResult2){
-              if(!err2)
-              {
-                const res = browseResult2[0].references.filter((f)=>!f.isForward)[0];
-                res.id = nodeId;
-                res.type = 'ReferenceDescriptionType';
-                resolve(res);  
-              }
-              else {
-                reject(err2);
-              }
-              
-            });
-        }
-        else {
-          reject(err);
-        }
-      });
-
-  });
-};
-
 const getUANode = (nodeId, outputArguments)=> {
   return {
     id: nodeId,
@@ -803,22 +773,24 @@ const CallUAMethodMutation = mutationWithClientMutationId({
 
     return new Promise(function(resolve, reject){
       try{
-        uaSession().call(methodsToCall, function(err, results) {
-          if(!err) {
-            if(results[0].statusCode.value)
-            {
-              reject(results[0].statusCode);
+        uaSession().subscribe(session=>
+          session.call(methodsToCall, function(err, results) {
+            if(!err) {
+              if(results[0].statusCode.value)
+              {
+                reject(results[0].statusCode);
+              }
+              else
+              {
+                resolve(getUANode(fromGlobalId(id).id, results[0].outputArguments.map(arg=>merge(arg, {value: { value: arg.value, dataType: arg.dataType, arrayType: arg.arrayType}}))));  
+              }
+              
+              
+            } else {
+              reject(err);
             }
-            else
-            {
-              resolve(getUANode(fromGlobalId(id).id, results[0].outputArguments.map(arg=>merge(arg, {value: { value: arg.value, dataType: arg.dataType, arrayType: arg.arrayType}}))));  
-            }
-            
-            
-          } else {
-            reject(err);
-          }
-        });
+          })
+        );
       }
       catch(err){
           reject(err);
@@ -857,18 +829,19 @@ var UpdateUANodeMutation = mutationWithClientMutationId({
     console.log('dataType', dataType);
    
     return new Promise(function(resolve, reject){
-        console.log('nid!!', nodeId);
         try{
-          uaSession().writeSingleNode(nodeId, new opcua.Variant({dataType: dataType, value: value}), (err, statusCode) => 
-            {
-                if(!err) {
-                  console.log('resolving: ', JSON.stringify(statusCode));
-                  resolve(getUANode(nodeId));
-                } else {
-                  console.log(err);
-                  reject(err);
+          uaSession().subscribe(session=>
+            session.writeSingleNode(nodeId, new opcua.Variant({dataType: dataType, value: value}), (err, statusCode) => 
+              {
+                  if(!err) {
+                    console.log('resolving: ', JSON.stringify(statusCode));
+                    resolve(getUANode(nodeId));
+                  } else {
+                    console.log(err);
+                    reject(err);
+                  }
                 }
-              }
+              )
             );
         }
         catch(err){
