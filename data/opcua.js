@@ -31,7 +31,7 @@ function logAllEmitterEvents(eventEmitter)
 const pinger = (session, handle)=> {
   session.browse('', function(err, browseResult){
     if(!err){
-      setTimeout(()=>pinger(session, handle), 60000);
+      setTimeout(()=>pinger(session, handle), 10000);
     }
     else {
       handle(session,err);

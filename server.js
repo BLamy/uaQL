@@ -10,13 +10,14 @@ import socket from 'socket.io';
 import http from 'http';
 
 const APP_PORT = 3000;
-const GRAPHQL_PORT = 8080;
+const GRAPHQL_PORT = 80;
 const SOCKET_PORT = 3001;
 
 var socketapp = express();
 var socketserver = http.Server(app);
 var io = socket(socketserver);
-socketserver.listen(SOCKET_PORT);
+//socketserver.listen(SOCKET_PORT);
+console.log('env port::', process.env.PORT);
 
 class Room {
   constructor(room : string){
@@ -78,13 +79,13 @@ var graphQLServer = express();
 graphQLServer.use('/', graphQLHTTP({
   graphiql: true,
   pretty: true,
-  schema: Schema,
+  schema: Schema
 }));
 
 //const io = socket(graphQLServer);
 
 
-graphQLServer.listen(GRAPHQL_PORT, () => console.log(
+graphQLServer.listen(process.env.PORT, () => console.log(
   `GraphQL Server is now running on http://localhost:${GRAPHQL_PORT}`
 ));
 
@@ -114,7 +115,7 @@ var app = new WebpackDevServer(compiler, {
 
 // Serve static resources
 app.use('/', express.static(path.resolve(__dirname, 'public')));
-app.listen(APP_PORT, () => {
-  console.log(`App is now running on http://localhost:${APP_PORT}`);
-});
+//app.listen(APP_PORT, () => {
+//  console.log(`App is now running on http://localhost:${APP_PORT}`);
+//});
 
