@@ -10,6 +10,7 @@
   "scripts": {
     "start_": "babel-node ./server.js",
     "start": "./node_modules/.bin/babel-node  ./server.js",
+    "build": "babel js/app.js -d -s build2/",
     "update-schema": "babel-node ./scripts/updateSchema.js"
   },
   "dependencies": {
@@ -43,9 +44,12 @@
     "webpack-dev-server": "1.14.1"
   },
   "devDependencies": {
-    "babel-cli": "6.5.1",
+    "babel-cli": "^6.6.5",
     "babel-eslint": "^6.0.0-beta.6",
     "babel-plugin-transform-flow-strip-types": "^6.7.0",
-    "eslint": "^2.4.0"
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "eslint": "^2.4.0",
+    "rollup-plugin-babel": "^2.4.0",
+    "rollup-plugin-json": "^2.0.0"
   }
 }

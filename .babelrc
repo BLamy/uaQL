@@ -3,6 +3,7 @@
   "presets": [
     {
       "plugins": [
+      
         "./build/babelRelayPlugin",
         "transform-flow-strip-types"
       ]
