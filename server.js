@@ -13,8 +13,10 @@ const APP_PORT = 3000;
 const GRAPHQL_PORT = 8080;
 const SOCKET_PORT = 3001;
 
-var socketapp = express();
-var socketserver = http.Server(app);
+// Expose a GraphQL endpoint
+var graphQLServer = express();
+
+var socketserver = http.Server(graphQLServer);
 var io = socket(socketserver);
 //socketserver.listen(SOCKET_PORT);
 console.log('env port::', process.env.PORT);
@@ -24,7 +26,7 @@ class Room {
     var number = 0;
     const timer=setInterval((()=>io.to(room).emit('update', {
       room: room, 
-      value: number++})), 0);
+      value: number++})), 1000);
     this.destroy = ()=> clearInterval(timer);
   }
 }
@@ -74,8 +76,6 @@ io.on('connection', (mySocket)=> {
 });
 
 
-// Expose a GraphQL endpoint
-var graphQLServer = express();
 
 
 
@@ -138,7 +138,7 @@ if(false) {
   });
   console.log("running compiler");
   compiler.run((err, stats)=> {
-    console.log("compile conplete", err, stats);
+    console.log("compile complete", err, stats);
   });
 
 
@@ -153,6 +153,11 @@ if(false) {
 
 }
 
-graphQLServer.listen(process.env.PORT || GRAPHQL_PORT , () => console.log(
-  `GraphQL Server is now running on http://localhost:${process.env.PORT || GRAPHQL_PORT}`
-));
+
+socketserver.listen(process.env.PORT || GRAPHQL_PORT, function(){
+  console.log('listening on *:' + process.env.PORT || GRAPHQL_PORT);
+});
+
+// graphQLServer.listen(process.env.PORT || GRAPHQL_PORT , () => console.log(
+//  `GraphQL Server is now running on http://localhost:${process.env.PORT || GRAPHQL_PORT}`
+// ));

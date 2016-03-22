@@ -8,9 +8,9 @@ import ReactDOM from 'react-dom';
 import Relay from 'react-relay';
 import io from 'socket.io-client';
 
-var socket = io.connect('http://localhost:3001');
+var socket = io.connect();
 socket.on('connect', ()=>{
-socket.emit('join', 'room1');
+	socket.emit('join', 'room1');
 });
 socket.on('update', (data: string)=>
     document.getElementById('io').innerText = data.value);

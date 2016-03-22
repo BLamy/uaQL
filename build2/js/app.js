@@ -74,7 +74,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var socket = _socket2.default.connect('http://localhost:3001');
+	var socket = _socket2.default.connect();
 	socket.on('connect', function () {
 	  socket.emit('join', 'room1');
 	});
