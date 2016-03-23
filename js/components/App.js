@@ -2,6 +2,10 @@
 
 import React from 'react';
 import Relay from 'react-relay';
+import Comp from './comp';
+import ReferenceLink from './ReferenceLink';
+import NodeName from './NodeName';
+import LocalizedText from './LocalizedText';
 
 var value = 0;
 
@@ -104,22 +108,37 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h1>Widget list</h1>
+        <Comp viewer={this.props.viewer}/>
+        <h1>
+          <NodeName viewer={this.props.viewer}/>
+        </h1>
         <button onClick={this._handleCount}>Like this</button>
         <button onClick={this._handleMethod}>Method Call</button>
-        
-        <h2>{this.props.viewer.id}</h2>
-        <h2>{this.props.viewer.nodeId.stringValue}</h2>
-        {this.props.viewer.browseName.value.value.name}
+        <h2>
+        {this.props.viewer.dataType.value ?
+          <NodeName viewer={this.props.viewer.dataType.value.value.uaNode}/>
+          : 'no data type'}
+        </h2>
+        <h3>
+          {this.props.viewer.nodeId.stringValue}
+        </h3>
+        <h4>
+          {this.props.viewer.nodeClassEnum.value.value}
+        </h4>
         {this.props.viewer.dataValue.stringValue}
+
+        <LocalizedText viewer={this.props.viewer.description}/>
+
         <ul>
-          {this.props.viewer.references.edges.map(r=>
-            <li>{r.node.browseName.name} {r.node.uaNode.id}</li>
+          {this.props.viewer.forwardReferences.edges.map(r=>
+            <li key={r.node.id}>
+              <ReferenceLink viewer={r.node}/>  
+            </li>
           )}
         </ul>
         <ul>
           {(this.props.viewer.outputArguments || []).map(arg=>
-            <li>{arg.dataType} {arg.value.value}</li>
+            <li key={arg.index}>{arg.dataType} {arg.value.value}</li>
           )}
         </ul>
       </div>
@@ -132,11 +151,23 @@ export default Relay.createContainer(App, {
     viewer: () => Relay.QL`
       fragment on UANode {
         id
-        parent: references(first:1 referenceTypeId: "HasComponent" browseDirection: Inverse, results:[ReferenceType, NodeClass]) {
-          edges {
-            node {
+        nodeClassEnum {
+          value {
+            value
+          }
+        }
+        ${Comp.getFragment('viewer')}
+        ${NodeName.getFragment('viewer')}
+        description {
+          
+            ${LocalizedText.getFragment('viewer')}
+          
+        }
+        dataType  { 
+          value { 
+            value {
               uaNode {
-                id
+                ${NodeName.getFragment('viewer')}  
               }
             }
           }
@@ -148,10 +179,49 @@ export default Relay.createContainer(App, {
             dataType
           }
         }  
-        browseName{value{value{name}}}    
+        browseName{value{value{name}}},
+        forwardReferences: references(first:100 browseDirection: Forward) {
+          edges {
+            node {
+              ${ReferenceLink.getFragment('viewer')}
+              id
+              browseName {
+                name
+              }
+              referenceTypeId {
+                uaNode {
+                  displayName {
+                    value {value {text}}
+                    
+                  }
+                }
+              }
+              uaNode {
+                id
+                nodeId {
+                  value {
+                    value {
+                      value
+                      namespace
+                      identifierType
+                    }
+                  }
+                }
+                displayName {
+                  value {
+                    value {
+                      text
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         references(first:2 browseDirection: Forward, nodeClasses: [Variable] referenceTypeId: "HasProperty"  results:[ReferenceType, NodeClass]) {
           edges {
             node {
+              id
               browseName {
                 name
               }
@@ -162,6 +232,7 @@ export default Relay.createContainer(App, {
           }
         },
         outputArguments {
+          index
           dataType
           arrayType
           value {

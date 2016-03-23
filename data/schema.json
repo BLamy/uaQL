@@ -46,6 +46,36 @@
               "description": "Gets a ua node from it's nodeId or the root folder",
               "args": [
                 {
+                  "name": "namespace",
+                  "description": "the namespace to fetch if blank fetches \"RootFolder\"",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "value",
+                  "description": "the value to fetch if blank fetches \"RootFolder\"",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "identifierType",
+                  "description": "the identifierType to fetch if blank fetches \"RootFolder\"",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "nodeId",
                   "description": "the node id to fetch if blank fetches \"RootFolder\"",
                   "type": {
@@ -3176,6 +3206,18 @@
           "name": "ArgumentValueType",
           "description": null,
           "fields": [
+            {
+              "name": "index",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
             {
               "name": "dataType",
               "description": null,

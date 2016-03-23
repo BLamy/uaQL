@@ -377,6 +377,9 @@ const TypedArgumentValueType = new GraphQLUnionType({
 const ArgumentValueType = new GraphQLObjectType({
   name: 'ArgumentValueType',
   fields: {
+    index: {
+      type: GraphQLInt
+    },
     dataType: {
       type: GraphQLString
     },
@@ -647,7 +650,7 @@ const UANodeType = new GraphQLObjectType({
               session.browse([browseDescription], function(err, browseResult){
                 if(!err) {
                   resolve(browseResult[0].references.map(r=>{
-                    r.id = r.nodeId.toString();
+                    r.id = r.referenceTypeId.toString() + '+' + r.nodeId.toString();
                     return r;
                   }));
                 }
@@ -781,7 +784,9 @@ const CallUAMethodMutation = mutationWithClientMutationId({
               }
               else
               {
-                resolve(getUANode(fromGlobalId(id).id, results[0].outputArguments.map(arg=>merge(arg, {value: { value: arg.value, dataType: arg.dataType, arrayType: arg.arrayType}}))));  
+                resolve(getUANode(fromGlobalId(id).id, results[0].outputArguments.map((arg, i)=>{
+                  return merge(arg, {index:i, value: { value: arg.value, dataType: arg.dataType, arrayType: arg.arrayType}});
+                })));  
               }
             } else {
               reject(handleError(session, err));
@@ -862,14 +867,37 @@ var queryType = new GraphQLObjectType({
       type: UANodeType,
       description: 'Gets a ua node from it\'s nodeId or the root folder',
       args: {
+        namespace: {
+          name: 'namespace',
+          description: 'the namespace to fetch if blank fetches "RootFolder"',
+          type: GraphQLInt
+        },
+        value: {
+          name: 'value',
+          description: 'the value to fetch if blank fetches "RootFolder"',
+          type: GraphQLString
+        },
+        identifierType: {
+          name: 'identifierType',
+          description: 'the identifierType to fetch if blank fetches "RootFolder"',
+          type: GraphQLString
+        },
         nodeId: {
           name: 'nodeId',
           description: 'the node id to fetch if blank fetches "RootFolder"',
           type: GraphQLString
         }
       },
-      resolve: function (_, {nodeId}) {
-        return getUANode(nodeId || 'RootFolder');
+      resolve: function (_, {nodeId, value, identifierType, namespace}) {
+
+        if(nodeId)
+          return getUANode(nodeId );
+        if(value && identifierType && (namespace || namespace===0)) {
+          console.log('value', value);
+          return getUANode(`ns=${namespace};${identifierType}=${value}`);
+        }
+        return getUANode('RootFolder');
+
       }
     },
   })
