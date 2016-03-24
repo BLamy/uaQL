@@ -147,7 +147,12 @@ const app = new WebpackDevServer(webpack(config), {
     //console.log("compile complete", err, stats);
   });
 
-
+  graphQLServer.use('/graphql', graphQLHTTP({
+      graphiql: true,
+      pretty: true,
+      schema: Schema
+  }));
+  
   graphQLServer.use('/', express.static('build2'));
   graphQLServer.get('/*', function(req, res){
     res.sendFile(__dirname + '/build2/index.html');
@@ -155,11 +160,6 @@ const app = new WebpackDevServer(webpack(config), {
 
   
   
-  graphQLServer.use('/graphql', graphQLHTTP({
-      graphiql: true,
-      pretty: true,
-      schema: Schema
-  }));
   socketserver.listen(process.env.PORT || GRAPHQL_PORT || 8080, function(){
     console.log('listening on *:' + process.env.PORT || GRAPHQL_PORT || 8080);
   });
