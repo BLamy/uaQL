@@ -6,7 +6,13 @@ import {Link} from 'react-router';
 import NodeName from './NodeName';
 import NodeClassEnum from './NodeClassEnum';
 
-
+const getId=(id)=> {
+  if(id==='STRING') return 's';
+  if(id==='BYTESTRING') return 'b';
+  if(id==='NUMERIC') return 'i';
+  if(id==='GUID') return 'g';
+  return id;
+}
 
 class App extends React.Component {
   
@@ -16,7 +22,7 @@ class App extends React.Component {
     	<Link to={'/ns=' 
           + this.props.viewer.nodeId.value.value.namespace 
           + ';' 
-          + (this.props.viewer.nodeId.value.value.identifierType === 'STRING' ? 's' : 'i')
+          + getId(this.props.viewer.nodeId.value.value.identifierType)
           + '=' + this.props.viewer.nodeId.value.value.value}>
            
           <NodeName viewer={this.props.viewer}/>

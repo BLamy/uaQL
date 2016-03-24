@@ -6,7 +6,7 @@ import Comp from './comp';
 import ReferenceLink from './ReferenceLink';
 import NodeName from './NodeName';
 import LocalizedText from './LocalizedText';
-
+import NodeClassEnum from './NodeClassEnum';
 var value = 0;
 
 
@@ -114,19 +114,20 @@ class App extends React.Component {
         </h1>
         <button onClick={this._handleCount}>Like this</button>
         <button onClick={this._handleMethod}>Method Call</button>
-        <h2>
+        <h2 title='dataType'>
         {this.props.viewer.dataType.value ?
           <NodeName viewer={this.props.viewer.dataType.value.value.uaNode}/>
           : 'no data type'}
         </h2>
-        <h3>
+        <h3 title='nodeId'>
           {this.props.viewer.nodeId.stringValue}
         </h3>
-        <h4>
-          {this.props.viewer.nodeClassEnum.value.value}
+        <h4 title='nodeClass'>
+          <NodeClassEnum viewer= {this.props.viewer.nodeClassEnum}/>
         </h4>
-        {this.props.viewer.dataValue.stringValue}
-
+        <div title='value'>
+          {this.props.viewer.dataValue.stringValue}
+        </div>
         <LocalizedText viewer={this.props.viewer.description}/>
 
         <ul>
@@ -152,16 +153,12 @@ export default Relay.createContainer(App, {
       fragment on UANode {
         id
         nodeClassEnum {
-          value {
-            value
-          }
+          ${NodeClassEnum.getFragment('viewer')}
         }
         ${Comp.getFragment('viewer')}
         ${NodeName.getFragment('viewer')}
         description {
-          
             ${LocalizedText.getFragment('viewer')}
-          
         }
         dataType  { 
           value { 
@@ -179,55 +176,11 @@ export default Relay.createContainer(App, {
             dataType
           }
         }  
-        browseName{value{value{name}}},
         forwardReferences: references(first:100 browseDirection: Forward) {
           edges {
             node {
               ${ReferenceLink.getFragment('viewer')}
               id
-              browseName {
-                name
-              }
-              referenceTypeId {
-                uaNode {
-                  displayName {
-                    value {value {text}}
-                    
-                  }
-                }
-              }
-              uaNode {
-                id
-                nodeId {
-                  value {
-                    value {
-                      value
-                      namespace
-                      identifierType
-                    }
-                  }
-                }
-                displayName {
-                  value {
-                    value {
-                      text
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        references(first:2 browseDirection: Forward, nodeClasses: [Variable] referenceTypeId: "HasProperty"  results:[ReferenceType, NodeClass]) {
-          edges {
-            node {
-              id
-              browseName {
-                name
-              }
-              uaNode {
-                id
-              }
             }
           }
         },
