@@ -128,7 +128,25 @@ const app = new WebpackDevServer(webpack(config), {
 
 } else {
 
- 
+ // Serve the Relay app
+  var compiler = webpack({
+    entry: path.resolve(__dirname, 'js', 'app.js'),
+    module: {
+      loaders: [
+        {
+          exclude: /node_modules/,
+          loader: 'babel',
+          test: /\.js$/,
+        }
+      ]
+    },
+    output: {filename: 'app.js', path: 'build2/js'}
+  });
+  //console.log("running compiler");
+  compiler.run((err, stats)=> {
+    //console.log("compile complete", err, stats);
+  });
+
 
   graphQLServer.use('/', express.static('build2'));
   graphQLServer.get('/*', function(req, res){

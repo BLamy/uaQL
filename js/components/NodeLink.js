@@ -4,7 +4,6 @@ import React from 'react';
 import Relay from 'react-relay';
 import {Link} from 'react-router';
 import NodeName from './NodeName';
-import NodeClassEnum from './NodeClassEnum';
 
 const getId=(id)=> {
   if(id==='STRING') return 's';
@@ -14,21 +13,21 @@ const getId=(id)=> {
   return id;
 }
 
-class App extends React.Component {
+class NodeLink extends React.Component {
   
   render() {
     return (
       <span>
     	<Link to={'/ns=' 
-          + this.props.viewer.nodeId.value.value.namespace 
+          + this.props.viewer.nodeId.namespace 
           + ';' 
-          + getId(this.props.viewer.nodeId.value.value.identifierType)
-          + '=' + this.props.viewer.nodeId.value.value.value}>
+          + getId(this.props.viewer.nodeId.identifierType)
+          + '=' + this.props.viewer.nodeId.value}>
            
           <NodeName viewer={this.props.viewer}/>
         </Link>
         (
-          <NodeClassEnum viewer = {this.props.viewer.nodeClassEnum}/>
+          {this.props.viewer.nodeClass}
         )
       </span>
   	);
@@ -36,23 +35,17 @@ class App extends React.Component {
  }
 
 
-export default Relay.createContainer(App, {
+export default Relay.createContainer(NodeLink, {
   fragments: {
     viewer: () => Relay.QL`
       fragment on UANode {
         ${NodeName.getFragment('viewer')}
-        nodeClassEnum {
-            ${NodeClassEnum.getFragment('viewer')}
-          }
+        nodeClass
         nodeId {
-            value {
-              value {
-                value
-                namespace
-                identifierType
-              }
-            }
-          }
+          namespace
+          identifierType
+          value
+        }
       }
      `
     }

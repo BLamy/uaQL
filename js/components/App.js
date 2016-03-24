@@ -5,8 +5,8 @@ import Relay from 'react-relay';
 import Comp from './comp';
 import ReferenceLink from './ReferenceLink';
 import NodeName from './NodeName';
+import NodeId from './NodeId';
 import LocalizedText from './LocalizedText';
-import NodeClassEnum from './NodeClassEnum';
 var value = 0;
 
 
@@ -94,7 +94,7 @@ var onFailure = (transaction) => {
 
 
 
-class App extends React.Component {
+class Appp extends React.Component {
    _handleCount = () => {
     // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
     Relay.Store.commitUpdate(new UaNodeMutation({viewer: this.props.viewer}), {onFailure});
@@ -115,20 +115,16 @@ class App extends React.Component {
         <button onClick={this._handleCount}>Like this</button>
         <button onClick={this._handleMethod}>Method Call</button>
         <h2 title='dataType'>
-        {this.props.viewer.dataType.value ?
-          <NodeName viewer={this.props.viewer.dataType.value.value.uaNode}/>
+          {this.props.viewer.dataType ?
+          <NodeName viewer={this.props.viewer.dataType.uaNode}/>
           : 'no data type'}
         </h2>
         <h3 title='nodeId'>
-          {this.props.viewer.nodeId.stringValue}
+          <NodeId viewer={this.props.viewer.nodeId}/>
         </h3>
         <h4 title='nodeClass'>
-          <NodeClassEnum viewer= {this.props.viewer.nodeClassEnum}/>
+          {this.props.viewer.nodeClass}
         </h4>
-        <div title='value'>
-          {this.props.viewer.dataValue.stringValue}
-        </div>
-        <LocalizedText viewer={this.props.viewer.description}/>
 
         <ul>
           {this.props.viewer.forwardReferences.edges.map(r=>
@@ -147,35 +143,39 @@ class App extends React.Component {
   }
 }
 
-export default Relay.createContainer(App, {
-  fragments: {
-    viewer: () => Relay.QL`
-      fragment on UANode {
-        id
-        nodeClassEnum {
-          ${NodeClassEnum.getFragment('viewer')}
-        }
-        ${Comp.getFragment('viewer')}
-        ${NodeName.getFragment('viewer')}
-        description {
-            ${LocalizedText.getFragment('viewer')}
-        }
-        dataType  { 
-          value { 
-            value {
-              uaNode {
-                ${NodeName.getFragment('viewer')}  
-              }
-            }
+
+/*
+
+dataType  { 
+          uaNode {
+            ${NodeName.getFragment('viewer')} 
           }
         }
-        nodeId{stringValue}    
         dataValue{
           stringValue
           value{
             dataType
           }
         }  
+        
+
+
+*/
+export default Relay.createContainer(Appp, {
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on UANode {
+        id
+        nodeClass
+        ${Comp.getFragment('viewer')}
+        ${NodeName.getFragment('viewer')}
+        description {
+          ${LocalizedText.getFragment('viewer')}
+        }
+
+        nodeId {
+          ${NodeId.getFragment('viewer')}
+        }
         forwardReferences: references(first:100 browseDirection: Forward) {
           edges {
             node {

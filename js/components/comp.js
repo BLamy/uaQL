@@ -5,7 +5,7 @@ import Relay from 'react-relay';
 import {Link} from 'react-router';
 import ReferenceLink from './ReferenceLink';
 
-class App extends React.Component {
+class Comp extends React.Component {
   
   render() {
     return (
@@ -24,28 +24,10 @@ class App extends React.Component {
  }
 
 
-export default Relay.createContainer(App, {
+export default Relay.createContainer(Comp, {
   fragments: {
     viewer: () => Relay.QL`
       fragment on UANode {
-        nodeClass {
-        	stringValue
-        }
-        displayName {
-        	value {
-        		value {
-        			text
-        		}
-        	}
-        }
-        browseName {
-        	value {
-        		value {
-        			name
-        		}
-        	}
-        }
-        
 		backReferences: references(first:10 browseDirection: Inverse) {
           edges {
             node {

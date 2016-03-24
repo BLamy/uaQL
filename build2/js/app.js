@@ -5432,6 +5432,10 @@
 
 	var _NodeName2 = _interopRequireDefault(_NodeName);
 
+	var _NodeId = __webpack_require__(643);
+
+	var _NodeId2 = _interopRequireDefault(_NodeId);
+
 	var _LocalizedText = __webpack_require__(642);
 
 	var _LocalizedText2 = _interopRequireDefault(_LocalizedText);
@@ -5711,21 +5715,21 @@
 	  alert(error);
 	};
 
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
+	var Appp = function (_React$Component) {
+	  _inherits(Appp, _React$Component);
 
-	  function App() {
+	  function Appp() {
 	    var _Object$getPrototypeO;
 
 	    var _temp, _this3, _ret;
 
-	    _classCallCheck(this, App);
+	    _classCallCheck(this, Appp);
 
 	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	      args[_key] = arguments[_key];
 	    }
 
-	    return _ret = (_temp = (_this3 = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(App)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this3), _this3._handleCount = function () {
+	    return _ret = (_temp = (_this3 = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Appp)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this3), _this3._handleCount = function () {
 	      // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
 	      _reactRelay2.default.Store.commitUpdate(new UaNodeMutation({ viewer: _this3.props.viewer }), { onFailure: onFailure });
 	      value++;
@@ -5735,7 +5739,7 @@
 	    }, _temp), _possibleConstructorReturn(_this3, _ret);
 	  }
 
-	  _createClass(App, [{
+	  _createClass(Appp, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -5759,21 +5763,19 @@
 	        ),
 	        _react2.default.createElement(
 	          'h2',
-	          null,
-	          this.props.viewer.dataType.value ? _react2.default.createElement(_NodeName2.default, { viewer: this.props.viewer.dataType.value.value.uaNode }) : 'no data type'
+	          { title: 'dataType' },
+	          this.props.viewer.dataType ? _react2.default.createElement(_NodeName2.default, { viewer: this.props.viewer.dataType.uaNode }) : 'no data type'
 	        ),
 	        _react2.default.createElement(
 	          'h3',
-	          null,
-	          this.props.viewer.nodeId.stringValue
+	          { title: 'nodeId' },
+	          _react2.default.createElement(_NodeId2.default, { viewer: this.props.viewer.nodeId })
 	        ),
 	        _react2.default.createElement(
 	          'h4',
-	          null,
-	          this.props.viewer.nodeClassEnum.value.value
+	          { title: 'nodeClass' },
+	          this.props.viewer.nodeClass
 	        ),
-	        this.props.viewer.dataValue.stringValue,
-	        _react2.default.createElement(_LocalizedText2.default, { viewer: this.props.viewer.description }),
 	        _react2.default.createElement(
 	          'ul',
 	          null,
@@ -5802,10 +5804,29 @@
 	    }
 	  }]);
 
-	  return App;
+	  return Appp;
 	}(_react2.default.Component);
 
-	exports.default = _reactRelay2.default.createContainer(App, {
+	/*
+
+	dataType  { 
+	          uaNode {
+	            ${NodeName.getFragment('viewer')} 
+	          }
+	        }
+	        dataValue{
+	          stringValue
+	          value{
+	            dataType
+	          }
+	        }  
+	        
+
+
+	*/
+
+
+	exports.default = _reactRelay2.default.createContainer(Appp, {
 	  fragments: {
 	    viewer: function viewer() {
 	      return function (RQL_0, RQL_1, RQL_2, RQL_3, RQL_4) {
@@ -5818,26 +5839,10 @@
 	            },
 	            type: 'ID'
 	          }, {
-	            children: [{
-	              children: [{
-	                fieldName: 'value',
-	                kind: 'Field',
-	                metadata: {},
-	                type: 'NodeClassEnum'
-	              }],
-	              fieldName: 'value',
-	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true
-	              },
-	              type: 'NodeClassEnumValue'
-	            }],
-	            fieldName: 'nodeClassEnum',
+	            fieldName: 'nodeClass',
 	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'NodeClassEnumValueResult'
+	            metadata: {},
+	            type: 'NodeClassEnum'
 	          }, {
 	            children: [].concat.apply([], [_reactRelay2.default.QL.__frag(RQL_2)]),
 	            fieldName: 'description',
@@ -5845,117 +5850,15 @@
 	            metadata: {
 	              canHaveSubselections: true
 	            },
-	            type: 'LocalizedTextResult'
+	            type: 'LocalizedText'
 	          }, {
-	            children: [{
-	              children: [{
-	                children: [{
-	                  children: [].concat.apply([], [{
-	                    fieldName: 'id',
-	                    kind: 'Field',
-	                    metadata: {
-	                      isGenerated: true,
-	                      isRequisite: true
-	                    },
-	                    type: 'ID'
-	                  }, _reactRelay2.default.QL.__frag(RQL_3)]),
-	                  fieldName: 'uaNode',
-	                  kind: 'Field',
-	                  metadata: {
-	                    canHaveSubselections: true,
-	                    inferredRootCallName: 'node',
-	                    inferredPrimaryKey: 'id'
-	                  },
-	                  type: 'UANode'
-	                }],
-	                fieldName: 'value',
-	                kind: 'Field',
-	                metadata: {
-	                  canHaveSubselections: true
-	                },
-	                type: 'ExpandedNodeId'
-	              }],
-	              fieldName: 'value',
-	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true
-	              },
-	              type: 'ExpandedNodeIdValue'
-	            }],
-	            fieldName: 'dataType',
-	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'ExpandedNodeIdResult'
-	          }, {
-	            children: [{
-	              fieldName: 'stringValue',
-	              kind: 'Field',
-	              metadata: {},
-	              type: 'String'
-	            }],
+	            children: [].concat.apply([], [_reactRelay2.default.QL.__frag(RQL_3)]),
 	            fieldName: 'nodeId',
 	            kind: 'Field',
 	            metadata: {
 	              canHaveSubselections: true
 	            },
-	            type: 'ExpandedNodeIdResult'
-	          }, {
-	            children: [{
-	              fieldName: 'stringValue',
-	              kind: 'Field',
-	              metadata: {},
-	              type: 'String'
-	            }, {
-	              children: [{
-	                fieldName: 'dataType',
-	                kind: 'Field',
-	                metadata: {},
-	                type: 'String'
-	              }],
-	              fieldName: 'value',
-	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true
-	              },
-	              type: 'DataValue'
-	            }],
-	            fieldName: 'dataValue',
-	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'DataValueResult'
-	          }, {
-	            children: [{
-	              children: [{
-	                children: [{
-	                  fieldName: 'name',
-	                  kind: 'Field',
-	                  metadata: {},
-	                  type: 'String'
-	                }],
-	                fieldName: 'value',
-	                kind: 'Field',
-	                metadata: {
-	                  canHaveSubselections: true
-	                },
-	                type: 'QualifiedName'
-	              }],
-	              fieldName: 'value',
-	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true
-	              },
-	              type: 'QualifiedNameValue'
-	            }],
-	            fieldName: 'browseName',
-	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'QualifiedNameResult'
+	            type: 'ExpandedNodeId'
 	          }, {
 	            alias: 'forwardReferences',
 	            calls: [{
@@ -5986,310 +5889,7 @@
 	                    isRequisite: true
 	                  },
 	                  type: 'ID'
-	                }, {
-	                  children: [{
-	                    fieldName: 'name',
-	                    kind: 'Field',
-	                    metadata: {},
-	                    type: 'String'
-	                  }],
-	                  fieldName: 'browseName',
-	                  kind: 'Field',
-	                  metadata: {
-	                    canHaveSubselections: true
-	                  },
-	                  type: 'QualifiedName'
-	                }, {
-	                  children: [{
-	                    children: [{
-	                      children: [{
-	                        children: [{
-	                          children: [{
-	                            fieldName: 'text',
-	                            kind: 'Field',
-	                            metadata: {},
-	                            type: 'String'
-	                          }],
-	                          fieldName: 'value',
-	                          kind: 'Field',
-	                          metadata: {
-	                            canHaveSubselections: true
-	                          },
-	                          type: 'LocalizedText'
-	                        }],
-	                        fieldName: 'value',
-	                        kind: 'Field',
-	                        metadata: {
-	                          canHaveSubselections: true
-	                        },
-	                        type: 'LocalizedTextValue'
-	                      }],
-	                      fieldName: 'displayName',
-	                      kind: 'Field',
-	                      metadata: {
-	                        canHaveSubselections: true
-	                      },
-	                      type: 'LocalizedTextResult'
-	                    }, {
-	                      fieldName: 'id',
-	                      kind: 'Field',
-	                      metadata: {
-	                        isGenerated: true,
-	                        isRequisite: true
-	                      },
-	                      type: 'ID'
-	                    }],
-	                    fieldName: 'uaNode',
-	                    kind: 'Field',
-	                    metadata: {
-	                      canHaveSubselections: true,
-	                      inferredRootCallName: 'node',
-	                      inferredPrimaryKey: 'id'
-	                    },
-	                    type: 'UANode'
-	                  }],
-	                  fieldName: 'referenceTypeId',
-	                  kind: 'Field',
-	                  metadata: {
-	                    canHaveSubselections: true
-	                  },
-	                  type: 'ExpandedNodeId'
-	                }, {
-	                  children: [{
-	                    fieldName: 'id',
-	                    kind: 'Field',
-	                    metadata: {
-	                      isRequisite: true
-	                    },
-	                    type: 'ID'
-	                  }, {
-	                    children: [{
-	                      children: [{
-	                        children: [{
-	                          fieldName: 'value',
-	                          kind: 'Field',
-	                          metadata: {},
-	                          type: 'String'
-	                        }, {
-	                          fieldName: 'namespace',
-	                          kind: 'Field',
-	                          metadata: {},
-	                          type: 'Int'
-	                        }, {
-	                          fieldName: 'identifierType',
-	                          kind: 'Field',
-	                          metadata: {},
-	                          type: 'String'
-	                        }],
-	                        fieldName: 'value',
-	                        kind: 'Field',
-	                        metadata: {
-	                          canHaveSubselections: true
-	                        },
-	                        type: 'ExpandedNodeId'
-	                      }],
-	                      fieldName: 'value',
-	                      kind: 'Field',
-	                      metadata: {
-	                        canHaveSubselections: true
-	                      },
-	                      type: 'ExpandedNodeIdValue'
-	                    }],
-	                    fieldName: 'nodeId',
-	                    kind: 'Field',
-	                    metadata: {
-	                      canHaveSubselections: true
-	                    },
-	                    type: 'ExpandedNodeIdResult'
-	                  }, {
-	                    children: [{
-	                      children: [{
-	                        children: [{
-	                          fieldName: 'text',
-	                          kind: 'Field',
-	                          metadata: {},
-	                          type: 'String'
-	                        }],
-	                        fieldName: 'value',
-	                        kind: 'Field',
-	                        metadata: {
-	                          canHaveSubselections: true
-	                        },
-	                        type: 'LocalizedText'
-	                      }],
-	                      fieldName: 'value',
-	                      kind: 'Field',
-	                      metadata: {
-	                        canHaveSubselections: true
-	                      },
-	                      type: 'LocalizedTextValue'
-	                    }],
-	                    fieldName: 'displayName',
-	                    kind: 'Field',
-	                    metadata: {
-	                      canHaveSubselections: true
-	                    },
-	                    type: 'LocalizedTextResult'
-	                  }],
-	                  fieldName: 'uaNode',
-	                  kind: 'Field',
-	                  metadata: {
-	                    canHaveSubselections: true,
-	                    inferredRootCallName: 'node',
-	                    inferredPrimaryKey: 'id'
-	                  },
-	                  type: 'UANode'
 	                }, _reactRelay2.default.QL.__frag(RQL_4)]),
-	                fieldName: 'node',
-	                kind: 'Field',
-	                metadata: {
-	                  canHaveSubselections: true,
-	                  inferredRootCallName: 'node',
-	                  inferredPrimaryKey: 'id',
-	                  isRequisite: true
-	                },
-	                type: 'ReferenceDescription'
-	              }, {
-	                fieldName: 'cursor',
-	                kind: 'Field',
-	                metadata: {
-	                  isGenerated: true,
-	                  isRequisite: true
-	                },
-	                type: 'String'
-	              }],
-	              fieldName: 'edges',
-	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true,
-	                isPlural: true
-	              },
-	              type: 'ReferenceEdge'
-	            }, {
-	              children: [{
-	                fieldName: 'hasNextPage',
-	                kind: 'Field',
-	                metadata: {
-	                  isGenerated: true,
-	                  isRequisite: true
-	                },
-	                type: 'Boolean'
-	              }, {
-	                fieldName: 'hasPreviousPage',
-	                kind: 'Field',
-	                metadata: {
-	                  isGenerated: true,
-	                  isRequisite: true
-	                },
-	                type: 'Boolean'
-	              }],
-	              fieldName: 'pageInfo',
-	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true,
-	                isGenerated: true,
-	                isRequisite: true
-	              },
-	              type: 'PageInfo'
-	            }],
-	            fieldName: 'references',
-	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true,
-	              isConnection: true
-	            },
-	            type: 'ReferenceConnection'
-	          }, {
-	            calls: [{
-	              kind: 'Call',
-	              metadata: {},
-	              name: 'first',
-	              value: {
-	                kind: 'CallValue',
-	                callValue: 2
-	              }
-	            }, {
-	              kind: 'Call',
-	              metadata: {
-	                type: 'BrowseDirectionEnum'
-	              },
-	              name: 'browseDirection',
-	              value: {
-	                kind: 'CallValue',
-	                callValue: 'Forward'
-	              }
-	            }, {
-	              kind: 'Call',
-	              metadata: {
-	                type: '[NodeClassEnum]'
-	              },
-	              name: 'nodeClasses',
-	              value: [{
-	                kind: 'CallValue',
-	                callValue: 'Variable'
-	              }]
-	            }, {
-	              kind: 'Call',
-	              metadata: {},
-	              name: 'referenceTypeId',
-	              value: {
-	                kind: 'CallValue',
-	                callValue: 'HasProperty'
-	              }
-	            }, {
-	              kind: 'Call',
-	              metadata: {
-	                type: '[ResultMaskEnum]'
-	              },
-	              name: 'results',
-	              value: [{
-	                kind: 'CallValue',
-	                callValue: 'ReferenceType'
-	              }, {
-	                kind: 'CallValue',
-	                callValue: 'NodeClass'
-	              }]
-	            }],
-	            children: [{
-	              children: [{
-	                children: [{
-	                  fieldName: 'id',
-	                  kind: 'Field',
-	                  metadata: {
-	                    isRequisite: true
-	                  },
-	                  type: 'ID'
-	                }, {
-	                  children: [{
-	                    fieldName: 'name',
-	                    kind: 'Field',
-	                    metadata: {},
-	                    type: 'String'
-	                  }],
-	                  fieldName: 'browseName',
-	                  kind: 'Field',
-	                  metadata: {
-	                    canHaveSubselections: true
-	                  },
-	                  type: 'QualifiedName'
-	                }, {
-	                  children: [{
-	                    fieldName: 'id',
-	                    kind: 'Field',
-	                    metadata: {
-	                      isRequisite: true
-	                    },
-	                    type: 'ID'
-	                  }],
-	                  fieldName: 'uaNode',
-	                  kind: 'Field',
-	                  metadata: {
-	                    canHaveSubselections: true,
-	                    inferredRootCallName: 'node',
-	                    inferredPrimaryKey: 'id'
-	                  },
-	                  type: 'UANode'
-	                }],
 	                fieldName: 'node',
 	                kind: 'Field',
 	                metadata: {
@@ -6459,7 +6059,7 @@
 	          name: 'App_ViewerRelayQL',
 	          type: 'UANode'
 	        };
-	      }(_comp2.default.getFragment('viewer'), _NodeName2.default.getFragment('viewer'), _LocalizedText2.default.getFragment('viewer'), _NodeName2.default.getFragment('viewer'), _ReferenceLink2.default.getFragment('viewer'));
+	      }(_comp2.default.getFragment('viewer'), _NodeName2.default.getFragment('viewer'), _LocalizedText2.default.getFragment('viewer'), _NodeId2.default.getFragment('viewer'), _ReferenceLink2.default.getFragment('viewer'));
 	    }
 	  }
 	});
@@ -48353,16 +47953,16 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
+	var Comp = function (_React$Component) {
+	  _inherits(Comp, _React$Component);
 
-	  function App() {
-	    _classCallCheck(this, App);
+	  function Comp() {
+	    _classCallCheck(this, Comp);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Comp).apply(this, arguments));
 	  }
 
-	  _createClass(App, [{
+	  _createClass(Comp, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -48383,86 +47983,15 @@
 	    }
 	  }]);
 
-	  return App;
+	  return Comp;
 	}(_react2.default.Component);
 
-	exports.default = _reactRelay2.default.createContainer(App, {
+	exports.default = _reactRelay2.default.createContainer(Comp, {
 	  fragments: {
 	    viewer: function viewer() {
 	      return function (RQL_0) {
 	        return {
 	          children: [{
-	            children: [{
-	              fieldName: 'stringValue',
-	              kind: 'Field',
-	              metadata: {},
-	              type: 'String'
-	            }],
-	            fieldName: 'nodeClass',
-	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'IntResult'
-	          }, {
-	            children: [{
-	              children: [{
-	                children: [{
-	                  fieldName: 'text',
-	                  kind: 'Field',
-	                  metadata: {},
-	                  type: 'String'
-	                }],
-	                fieldName: 'value',
-	                kind: 'Field',
-	                metadata: {
-	                  canHaveSubselections: true
-	                },
-	                type: 'LocalizedText'
-	              }],
-	              fieldName: 'value',
-	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true
-	              },
-	              type: 'LocalizedTextValue'
-	            }],
-	            fieldName: 'displayName',
-	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'LocalizedTextResult'
-	          }, {
-	            children: [{
-	              children: [{
-	                children: [{
-	                  fieldName: 'name',
-	                  kind: 'Field',
-	                  metadata: {},
-	                  type: 'String'
-	                }],
-	                fieldName: 'value',
-	                kind: 'Field',
-	                metadata: {
-	                  canHaveSubselections: true
-	                },
-	                type: 'QualifiedName'
-	              }],
-	              fieldName: 'value',
-	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true
-	              },
-	              type: 'QualifiedNameValue'
-	            }],
-	            fieldName: 'browseName',
-	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'QualifiedNameResult'
-	          }, {
 	            alias: 'backReferences',
 	            calls: [{
 	              kind: 'Call',
@@ -53669,16 +53198,16 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
+	var ReferenceLink = function (_React$Component) {
+	  _inherits(ReferenceLink, _React$Component);
 
-	  function App() {
-	    _classCallCheck(this, App);
+	  function ReferenceLink() {
+	    _classCallCheck(this, ReferenceLink);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(ReferenceLink).apply(this, arguments));
 	  }
 
-	  _createClass(App, [{
+	  _createClass(ReferenceLink, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -53691,10 +53220,10 @@
 	    }
 	  }]);
 
-	  return App;
+	  return ReferenceLink;
 	}(_react2.default.Component);
 
-	exports.default = _reactRelay2.default.createContainer(App, {
+	exports.default = _reactRelay2.default.createContainer(ReferenceLink, {
 	  fragments: {
 	    viewer: function viewer() {
 	      return function (RQL_0, RQL_1) {
@@ -53788,10 +53317,6 @@
 
 	var _NodeName2 = _interopRequireDefault(_NodeName);
 
-	var _NodeClassEnum = __webpack_require__(643);
-
-	var _NodeClassEnum2 = _interopRequireDefault(_NodeClassEnum);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -53800,16 +53325,24 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
+	var getId = function getId(id) {
+	  if (id === 'STRING') return 's';
+	  if (id === 'BYTESTRING') return 'b';
+	  if (id === 'NUMERIC') return 'i';
+	  if (id === 'GUID') return 'g';
+	  return id;
+	};
 
-	  function App() {
-	    _classCallCheck(this, App);
+	var NodeLink = function (_React$Component) {
+	  _inherits(NodeLink, _React$Component);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+	  function NodeLink() {
+	    _classCallCheck(this, NodeLink);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(NodeLink).apply(this, arguments));
 	  }
 
-	  _createClass(App, [{
+	  _createClass(NodeLink, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -53817,71 +53350,52 @@
 	        null,
 	        _react2.default.createElement(
 	          _reactRouter.Link,
-	          { to: '/ns=' + this.props.viewer.nodeId.value.value.namespace + ';' + (this.props.viewer.nodeId.value.value.identifierType === 'STRING' ? 's' : 'i') + '=' + this.props.viewer.nodeId.value.value.value },
+	          { to: '/ns=' + this.props.viewer.nodeId.namespace + ';' + getId(this.props.viewer.nodeId.identifierType) + '=' + this.props.viewer.nodeId.value },
 	          _react2.default.createElement(_NodeName2.default, { viewer: this.props.viewer })
 	        ),
 	        '(',
-	        _react2.default.createElement(_NodeClassEnum2.default, { viewer: this.props.viewer.nodeClassEnum }),
+	        this.props.viewer.nodeClass,
 	        ')'
 	      );
 	    }
 	  }]);
 
-	  return App;
+	  return NodeLink;
 	}(_react2.default.Component);
 
-	exports.default = _reactRelay2.default.createContainer(App, {
+	exports.default = _reactRelay2.default.createContainer(NodeLink, {
 	  fragments: {
 	    viewer: function viewer() {
-	      return function (RQL_0, RQL_1) {
+	      return function (RQL_0) {
 	        return {
 	          children: [].concat.apply([], [{
-	            children: [].concat.apply([], [_reactRelay2.default.QL.__frag(RQL_1)]),
-	            fieldName: 'nodeClassEnum',
+	            fieldName: 'nodeClass',
 	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'NodeClassEnumValueResult'
+	            metadata: {},
+	            type: 'NodeClassEnum'
 	          }, {
 	            children: [{
-	              children: [{
-	                children: [{
-	                  fieldName: 'value',
-	                  kind: 'Field',
-	                  metadata: {},
-	                  type: 'String'
-	                }, {
-	                  fieldName: 'namespace',
-	                  kind: 'Field',
-	                  metadata: {},
-	                  type: 'Int'
-	                }, {
-	                  fieldName: 'identifierType',
-	                  kind: 'Field',
-	                  metadata: {},
-	                  type: 'String'
-	                }],
-	                fieldName: 'value',
-	                kind: 'Field',
-	                metadata: {
-	                  canHaveSubselections: true
-	                },
-	                type: 'ExpandedNodeId'
-	              }],
+	              fieldName: 'namespace',
+	              kind: 'Field',
+	              metadata: {},
+	              type: 'Int'
+	            }, {
+	              fieldName: 'identifierType',
+	              kind: 'Field',
+	              metadata: {},
+	              type: 'String'
+	            }, {
 	              fieldName: 'value',
 	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true
-	              },
-	              type: 'ExpandedNodeIdValue'
+	              metadata: {},
+	              type: 'String'
 	            }],
 	            fieldName: 'nodeId',
 	            kind: 'Field',
 	            metadata: {
 	              canHaveSubselections: true
 	            },
-	            type: 'ExpandedNodeIdResult'
+	            type: 'ExpandedNodeId'
 	          }, {
 	            fieldName: 'id',
 	            kind: 'Field',
@@ -53897,7 +53411,7 @@
 	          name: 'NodeLink_ViewerRelayQL',
 	          type: 'UANode'
 	        };
-	      }(_NodeName2.default.getFragment('viewer'), _NodeClassEnum2.default.getFragment('viewer'));
+	      }(_NodeName2.default.getFragment('viewer'));
 	    }
 	  }
 	});
@@ -53934,26 +53448,26 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
+	var NodeName = function (_React$Component) {
+	  _inherits(NodeName, _React$Component);
 
-	  function App() {
-	    _classCallCheck(this, App);
+	  function NodeName() {
+	    _classCallCheck(this, NodeName);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(NodeName).apply(this, arguments));
 	  }
 
-	  _createClass(App, [{
+	  _createClass(NodeName, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(_LocalizedText2.default, { viewer: this.props.viewer.displayName });
 	    }
 	  }]);
 
-	  return App;
+	  return NodeName;
 	}(_react2.default.Component);
 
-	exports.default = _reactRelay2.default.createContainer(App, {
+	exports.default = _reactRelay2.default.createContainer(NodeName, {
 	  fragments: {
 	    viewer: function viewer() {
 	      return function (RQL_0) {
@@ -53965,7 +53479,7 @@
 	            metadata: {
 	              canHaveSubselections: true
 	            },
-	            type: 'LocalizedTextResult'
+	            type: 'LocalizedText'
 	          }, {
 	            fieldName: 'id',
 	            kind: 'Field',
@@ -54016,61 +53530,45 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
+	var LocalizedText = function (_React$Component) {
+	  _inherits(LocalizedText, _React$Component);
 
-	  function App() {
-	    _classCallCheck(this, App);
+	  function LocalizedText() {
+	    _classCallCheck(this, LocalizedText);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(LocalizedText).apply(this, arguments));
 	  }
 
-	  _createClass(App, [{
+	  _createClass(LocalizedText, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'span',
 	        null,
-	        this.props.viewer.value ? this.props.viewer.value.value ? this.props.viewer.value.value.text : undefined : undefined
+	        this.props.viewer ? this.props.viewer.text : undefined
 	      );
 	    }
 	  }]);
 
-	  return App;
+	  return LocalizedText;
 	}(_react2.default.Component);
 
-	exports.default = _reactRelay2.default.createContainer(App, {
+	exports.default = _reactRelay2.default.createContainer(LocalizedText, {
 	  fragments: {
 	    viewer: function viewer() {
 	      return function () {
 	        return {
 	          children: [{
-	            children: [{
-	              children: [{
-	                fieldName: 'text',
-	                kind: 'Field',
-	                metadata: {},
-	                type: 'String'
-	              }],
-	              fieldName: 'value',
-	              kind: 'Field',
-	              metadata: {
-	                canHaveSubselections: true
-	              },
-	              type: 'LocalizedText'
-	            }],
-	            fieldName: 'value',
+	            fieldName: 'text',
 	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'LocalizedTextValue'
+	            metadata: {},
+	            type: 'String'
 	          }],
 	          id: _reactRelay2.default.QL.__id(),
 	          kind: 'Fragment',
 	          metadata: {},
 	          name: 'LocalizedText_ViewerRelayQL',
-	          type: 'LocalizedTextResult'
+	          type: 'LocalizedText'
 	        };
 	      }();
 	    }
@@ -54097,8 +53595,6 @@
 
 	var _reactRelay2 = _interopRequireDefault(_reactRelay);
 
-	var _reactRouter = __webpack_require__(582);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -54107,53 +53603,57 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var App = function (_React$Component) {
-	  _inherits(App, _React$Component);
+	var NodeId = function (_React$Component) {
+	  _inherits(NodeId, _React$Component);
 
-	  function App() {
-	    _classCallCheck(this, App);
+	  function NodeId() {
+	    _classCallCheck(this, NodeId);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(NodeId).apply(this, arguments));
 	  }
 
-	  _createClass(App, [{
+	  _createClass(NodeId, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'span',
 	        null,
-	        this.props.viewer.value.value
+	        this.props.viewer.namespace,
+	        this.props.viewer.identifierType,
+	        this.props.viewer.value
 	      );
 	    }
 	  }]);
 
-	  return App;
+	  return NodeId;
 	}(_react2.default.Component);
 
-	exports.default = _reactRelay2.default.createContainer(App, {
+	exports.default = _reactRelay2.default.createContainer(NodeId, {
 	  fragments: {
 	    viewer: function viewer() {
 	      return function () {
 	        return {
 	          children: [{
-	            children: [{
-	              fieldName: 'value',
-	              kind: 'Field',
-	              metadata: {},
-	              type: 'NodeClassEnum'
-	            }],
+	            fieldName: 'identifierType',
+	            kind: 'Field',
+	            metadata: {},
+	            type: 'String'
+	          }, {
 	            fieldName: 'value',
 	            kind: 'Field',
-	            metadata: {
-	              canHaveSubselections: true
-	            },
-	            type: 'NodeClassEnumValue'
+	            metadata: {},
+	            type: 'String'
+	          }, {
+	            fieldName: 'namespace',
+	            kind: 'Field',
+	            metadata: {},
+	            type: 'Int'
 	          }],
 	          id: _reactRelay2.default.QL.__id(),
 	          kind: 'Fragment',
 	          metadata: {},
-	          name: 'NodeClassEnum_ViewerRelayQL',
-	          type: 'NodeClassEnumValueResult'
+	          name: 'NodeId_ViewerRelayQL',
+	          type: 'ExpandedNodeId'
 	        };
 	      }();
 	    }

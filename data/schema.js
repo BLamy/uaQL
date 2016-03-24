@@ -547,9 +547,10 @@ const IntListResultType = genericResultType(genericValueType(new GraphQLList(Gra
 const DataValueResultType = genericTypedResultType(genericValueType(GraphQLString, 'DataValue'), 'DataValueResult');
 
 
-const getProperty = (type, attributeId) => ({
+
+const getProperty = (type, attributeId, description) => ({
   type: type,
-  description: 'DOcument this!',
+  description: description,
   resolve: ({id})=> new Promise(function(resolve, reject){
     const nodesToRead = [
       {
@@ -557,20 +558,16 @@ const getProperty = (type, attributeId) => ({
         attributeId: attributeId
       }
     ];
-    //session2().take(1).subscribe(x=>{if(x){console.log('yes x');}else{console.log('nox');}});
     session2().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
       session.read(nodesToRead, function(err, _nodesToRead, results) {
+        console.log(JSON.stringify(results[0], null, '\t'));
         if (!err) {
-          const value = results[0].value ? results[0].value.value : null;
-          const arrayType = results[0].value ? results[0].value.arrayType : null;
-          const dataType = results[0].value ? results[0].value.dataType : null;
-          const stringValue = ()=> value !== null && value !== undefined ? value.toString() : null;
-          const jsonValue = ()=> JSON.stringify(value);
-
-          const ret = merge(results[0], {typedValue: {value, arrayType, dataType}, stringValue, jsonValue});
-          resolve(ret);
-        }
-        else {
+          if(!results[0].statusCode.value) {
+            resolve(results[0].value ? results[0].value.value : null);
+          } else {
+            reject(results[0].statusCode);
+          }
+        } else {
           reject(handleError(session, err));
         }
       }),
@@ -580,35 +577,37 @@ const getProperty = (type, attributeId) => ({
 });
 
 
+
+
 //  http://node-opcua.github.io/api_doc/classes/ReferenceDescription.html
 const UANodeType = new GraphQLObjectType({
   name: 'UANode',
   description: 'An OPCUA node',
   fields: ()=>({
     id: globalIdField('UANode'),
-    nodeId: getProperty(ExpandedNodeIdResultType, opcua.AttributeIds.NodeId), //1
-    nodeClass: getProperty(IntResultType, opcua.AttributeIds.NodeClass), //2
-    nodeClassEnum: getProperty(NodeClassEnumResultType, opcua.AttributeIds.NodeClass), //2
-    browseName: getProperty(QualifiedNameResultType, opcua.AttributeIds.BrowseName), //3
-    displayName: getProperty(LocalizedTextResultType, opcua.AttributeIds.DisplayName), //4
-    description: getProperty(LocalizedTextResultType, opcua.AttributeIds.Description), //5,
-    writeMask: getProperty(IntResultType, opcua.AttributeIds.WriteMask), //6,
-    userWriteMask: getProperty(IntResultType, opcua.AttributeIds.UserWriteMask), //7,
-    isAbstract: getProperty(BooleanResultType, opcua.AttributeIds.IsAbstract), //8,
-    symmetric: getProperty(BooleanResultType, opcua.AttributeIds.Symmetric), //9,
-    inverseName: getProperty(LocalizedTextResultType, opcua.AttributeIds.InverseName), //5,
-    containsNoLoops: getProperty(BooleanResultType, opcua.AttributeIds.ContainsNoLoops), //11,
-    eventNotifier: getProperty(IntResultType, opcua.AttributeIds.EventNotifier), //12,
+    nodeId: getProperty(ExpandedNodeIdType, opcua.AttributeIds.NodeId, 'Node id.'), //19,
+    nodeClass: getProperty(NodeClassEnumType, opcua.AttributeIds.NodeClass, 'Node class.'), //19,
+    browseName: getProperty(QualifiedNameType, opcua.AttributeIds.BrowseName, 'Browse name.'), //3
+    displayName: getProperty(LocalizedTextType, opcua.AttributeIds.DisplayName, 'Display name.'), //4
+    description: getProperty(LocalizedTextType, opcua.AttributeIds.Description, 'Description.'), //5,
+    writeMask: getProperty(GraphQLInt, opcua.AttributeIds.WriteMask, 'Write mask.'), //6,
+    userWriteMask: getProperty(GraphQLInt, opcua.AttributeIds.UserWriteMask, 'User write mask.'), //7,
+    isAbstract: getProperty(GraphQLBoolean, opcua.AttributeIds.IsAbstract), //8,
+    symmetric: getProperty(GraphQLBoolean, opcua.AttributeIds.Symmetric), //9,
+    inverseName: getProperty(LocalizedTextType, opcua.AttributeIds.InverseName), //5,
+    containsNoLoops: getProperty(GraphQLBoolean, opcua.AttributeIds.ContainsNoLoops), //11,
+    eventNotifier: getProperty(GraphQLInt, opcua.AttributeIds.EventNotifier), //12,
     dataValue: getProperty(DataValueResultType, opcua.AttributeIds.DataValue), //13,
-    dataType: getProperty(ExpandedNodeIdResultType, opcua.AttributeIds.DataType), //14,
-    valueRank: getProperty(IntResultType, opcua.AttributeIds.ValueRank), //15,
-    arrayDimensions: getProperty(IntListResultType, opcua.AttributeIds.ArrayDimensions), //16,  IntListResultType
-    accessLevel: getProperty(IntResultType, opcua.AttributeIds.AccessLevel), //17,
-    userAccessLevel: getProperty(IntResultType, opcua.AttributeIds.UserAccessLevel), //18,
-    minimumSamplingInterval: getProperty(FloatResultType, opcua.AttributeIds.MinimumSamplingInterval), //19,
-    historizing: getProperty(BooleanResultType, opcua.AttributeIds.Historizing), //20,
-    executable: getProperty(BooleanResultType, opcua.AttributeIds.Executable), //21,
-    userExecutable: getProperty(BooleanResultType, opcua.AttributeIds.UserExecutable), //22,
+    dataType: getProperty(ExpandedNodeIdType, opcua.AttributeIds.DataType), //14,
+    valueRank: getProperty(GraphQLInt, opcua.AttributeIds.ValueRank), //15,
+    arrayDimensions: getProperty(new GraphQLList(GraphQLInt), opcua.AttributeIds.ArrayDimensions), //16,  IntListResultType
+    accessLevel: getProperty(GraphQLInt, opcua.AttributeIds.AccessLevel), //17,
+    userAccessLevel: getProperty(GraphQLInt, opcua.AttributeIds.UserAccessLevel), //18,
+    minimumSamplingInterval: getProperty(GraphQLFloat, opcua.AttributeIds.MinimumSamplingInterval), //19,
+    historizing: getProperty(GraphQLBoolean, opcua.AttributeIds.Historizing), //20,
+    executable: getProperty(GraphQLBoolean, opcua.AttributeIds.Executable), //21,
+    userExecutable: getProperty(GraphQLBoolean, opcua.AttributeIds.UserExecutable), //22,
+    
     outputArguments: {type: new GraphQLList(ArgumentValueType)},
     references: {
       type: ReferenceConnection,
@@ -893,7 +892,6 @@ var queryType = new GraphQLObjectType({
         if(nodeId)
           return getUANode(nodeId );
         if(value && identifierType && (namespace || namespace===0)) {
-          console.log('value', value);
           return getUANode(`ns=${namespace};${identifierType}=${value}`);
         }
         return getUANode('RootFolder');

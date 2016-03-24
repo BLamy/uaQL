@@ -5,7 +5,7 @@ import Relay from 'react-relay';
 import {Link} from 'react-router';
 import NodeLink from './NodeLink';
 
-class App extends React.Component {
+class ReferenceLink extends React.Component {
   
   render() {
     return (
@@ -19,7 +19,7 @@ class App extends React.Component {
  }
 
 
-export default Relay.createContainer(App, {
+export default Relay.createContainer(ReferenceLink, {
   fragments: {
     viewer: () => Relay.QL`
       fragment on ReferenceDescription {
