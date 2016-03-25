@@ -175,7 +175,7 @@ dataType  {
 
 
 */
-export default Relay.createContainer(Appp, {
+export default Relay.createContainer(App, {
   initialVariables: {
     'nodeClassIsVariable': undefined
   },
