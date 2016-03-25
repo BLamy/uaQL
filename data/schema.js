@@ -560,7 +560,6 @@ const getProperty = (type, attributeId, description) => ({
     ];
     session2().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
       session.read(nodesToRead, function(err, _nodesToRead, results) {
-        console.log(JSON.stringify(results[0], null, '\t'));
         if (!err) {
           if(!results[0].statusCode.value) {
             resolve(results[0].value ? results[0].value.value : null);
@@ -611,7 +610,7 @@ const UANodeType = new GraphQLObjectType({
     outputArguments: {type: new GraphQLList(ArgumentValueType)},
     references: {
       type: ReferenceConnection,
-      description: 'references are typed links to other nodes',
+      description: 'References are typed links to other nodes (defaults to forward)',
       args: extend({
         referenceTypeId: {
           type: GraphQLString,
@@ -713,10 +712,6 @@ const ReferenceDescriptionType = new GraphQLObjectType({
 
 var {connectionType: ReferenceConnection} =
   connectionDefinitions({name: 'Reference', nodeType: ReferenceDescriptionType});
-
-var {connectionType: NodeConnection} =
-  connectionDefinitions({name: 'Node', nodeType: UANodeType});
-
 
 
 const getUANode = (nodeId, outputArguments)=> {

@@ -94,7 +94,7 @@ var onFailure = (transaction) => {
 
 
 
-class Appp extends React.Component {
+class App extends React.Component {
    _handleCount = () => {
     // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
     Relay.Store.commitUpdate(new UaNodeMutation({viewer: this.props.viewer}), {onFailure});
@@ -104,7 +104,20 @@ class Appp extends React.Component {
     // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
     Relay.Store.commitUpdate(new CallUAMethodMutation({viewer: this.props.viewer}), {onFailure});
   }
-
+  componentWillMount() {
+    
+    this.props.relay.setVariables({
+      'nodeClassIsVariable': this.props.viewer.nodeClass ==='Variable'
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    if(this.props.viewer.nodeClass !== nextProps.viewer.nodeClass) {
+      this.props.relay.setVariables({
+        'nodeClassIsVariable': nextProps.viewer.nodeClass ==='Variable'
+      });
+    }
+    
+  }
   render() {
     return (
       <div>
@@ -117,7 +130,7 @@ class Appp extends React.Component {
         <h2 title='dataType'>
           {this.props.viewer.dataType ?
           <NodeName viewer={this.props.viewer.dataType.uaNode}/>
-          : 'no data type'}
+          : undefined}
         </h2>
         <h3 title='nodeId'>
           <NodeId viewer={this.props.viewer.nodeId}/>
@@ -125,6 +138,7 @@ class Appp extends React.Component {
         <h4 title='nodeClass'>
           {this.props.viewer.nodeClass}
         </h4>
+        <LocalizedText viewer={this.props.viewer.description}/>
 
         <ul>
           {this.props.viewer.forwardReferences.edges.map(r=>
@@ -162,6 +176,17 @@ dataType  {
 
 */
 export default Relay.createContainer(Appp, {
+  initialVariables: {
+    'nodeClassIsVariable': undefined
+  },
+  prepareVariables: (prevVariables,...args) => {
+    console.log('args::', args.length);
+    console.log(args[0]);
+    return {
+      ...prevVariables
+      // If devicePixelRatio is `2`, the new size will be `100`.
+    };
+  },
   fragments: {
     viewer: () => Relay.QL`
       fragment on UANode {
@@ -172,7 +197,11 @@ export default Relay.createContainer(Appp, {
         description {
           ${LocalizedText.getFragment('viewer')}
         }
-
+        dataType  @include(if: $nodeClassIsVariable) {
+          uaNode {
+            ${NodeName.getFragment('viewer')}
+          }
+        }
         nodeId {
           ${NodeId.getFragment('viewer')}
         }
