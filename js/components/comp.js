@@ -1,3 +1,5 @@
+// @flow
+
 'use strict';
 
 import React from 'react';
@@ -6,7 +8,7 @@ import {Link} from 'react-router';
 import ReferenceLink from './ReferenceLink';
 
 class Comp extends React.Component {
-  
+  o: number;
   render() {
     return (
     	<div>

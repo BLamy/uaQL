@@ -318,8 +318,8 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "OBJECT",
-                "name": "DataValueResult",
+                "kind": "UNION",
+                "name": "TestUnion",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -455,7 +455,7 @@
             },
             {
               "name": "references",
-              "description": "references are typed links to other nodes",
+              "description": "References are typed links to other nodes (defaults to forward)",
               "args": [
                 {
                   "name": "referenceTypeId",
@@ -825,101 +825,112 @@
           "possibleTypes": null
         },
         {
+          "kind": "UNION",
+          "name": "TestUnion",
+          "description": "type of data value",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": [
+            {
+              "kind": "OBJECT",
+              "name": "UaLong",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaFloat",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaInt",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaDate",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaBoolean",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaString",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaLongArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaFloatArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaIntArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaDateArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaBooleanArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaStringArray",
+              "ofType": null
+            }
+          ]
+        },
+        {
           "kind": "OBJECT",
-          "name": "DataValueResult",
+          "name": "UaLong",
           "description": null,
           "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
             {
               "name": "value",
               "description": null,
               "args": [],
               "type": {
-                "kind": "OBJECT",
-                "name": "DataValue",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "typedValue",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "UNION",
-                "name": "typedValue",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "stringValue",
-              "description": null,
-              "args": [],
-              "type": {
                 "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "jsonValue",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "statusCode",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "StatusCode",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "serverPicoseconds",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "serverTimestamp",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "sourcePicoseconds",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
+                "name": "GraphQLLong",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -927,13 +938,182 @@
             }
           ],
           "inputFields": null,
-          "interfaces": [],
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "INTERFACE",
+          "name": "IUaDataValue",
+          "description": "Data type and array type for data values",
+          "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": [
+            {
+              "kind": "OBJECT",
+              "name": "UaLong",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaLongArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaString",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaStringArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaBoolean",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaBooleanArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaFloat",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaFloatArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaInt",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaIntArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaDate",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaDateArray",
+              "ofType": null
+            }
+          ]
+        },
+        {
+          "kind": "OBJECT",
+          "name": "UaLongArray",
+          "description": "Long array.",
+          "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "value",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "GraphQLLong",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "GraphQLLong",
+          "description": "64-bit integral numbers",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
           "enumValues": null,
           "possibleTypes": null
         },
         {
           "kind": "OBJECT",
-          "name": "DataValue",
+          "name": "UaString",
           "description": null,
           "fields": [
             {
@@ -974,181 +1154,102 @@
             }
           ],
           "inputFields": null,
-          "interfaces": [],
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
           "enumValues": null,
           "possibleTypes": null
         },
         {
-          "kind": "UNION",
-          "name": "typedValue",
-          "description": null,
-          "fields": null,
+          "kind": "OBJECT",
+          "name": "UaStringArray",
+          "description": "String array.",
+          "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "value",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
           "inputFields": null,
-          "interfaces": null,
-          "enumValues": null,
-          "possibleTypes": [
+          "interfaces": [
             {
-              "kind": "OBJECT",
-              "name": "BooleanTypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "SByteTypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "ByteTypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Int16TypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "UInt16TypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Int32TypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "UInt32TypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Int64TypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "UInt64TypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "FloatTypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "DoubleTypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "StringTypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "DateTimeTypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "GuidTypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "ByteStringTypedValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "BooleanTypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "SByteTypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "ByteTypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Int16TypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "UInt16TypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Int32TypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "UInt32TypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Int64TypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "UInt64TypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "FloatTypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "DoubleTypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "StringTypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "DateTimeTypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "GuidTypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "ByteStringTypedArrayValue",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "MethodParameterTypedArrayValue",
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
               "ofType": null
             }
-          ]
+          ],
+          "enumValues": null,
+          "possibleTypes": null
         },
         {
           "kind": "OBJECT",
-          "name": "BooleanTypedValue",
+          "name": "UaBoolean",
           "description": null,
           "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
             {
               "name": "value",
               "description": null,
@@ -1163,257 +1264,23 @@
             }
           ],
           "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "SByteTypedValue",
-          "description": null,
-          "fields": [
+          "interfaces": [
             {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
             }
           ],
-          "inputFields": null,
-          "interfaces": [],
           "enumValues": null,
           "possibleTypes": null
         },
         {
           "kind": "OBJECT",
-          "name": "ByteTypedValue",
-          "description": null,
+          "name": "UaBooleanArray",
+          "description": "Boolean array.",
           "fields": [
             {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "Int16TypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "UInt16TypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "Int32TypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "UInt32TypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "Int64TypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "UInt64TypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "FloatTypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "SCALAR",
-          "name": "Float",
-          "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point). ",
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "DoubleTypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "StringTypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
+              "name": "dataType",
               "description": null,
               "args": [],
               "type": {
@@ -1423,20 +1290,9 @@
               },
               "isDeprecated": false,
               "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "DateTimeTypedValue",
-          "description": null,
-          "fields": [
+            },
             {
-              "name": "value",
+              "name": "arrayType",
               "description": null,
               "args": [],
               "type": {
@@ -1446,64 +1302,7 @@
               },
               "isDeprecated": false,
               "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "GuidTypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "ByteStringTypedValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "BooleanTypedArrayValue",
-          "description": null,
-          "fields": [
+            },
             {
               "name": "value",
               "description": null,
@@ -1522,446 +1321,167 @@
             }
           ],
           "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "SByteTypedArrayValue",
-          "description": null,
-          "fields": [
+          "interfaces": [
             {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
             }
           ],
-          "inputFields": null,
-          "interfaces": [],
           "enumValues": null,
           "possibleTypes": null
         },
         {
           "kind": "OBJECT",
-          "name": "ByteTypedArrayValue",
-          "description": null,
+          "name": "UaFloat",
+          "description": "Floating point.",
           "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "Int16TypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "UInt16TypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "Int32TypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "UInt32TypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "Int64TypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "UInt64TypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "FloatTypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "DoubleTypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "StringTypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "DateTimeTypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "GuidTypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "ByteStringTypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "MethodParameterTypedArrayValue",
-          "description": null,
-          "fields": [
-            {
-              "name": "value",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "MethodParameter",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "OBJECT",
-          "name": "MethodParameter",
-          "description": "Required parameter for a method call",
-          "fields": [
-            {
-              "name": "name",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
             {
               "name": "dataType",
               "description": null,
               "args": [],
               "type": {
-                "kind": "OBJECT",
-                "name": "ExpandedNodeId",
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               },
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
-              "name": "valueRank",
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "value",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "Float",
+          "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point). ",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "UaFloatArray",
+          "description": "Floating point array.",
+          "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "value",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Float",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "UaInt",
+          "description": null,
+          "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "value",
               "description": null,
               "args": [],
               "type": {
@@ -1971,9 +1491,50 @@
               },
               "isDeprecated": false,
               "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "UaIntArray",
+          "description": "Integer array.",
+          "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
             },
             {
-              "name": "arrayDimensions",
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "value",
               "description": null,
               "args": [],
               "type": {
@@ -1987,61 +1548,55 @@
               },
               "isDeprecated": false,
               "deprecationReason": null
-            },
-            {
-              "name": "description",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "LocalizedText",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
             }
           ],
           "inputFields": null,
-          "interfaces": [],
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
           "enumValues": null,
           "possibleTypes": null
         },
         {
           "kind": "OBJECT",
-          "name": "StatusCode",
-          "description": "http://node-opcua.github.io/api_doc/classes/StatusCode.html",
+          "name": "UaDate",
+          "description": null,
           "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
             {
               "name": "value",
               "description": null,
               "args": [],
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "description",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "name",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "name": "DateTime",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -2049,7 +1604,80 @@
             }
           ],
           "inputFields": null,
-          "interfaces": [],
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "DateTime",
+          "description": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "UaDateArray",
+          "description": "Date array.",
+          "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "value",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
           "enumValues": null,
           "possibleTypes": null
         },

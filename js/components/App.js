@@ -1,4 +1,7 @@
+// @flow
+
 'use strict';
+
 
 import React from 'react';
 import Relay from 'react-relay';
@@ -7,6 +10,8 @@ import ReferenceLink from './ReferenceLink';
 import NodeName from './NodeName';
 import NodeId from './NodeId';
 import LocalizedText from './LocalizedText';
+import DataValue from './DataValue';
+import DataType from './DataType';
 var value = 0;
 
 
@@ -95,12 +100,12 @@ var onFailure = (transaction) => {
 
 
 class App extends React.Component {
-   _handleCount = () => {
+   _handleCount(){
     // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
     Relay.Store.commitUpdate(new UaNodeMutation({viewer: this.props.viewer}), {onFailure});
     value++;
   }
-  _handleMethod = () => {
+  _handleMethod(){
     // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
     Relay.Store.commitUpdate(new CallUAMethodMutation({viewer: this.props.viewer}), {onFailure});
   }
@@ -127,11 +132,9 @@ class App extends React.Component {
         </h1>
         <button onClick={this._handleCount}>Like this</button>
         <button onClick={this._handleMethod}>Method Call</button>
-        <h2 title='dataType'>
-          {this.props.viewer.dataType ?
-          <NodeName viewer={this.props.viewer.dataType.uaNode}/>
-          : undefined}
-        </h2>
+        
+        <DataType viewer={this.props.viewer}/>
+        <DataValue viewer={this.props.viewer}/>
         <h3 title='nodeId'>
           <NodeId viewer={this.props.viewer.nodeId}/>
         </h3>
@@ -158,30 +161,11 @@ class App extends React.Component {
 }
 
 
-/*
-
-dataType  { 
-          uaNode {
-            ${NodeName.getFragment('viewer')} 
-          }
-        }
-        dataValue{
-          stringValue
-          value{
-            dataType
-          }
-        }  
-        
-
-
-*/
 export default Relay.createContainer(App, {
   initialVariables: {
     'nodeClassIsVariable': undefined
   },
   prepareVariables: (prevVariables,...args) => {
-    console.log('args::', args.length);
-    console.log(args[0]);
     return {
       ...prevVariables
       // If devicePixelRatio is `2`, the new size will be `100`.
@@ -197,11 +181,8 @@ export default Relay.createContainer(App, {
         description {
           ${LocalizedText.getFragment('viewer')}
         }
-        dataType  @include(if: $nodeClassIsVariable) {
-          uaNode {
-            ${NodeName.getFragment('viewer')}
-          }
-        }
+        ${DataValue.getFragment('viewer')}
+        ${DataType.getFragment('viewer')}
         nodeId {
           ${NodeId.getFragment('viewer')}
         }

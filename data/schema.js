@@ -1,5 +1,7 @@
+// @flow
+
 'use strict';
-import {
+import graphQL, {
   GraphQLBoolean,
   GraphQLFloat,
   GraphQLID,
@@ -10,7 +12,9 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
-  GraphQLUnionType
+  GraphQLUnionType,
+  GraphQLInterfaceType,
+  GraphQLScalarType
 } from 'graphql';
 
 import {
@@ -24,6 +28,7 @@ import {
   nodeDefinitions,
 } from 'graphql-relay';
 
+import GraphQLDate from 'graphql-custom-datetype';
 import {opcua, session2, handleError} from './opcua';
 import merge from 'merge';
 import extend from 'util-extend';
@@ -123,8 +128,68 @@ const ExpandedNodeIdType = new GraphQLObjectType({
   })
 });
 
-const genericValueType = (type, name)=> new GraphQLObjectType({
+
+const resolveUaDataType = (value, info) => {
+  if (value.arrayType.toString() === 'Array') {
+    switch(value.dataType.toString()){
+      case 'Boolean': return UaBooleanArray;
+      case 'SByte': return UaIntArray;
+      case 'Byte': return UaIntArray;
+      case 'Int16': return UaIntArray;
+      case 'UInt16': return UaIntArray;
+      case 'Int32': return UaIntArray;
+      case 'UInt32': return UaLongArray;
+      case 'Int64': return Int64TypedArrayValueType;
+      case 'UInt64': return UInt64TypedArrayValueType;
+      case 'Float': return UaFloatArray;
+      case 'Double': return UaFloatArray;
+      case 'String': return UaStringArray;
+      case 'DateTime': return UaDateArray;
+      case 'Guid': return UaStringArray;
+      case 'ByteString': return ByteStringTypedArrayValueType;
+      //will be more to it than this ?? extension point?
+      case 'ExtensionObject': return MethodParameterTypedArrayValueType;
+    }
+  } else {
+    switch(value.dataType.toString()){
+      case 'Boolean': return UaBoolean;
+      case 'SByte': return UaInt;
+      case 'Byte': return UaInt;
+      case 'Int16': return UaInt;
+      case 'UInt16': return UaInt;
+      case 'Int32': return UaInt;
+      case 'UInt32': return UaLong;
+      case 'Int64': return Int64TypedValueType;
+      case 'UInt64': return UInt64TypedValueType;
+      case 'Float': return UaFloat;
+      case 'Double': return UaFloat;
+      case 'String': return UaString;
+      case 'DateTime': return UaDate;
+      case 'Guid': return UaString;
+      case 'ByteString': return ByteStringTypedValueType;
+    }
+  }
+};
+
+const IUaDataValue = new GraphQLInterfaceType({
+  name: 'IUaDataValue',
+  fields : {
+    dataType: {
+      type: GraphQLString
+    },
+    arrayType : {
+      type: GraphQLString
+    }
+  },
+  description:'Data type and array type for data values',
+  resolveType: resolveUaDataType
+});
+
+
+const genericValueType = (type, name, arrayType, [dataTypes], description)=> new GraphQLObjectType({
   name: name,
+  description: description,
+  interfaces: [IUaDataValue],
   fields: {
     dataType: {
       type: GraphQLString
@@ -135,7 +200,8 @@ const genericValueType = (type, name)=> new GraphQLObjectType({
     value: {
       type: type
     }
-  }
+  },
+  istypeof: value => value.arrayType=== arrayType && dataTypes.indexOf(value.dataType) > -1
 });
 
 const genericResultType = (type, name)=> new GraphQLObjectType({
@@ -426,16 +492,6 @@ const genericTypedResultType = (type, name)=> new GraphQLObjectType({
 
 
 
-const QualifiedNameValueType = genericValueType(QualifiedNameType, 'QualifiedNameValue');
-const QualifiedNameResultType = genericResultType(QualifiedNameValueType, 'QualifiedNameResult');
-
-
-const LocalizedTextValueType = genericValueType(LocalizedTextType, 'LocalizedTextValue');
-const LocalizedTextResultType = genericResultType(LocalizedTextValueType, 'LocalizedTextResult');
-
-
-const ExpandedNodeIdValueType = genericValueType(ExpandedNodeIdType, 'ExpandedNodeIdValue');
-const ExpandedNodeIdResultType = genericResultType(ExpandedNodeIdValueType, 'ExpandedNodeIdResult');
 
 const ResultMaskEnumType = new GraphQLEnumType({
     name: 'ResultMaskEnum',
@@ -535,17 +591,6 @@ const NodeClassEnumType = new GraphQLEnumType({
   }
 });
 
-const NodeClassEnumValueType = genericValueType(NodeClassEnumType, 'NodeClassEnumValue');
-
-const NodeClassEnumResultType = genericResultType(NodeClassEnumValueType, 'NodeClassEnumValueResult');
-const IntResultType = genericResultType(genericValueType(GraphQLInt, 'IntValue'), 'IntResult');
-const BooleanResultType = genericResultType(genericValueType(GraphQLBoolean, 'BooleanValue'), 'BooleanResult');
-const StringResultType = genericResultType(genericValueType(GraphQLString, 'StringValue'), 'StringResult');
-const FloatResultType = genericResultType(genericValueType(GraphQLFloat, 'FloatValue'), 'FloatResult');
-const IntListResultType = genericResultType(genericValueType(new GraphQLList(GraphQLInt), 'IntListValue'), 'IntListResult');
-
-const DataValueResultType = genericTypedResultType(genericValueType(GraphQLString, 'DataValue'), 'DataValueResult');
-
 
 
 const getProperty = (type, attributeId, description) => ({
@@ -561,6 +606,7 @@ const getProperty = (type, attributeId, description) => ({
     session2().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
       session.read(nodesToRead, function(err, _nodesToRead, results) {
         if (!err) {
+          console.log(JSON.stringify(results[0], null, '\t'));   
           if(!results[0].statusCode.value) {
             resolve(results[0].value ? results[0].value.value : null);
           } else {
@@ -575,7 +621,127 @@ const getProperty = (type, attributeId, description) => ({
   })
 });
 
+const getWholeProperty = (type, attributeId, description) => ({
+  type: type,
+  description: description,
+  resolve: ({id})=> new Promise(function(resolve, reject){
+    const nodesToRead = [
+      {
+        nodeId: id,
+        attributeId: attributeId
+      }
+    ];
+    session2().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
+      session.read(nodesToRead, function(err, _nodesToRead, results) {
+        if (!err) {
+          console.log('value:::', JSON.stringify(results[0], null, '\t'));   
+          if(!results[0].statusCode.value) {
+            if(results[0].value.arrayType.toString()=== 'Array')
+            {
+              let arr=[];
+              for(let x of Object.keys(results[0].value.value))
+              {
+                arr[Number(x)]= results[0].value.value[x];
+              }
+              results[0].value.value = arr;
+            }
+            resolve(results[0].value);
+          } else {
+            reject(results[0].statusCode);
+          }
+        } else {
+          reject(handleError(session, err));
+        }
+      }),
+      reject
+    );
+  })
+});
 
+/*
+
+Null:              0,
+        Boolean:           1,
+        SByte:             2, // signed Byte = Int8
+        Byte :             3, // unsigned Byte = UInt8
+        Int16:             4,
+        UInt16:            5,
+        Int32:             6,
+        UInt32:            7,
+        Int64:             8,
+        UInt64:            9,
+        Float:            10,
+        Double:           11,
+        String:           12,
+        DateTime:         13,
+        Guid:             14,
+        ByteString:       15,
+        XmlElement:       16,
+        NodeId:           17,
+        ExpandedNodeId:   18,
+        StatusCode:       19,
+        QualifiedName:    20,
+        LocalizedText:    21,
+        ExtensionObject:  22,
+        DataValue:        23,
+        Variant:          24,
+        DiagnosticInfo:   25
+
+        */
+
+
+var GraphQLLong = new GraphQLScalarType({
+  name: 'GraphQLLong',
+  description: '64-bit integral numbers',
+  // TODO: Number is only 52-bit
+  serialize: Number,
+  parseValue: Number,
+  parseLiteral: function parseLiteral(ast) {
+    if (ast.kind === graphql.Kind.INT) {
+      const num = parseInt(ast.value, 10);
+      return num;
+    }
+    return null;
+  }
+});
+
+const UaLong = genericValueType(GraphQLLong, 'UaLong', 'Scalar', ['UInt32']);
+const UaLongArray = genericValueType(new GraphQLList(GraphQLLong), 'UaLongArray', 'Array', ['UInt32'], 'Long array.');
+
+
+const UaString = genericValueType(GraphQLString, 'UaString', 'Scalar', ['String', 'Guid']);
+const UaStringArray = genericValueType(new GraphQLList(GraphQLString), 'UaStringArray', 'Array', ['String', 'Guid'], 'String array.');
+
+
+const UaBoolean = genericValueType(GraphQLBoolean, 'UaBoolean', 'Scalar', ['Boolean']);
+const UaBooleanArray = genericValueType(new GraphQLList(GraphQLBoolean), 'UaBooleanArray', 'Array', ['Boolean'], 'Boolean array.');
+
+const UaFloat = genericValueType(GraphQLFloat, 'UaFloat', 'Scalar', ['Float', 'Double'], 'Floating point.');
+const UaFloatArray = genericValueType(new GraphQLList(GraphQLFloat), 'UaFloatArray', 'Array', ['Float', 'Double'], 'Floating point array.');
+const UaInt = genericValueType(GraphQLInt, 'UaInt', 'Scalar', ['SByte', 'Byte', 'Int16', 'UInt16', 'Int32']);
+const UaIntArray = genericValueType(new GraphQLList(GraphQLInt), 'UaIntArray', 'Array', ['SByte', 'Byte', 'Int16', 'UInt16', 'Int32'], 'Integer array.');
+const UaDate = genericValueType(GraphQLDate, 'UaDate', 'Scalar', ['DateTime']);
+const UaDateArray = genericValueType(new GraphQLList(GraphQLDate), 'UaDateArray', 'Array', ['DateTime'], 'Date array.');
+const TestUnion = new GraphQLUnionType({
+  name: 'TestUnion',
+  description: 'type of data value',
+  interfaces: [IUaDataValue],
+  types: [
+    UaLong,
+    UaFloat,
+    UaInt,
+    UaDate,
+    UaBoolean,
+    UaString,
+    UaLongArray,
+    UaFloatArray,
+    UaIntArray,
+    UaDateArray,
+    UaBooleanArray,
+    UaStringArray
+  ],
+  resolveType: resolveUaDataType
+});
 
 
 //  http://node-opcua.github.io/api_doc/classes/ReferenceDescription.html
@@ -596,7 +762,7 @@ const UANodeType = new GraphQLObjectType({
     inverseName: getProperty(LocalizedTextType, opcua.AttributeIds.InverseName), //5,
     containsNoLoops: getProperty(GraphQLBoolean, opcua.AttributeIds.ContainsNoLoops), //11,
     eventNotifier: getProperty(GraphQLInt, opcua.AttributeIds.EventNotifier), //12,
-    dataValue: getProperty(DataValueResultType, opcua.AttributeIds.DataValue), //13,
+    dataValue: getWholeProperty(TestUnion, opcua.AttributeIds.DataValue), //13,
     dataType: getProperty(ExpandedNodeIdType, opcua.AttributeIds.DataType), //14,
     valueRank: getProperty(GraphQLInt, opcua.AttributeIds.ValueRank), //15,
     arrayDimensions: getProperty(new GraphQLList(GraphQLInt), opcua.AttributeIds.ArrayDimensions), //16,  IntListResultType

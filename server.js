@@ -1,3 +1,5 @@
+// @flow
+
 'use strict';
 
 import express from 'express';
@@ -8,6 +10,7 @@ import WebpackDevServer from 'webpack-dev-server';
 import {Schema} from './data/schema';
 import socket from 'socket.io';
 import http from 'http';
+import Room from './Room';
 
 import config from './webpack.config';
 
@@ -18,21 +21,12 @@ const SOCKET_PORT = 3001;
 // Expose a GraphQL endpoint
 var graphQLServer = express();
 
-var socketserver = http.Server(graphQLServer);
+var socketserver = new http.Server(graphQLServer);
 var io = socket(socketserver, {path: '/napi'});
 
 
-console.log('env port::', process.env.PORT);
 
-class Room {
-  constructor(room : string){
-    var number = 0;
-    const timer=setInterval((()=>io.to(room).emit('update', {
-      room: room, 
-      value: number++})), 1000);
-    this.destroy = ()=> clearInterval(timer);
-  }
-}
+
 
 
 const rooms = {};
@@ -54,7 +48,7 @@ const leaveRoom = (socket, room, myRooms, myConnection)=>{
 };
 
 io.on('connection', (mySocket)=> {
-  const myRooms = [];
+  const myRooms = {};
   const myConnection = latestConnection++;
 
   mySocket.on('join', (room)=> {
@@ -63,7 +57,7 @@ io.on('connection', (mySocket)=> {
     }
     myRooms[room] = true;
     (rooms[room] || (rooms[room] = {
-      room: new Room(room), 
+      room: new Room(room, io), 
       connectionCount: 0, 
       connections: {}})).connections[myConnection] = true;
 
@@ -80,14 +74,14 @@ io.on('connection', (mySocket)=> {
 });
 
 
-
+const port: number = Number(process.env.PORT); 
 
 
 
 
 if(process.env.NODE_ENV !== 'production') {
 
-
+  // $FlowIgnore: dunno why this doesn't check...
   socketserver.listen(SOCKET_PORT, function(){
     console.log('socket io on *:' + SOCKET_PORT);
   });
@@ -159,9 +153,11 @@ const app = new WebpackDevServer(webpack(config), {
   });
 
   
+  const listenPort: number = (port || GRAPHQL_PORT || 8080);
   
-  socketserver.listen(process.env.PORT || GRAPHQL_PORT || 8080, function(){
-    console.log('listening on *:' + process.env.PORT || GRAPHQL_PORT || 8080);
+  // $FlowIgnore: dunno why this doesn't check...
+  socketserver.listen(listenPort, function(){
+    console.log('listening on *:' + port || GRAPHQL_PORT || 8080);
   });
 
 }

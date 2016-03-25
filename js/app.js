@@ -1,8 +1,11 @@
+// @flow
+
 'use strict';
 
 import 'babel-polyfill';
 import App from './components/App';
 import AppHomeRoute from './routes/AppHomeRoute';
+import NoMatch from './components/NoMatch';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Relay from 'react-relay';
@@ -14,7 +17,7 @@ var socket = io.connect('/', {path: '/napi/socket.io'});
 socket.on('connect', ()=>{
 	socket.emit('join', 'room1');
 });
-socket.on('update', (data: string)=>
+socket.on('update', (data)=>
     document.getElementById('io').innerText = data.value);
 
 
@@ -41,6 +44,7 @@ const queries = {
   ReactDOM.render(
   	 <RelayRouter history={browserHistory}>
   	 	<AppHomeRoute path=':nodeId' component={App} queries={queries}/>
+      <Relay.Route path="*" component={NoMatch}/>
   	 </RelayRouter>
     ,
     document.getElementById('root')

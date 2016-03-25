@@ -1,9 +1,12 @@
+// @flow
+
 'use strict';
+
 import Relay from 'react-relay';
 
 export default class extends Relay.Route {
-	constructor(args) {
-		super({nodeId: args.nodeId || `ns=${args.namespace};i=${args.value}`});
+	constructor({nodeId, namespace, value}: {nodeId: string, namespace: string, value: string}) {
+		super({nodeId: nodeId || `ns=${namespace};i=${value}`});
 		console.log('kjhvkhgcjhgcjgc');
 	}
   static queries = {

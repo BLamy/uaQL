@@ -1,0 +1,6 @@
+[options]
+esproposal.class_static_fields=enable
+suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore
+[ignore]
+.*node_modules/fbjs.*
+
