@@ -774,6 +774,15 @@ const UANodeType = new GraphQLObjectType({
     userExecutable: getProperty(GraphQLBoolean, opcua.AttributeIds.UserExecutable), //22,
     
     outputArguments: {type: new GraphQLList(ArgumentValueType)},
+    browsePath: {
+      type: new GraphQLList(new GraphQLList(GraphQLString)),
+      args: {
+        paths: {
+          type: new GraphQLList(new GraphQLList(GraphQLString))
+        }
+      },
+      resolve:({id}, args)=> args.paths
+    },
     references: {
       type: ReferenceConnection,
       description: 'References are typed links to other nodes (defaults to forward)',
@@ -790,6 +799,7 @@ const UANodeType = new GraphQLObjectType({
           type: new GraphQLList(NodeClassEnumType),
           description: 'Node classes to include.'
         },
+
         results: {
           type: new GraphQLList(ResultMaskEnumType),
           description: 'Results to include.'
@@ -810,18 +820,36 @@ const UANodeType = new GraphQLObjectType({
               nodeClassMask: nodeClasses ? nodeClasses.reduce(((p, c)=>p | c), 0) : 0,
               resultMask: results ? results.reduce(((p, c)=>p | c), 0) : 63
             };
-            nextSession().take(1).timeout(3000, new Error('Timeout, try later...')).subscribe(session=>
-              session.browse([browseDescription], function(err, browseResult){
-                if(!err) {
-                  resolve(browseResult[0].references.map(r=>{
-                    r.id = r.referenceTypeId.toString() + '+' + r.nodeId.toString();
-                    return r;
-                  }));
-                }
-                else {
-                  reject(handleError(session, err));
-                }
-              }),
+            nextSession().take(1).timeout(3000, new Error('Timeout, try later...')).subscribe(session=> {
+                session.browse([browseDescription], function(err, browseResult){
+                  if(!err) {
+                    resolve(browseResult[0].references.map(r=>{
+                      r.id = r.referenceTypeId.toString() + '+' + r.nodeId.toString();
+                      return r;
+                    }));
+                  }
+                  else {
+                    reject(handleError(session, err));
+                  }
+                });
+                console.log('ref', JSON.stringify(opcua.makeExpandedNodeId(0,35), null, '\t'));
+                const bpath= [{
+                  startingNode: 'ns=0;i=84',
+                  relativePath: { 
+                    elements: [ {
+                        "referenceTypeId":  "ns=0;i=35", //opcua.makeExpandedNodeId(35,0),
+                        targetName: {
+                          'namespaceIndex': 0,
+                          'name': 'Objects'
+                        },
+                        isInverse: false,
+                        includeSubtypes: true,
+                      }]
+                    }
+                }]
+                console.log('gogo go');
+                session.translateBrowsePath(bpath,(err, x)=> console.log('browsepath', JSON.stringify(x, null, '\t')));
+              },
               reject
             );
           }),

@@ -48,6 +48,12 @@ const queries = {
       query {
         uaNode(nodeId: $nodeId)
       }
+    `,
+    server: () => Relay.QL`
+      query {
+        uaNode('ns=0;i==84')
+      }
+
     `
   };
 

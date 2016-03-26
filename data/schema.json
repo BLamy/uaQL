@@ -454,6 +454,37 @@
               "deprecationReason": null
             },
             {
+              "name": "browsePath",
+              "description": null,
+              "args": [
+                {
+                  "name": "paths",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "references",
               "description": "References are typed links to other nodes (defaults to forward)",
               "args": [
