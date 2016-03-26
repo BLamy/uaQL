@@ -45,6 +45,7 @@ class NodeSocket {
 			   obs.onNext(dataValue.value.value);
 			});
 		} catch(ex) {
+			console.log("caught error", ex);
 			obs.onError(ex);
 		}
   		return ()=>subscription.terminate();
