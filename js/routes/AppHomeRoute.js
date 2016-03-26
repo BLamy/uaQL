@@ -9,13 +9,7 @@ export default class extends Relay.Route {
 		super({nodeId: nodeId || `ns=${namespace};i=${value}`});
 		console.log('kjhvkhgcjhgcjgc');
 	}
-  static queries = {
-    viewer: () => Relay.QL`
-      query {
-        uaNode(nodeId: $nodeId)
-      }
-    `
-  };
+  
   static paramDefinitions = {
     nodeId: {required: false},
     value: {required: false},

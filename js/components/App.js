@@ -45,7 +45,6 @@ class UaNodeMutation extends Relay.Mutation {
     viewer: () => Relay.QL`
       fragment on UANode {
         dataValue{
-          stringValue
           value{
             dataType
           }
@@ -126,6 +125,11 @@ class App extends React.Component {
   render() {
     return (
       <div>
+        {this.props.root.browsePath.dataValue.value.map(v=>
+          <li key={v}>
+            {v}
+          </li>
+        )}
         <Comp viewer={this.props.viewer}/>
         <h1>
           <NodeName viewer={this.props.viewer}/>
@@ -172,6 +176,15 @@ export default Relay.createContainer(App, {
     };
   },
   fragments: {
+    root: () => Relay.QL`
+      fragment on UANode {
+        browsePath(paths:["Objects", "Server", "NamespaceArray"]) {
+          dataValue { 
+            ... on UaStringArray {value}
+          }
+        } 
+      }
+    `,
     viewer: () => Relay.QL`
       fragment on UANode {
         id

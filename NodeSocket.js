@@ -7,17 +7,17 @@ class NodeSocket {
   destroy: Function;
   constructor(nodeId : string, io : any){
   	const timer = nextSession().select(session => Observable.create((obs)=> {
+  		const subscription = new opcua.ClientSubscription(session,{
+		    requestedPublishingInterval: 1000,
+		    requestedLifetimeCount: 10,
+		    requestedMaxKeepAliveCount: 2,
+		    maxNotificationsPerPublish: 10,
+		    publishingEnabled: true,
+		    priority: 10
+		});
 
   		try {
-	  		const subscription = new opcua.ClientSubscription(session,{
-			    requestedPublishingInterval: 1000,
-			    requestedLifetimeCount: 10,
-			    requestedMaxKeepAliveCount: 2,
-			    maxNotificationsPerPublish: 10,
-			    publishingEnabled: true,
-			    priority: 10
-			});
-
+	  		
 			subscription.on('started',function(){
 			    console.log(`subscription started - subscriptionId=`,subscription.subscriptionId);
 			}).on("keepalive",function(){

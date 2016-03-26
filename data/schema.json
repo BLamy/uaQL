@@ -469,17 +469,13 @@
                       "ofType": null
                     }
                   },
-                  "defaultValue": null
+                  "defaultValue": "[]"
                 }
               ],
               "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
+                "kind": "OBJECT",
+                "name": "UANode",
+                "ofType": null
               },
               "isDeprecated": false,
               "deprecationReason": null

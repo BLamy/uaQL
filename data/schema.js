@@ -606,7 +606,6 @@ const getProperty = (type, attributeId, description) => ({
     nextSession().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
       session.read(nodesToRead, function(err, _nodesToRead, results) {
         if (!err) {
-          console.log(JSON.stringify(results[0], null, '\t'));   
           if(!results[0].statusCode.value) {
             resolve(results[0].value ? results[0].value.value : null);
           } else {
@@ -634,7 +633,6 @@ const getWholeProperty = (type, attributeId, description) => ({
     nextSession().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
       session.read(nodesToRead, function(err, _nodesToRead, results) {
         if (!err) {
-          console.log('value:::', JSON.stringify(results[0], null, '\t'));   
           if(!results[0].statusCode.value) {
             if(results[0].value.arrayType.toString()=== 'Array')
             {
@@ -775,13 +773,51 @@ const UANodeType = new GraphQLObjectType({
     
     outputArguments: {type: new GraphQLList(ArgumentValueType)},
     browsePath: {
-      type: new GraphQLList(new GraphQLList(GraphQLString)),
+      type: UANodeType,
       args: {
         paths: {
-          type: new GraphQLList(new GraphQLList(GraphQLString))
+          type: new GraphQLList(GraphQLString),
+          defaultValue: []
         }
       },
-      resolve:({id}, args)=> args.paths
+      resolve:({id}, args)=> new Promise(function(resolve, reject){
+        nextSession().take(1).timeout(3000, new Error('Timeout, try later...')).subscribe(session=> {
+          console.log('resolving');
+          const bpath= [{
+            startingNode: id,
+            relativePath: { 
+              elements: args.paths.map(p=>({
+                targetName: {
+                  namespaceIndex: p.split(':')[1] || 0,
+                  name: p.split(':')[0]
+                },
+                //"referenceTypeId": undefined,
+                isInverse: false,
+                includeSubtypes: true,
+
+
+              }))
+            }
+          }];
+          console.log('resolving go!', JSON.stringify(bpath, null, '\t'));
+          try{
+            session.translateBrowsePath(bpath, (err, x) => {
+              console.log('aaaa', JSON.stringify(x, null, '\t'));
+              if(x[0]) {
+                if(x[0].targets) {
+                  if(x[0].targets[0])
+                    resolve(getUANode(x[0].targets[0].targetId))
+                    return;
+                }
+              }
+              resolve(null)
+            });
+          } catch (ex) {
+            console.log(ex);
+          }
+          console.log('resolved go!', JSON.stringify(bpath, null, '\t'));
+        }, reject);
+      })
     },
     references: {
       type: ReferenceConnection,
@@ -832,7 +868,6 @@ const UANodeType = new GraphQLObjectType({
                     reject(handleError(session, err));
                   }
                 });
-                console.log('ref', JSON.stringify(opcua.makeExpandedNodeId(0,35), null, '\t'));
                 const bpath= [{
                   startingNode: 'ns=0;i=84',
                   relativePath: { 
@@ -847,8 +882,6 @@ const UANodeType = new GraphQLObjectType({
                       }]
                     }
                 }]
-                console.log('gogo go');
-                session.translateBrowsePath(bpath,(err, x)=> console.log('browsepath', JSON.stringify(x, null, '\t')));
               },
               reject
             );

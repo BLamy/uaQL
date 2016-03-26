@@ -44,18 +44,17 @@ function getParameterByName(name, url) {
 }
 
 const queries = {
-    viewer: () => Relay.QL`
-      query {
-        uaNode(nodeId: $nodeId)
-      }
-    `,
-    server: () => Relay.QL`
-      query {
-        uaNode('ns=0;i==84')
-      }
-
-    `
-  };
+  viewer: () => Relay.QL`
+    query {
+      uaNode(nodeId: $nodeId)
+    }
+  `,
+  root: () => Relay.QL`
+    query {
+      uaNode(nodeId: "ns=0;i=84")
+    }
+  `
+};
 
   ReactDOM.render(
   	 <RelayRouter history={browserHistory}>
