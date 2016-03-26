@@ -5,26 +5,27 @@
 import React from 'react';
 import Relay from 'react-relay';
 import LocalizedText from './LocalizedText';
-
-class NodeName extends React.Component {
-  
-  render() {
-    return (
-
-      <LocalizedText viewer={this.props.viewer.displayName}/>
-  	);
-  }
- }
+import {createContainer} from 'recompose-relay';
+import {compose} from 'recompose';
 
 
-export default Relay.createContainer(NodeName, {
-  fragments: {
-    viewer: () => Relay.QL`
-      fragment on UANode {
-        displayName {
-          ${LocalizedText.getFragment('viewer')}
-        }
+const NodeName = compose(
+  createContainer(
+    {
+      fragments: {
+        viewer: () => Relay.QL`
+          fragment on UANode {
+            displayName {
+              ${LocalizedText.getFragment('viewer')}
+            }
+          }
+        `
       }
-     `
     }
-  });
+  )
+)(({viewer})=>
+  <LocalizedText viewer={viewer.displayName}/>
+);
+
+
+export default NodeName;

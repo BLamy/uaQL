@@ -5,35 +5,35 @@ import React from 'react';
 import Relay from 'react-relay';
 import {Link} from 'react-router';
 import NodeLink from './NodeLink';
+import {createContainer} from 'recompose-relay';
+import {compose,} from 'recompose';
 
-class ReferenceLink extends React.Component {
-  
-  render() {
-    return (
-      <span>
-        <NodeLink viewer= {this.props.viewer.referenceTypeId.uaNode}/>
-        -
-        <NodeLink viewer= {this.props.viewer.uaNode}/>
-      </span>
-  	);
-  }
- }
-
-
-export default Relay.createContainer(ReferenceLink, {
-  fragments: {
-    viewer: () => Relay.QL`
-      fragment on ReferenceDescription {
-        uaNode {
-          id
-          ${NodeLink.getFragment('viewer')}
-        }
-        referenceTypeId {
-          uaNode {
-            ${NodeLink.getFragment('viewer')}
+const ReferenceLink = compose(
+  createContainer(
+    {
+      fragments: {
+        viewer: () => Relay.QL`
+          fragment on ReferenceDescription {
+            uaNode {
+              id
+              ${NodeLink.getFragment('viewer')}
+            }
+            referenceTypeId {
+              uaNode {
+                ${NodeLink.getFragment('viewer')}
+              }
+            }
           }
+         `
         }
-      }
-     `
     }
-  });
+  )
+)(({viewer})=>
+  <span>
+    <NodeLink viewer= {viewer.referenceTypeId.uaNode}/>
+    -
+    <NodeLink viewer= {viewer.uaNode}/>
+  </span>
+);
+
+export default ReferenceLink;

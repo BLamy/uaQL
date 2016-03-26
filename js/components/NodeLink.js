@@ -7,6 +7,9 @@ import Relay from 'react-relay';
 import {Link} from 'react-router';
 import NodeName from './NodeName';
 
+import {createContainer} from 'recompose-relay';
+import {compose} from 'recompose';
+
 const getId=(id)=> {
   if(id==='STRING') return 's';
   if(id==='BYTESTRING') return 'b';
@@ -15,40 +18,41 @@ const getId=(id)=> {
   return id;
 }
 
-class NodeLink extends React.Component {
-  
-  render() {
-    return (
-      <span>
-    	<Link to={'/ns=' 
-          + this.props.viewer.nodeId.namespace 
-          + ';' 
-          + getId(this.props.viewer.nodeId.identifierType)
-          + '=' + this.props.viewer.nodeId.value}>
-           
-          <NodeName viewer={this.props.viewer}/>
-        </Link>
-        (
-          {this.props.viewer.nodeClass}
-        )
-      </span>
-  	);
-  }
- }
 
-
-export default Relay.createContainer(NodeLink, {
-  fragments: {
-    viewer: () => Relay.QL`
-      fragment on UANode {
-        ${NodeName.getFragment('viewer')}
-        nodeClass
-        nodeId {
-          namespace
-          identifierType
-          value
-        }
+const NodeLink = compose(
+  createContainer(
+    {
+      fragments: {
+        viewer: () => Relay.QL`
+          fragment on UANode {
+            ${NodeName.getFragment('viewer')}
+            nodeClass
+            nodeId {
+              namespace
+              identifierType
+              value
+            }
+          }
+        `
       }
-     `
     }
-  });
+  )
+)(({viewer})=>
+  <span>
+    <Link to={'/ns=' 
+      + viewer.nodeId.namespace 
+      + ';' 
+      + getId(viewer.nodeId.identifierType)
+      + '=' + viewer.nodeId.value}>
+       
+      <NodeName viewer={viewer}/>
+    </Link>
+    (
+      {viewer.nodeClass}
+    )
+  </span>
+);
+
+
+export default NodeLink;
+

@@ -5,7 +5,7 @@ import Relay from 'react-relay';
 import VariableBase from './VariableBase';
 import NodeName from './NodeName';
 import {createContainer} from 'recompose-relay';
-import {compose, doOnReceiveProps} from 'recompose';
+import {compose} from 'recompose';
 
 
 const DataType = compose(

@@ -6,24 +6,27 @@ import React from 'react';
 import Relay from 'react-relay';
 import {Link} from 'react-router';
 
-class LocalizedText extends React.Component {
-  
-  render() {
-    return (
-    	<span>
-        {this.props.viewer ? this.props.viewer.text : undefined}
-      </span>
-  	);
-  }
- }
+
+import {createContainer} from 'recompose-relay';
+import {compose} from 'recompose';
 
 
-export default Relay.createContainer(LocalizedText, {
-  fragments: {
-    viewer: () => Relay.QL`
-      fragment on LocalizedText {  
-        text
+const LocalizedText = compose(
+  createContainer(
+    {
+      fragments: {
+        viewer: () => Relay.QL`
+          fragment on LocalizedText {  
+            text
+          }
+        `
       }
-     `
     }
-  });
+  )
+)(({viewer})=>
+  <span>
+        {viewer ? viewer.text : undefined}
+  </span>
+);
+
+export default LocalizedText;
