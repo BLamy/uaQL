@@ -59,7 +59,7 @@ io.on('connection', (mySocket)=> {
   mySocket.on('join', (nodeId)=> {
     console.log('join:', nodeId)
     if(myRooms[nodeId]){
-      throw `you are already joined to "${nodeId}"`;
+      return;
     }
     myRooms[nodeId] = true;
     (rooms[nodeId] || (rooms[nodeId] = {
