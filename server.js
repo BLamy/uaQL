@@ -36,9 +36,11 @@ const rooms = {};
 var latestConnection = 0;
 const leaveRoom = (socket, nodeId, myRooms, myConnection)=>{
   if(!rooms[nodeId]){
+    return;
     throw `"${nodeId}" does not exist`;
   }
   if(!myRooms[nodeId]){
+    return;
     throw `you are not joined to "${nodeId}"`;
   }
   delete myRooms[nodeId];
