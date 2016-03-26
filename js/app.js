@@ -12,15 +12,25 @@ import Relay from 'react-relay';
 import io from 'socket.io-client';
 import { RelayRouter } from 'react-router-relay';
 import {browserHistory} from 'react-router';
+import socketObservable from './data/SocketObservable';
+import rx from 'rx';
 
-var socket = io.connect('/', {path: '/napi/socket.io'});
-socket.on('connect', ()=>{
-	socket.emit('join', 'room1');
-});
-socket.on('update', (data)=>
-    document.getElementById('io').innerText = data.value);
+//var socket = io.connect('/', {path: '/napi/socket.io'});
+//socket.on('connect', ()=>{
+//	socket.emit('join', 'ns=2;i=10844');
+//});
+//socket.on('update', (data)=>
+//    document.getElementById('io').innerText = data.value);
 
 
+/*
+socketObservable('ns=2;i=10845')
+  .subscribe(s=>console.log("we have a socket2....", s));
+
+socketObservable('ns=2;i=10844')
+  .subscribe(s=>console.log("we have a socket....", s));
+
+*/
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;

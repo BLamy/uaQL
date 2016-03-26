@@ -29,7 +29,7 @@ import {
 } from 'graphql-relay';
 
 import GraphQLDate from 'graphql-custom-datetype';
-import {opcua, session2, handleError} from './opcua';
+import {opcua, nextSession, handleError} from './opcua';
 import merge from 'merge';
 import extend from 'util-extend';
 var {nodeInterface, nodeField} = nodeDefinitions(
@@ -603,7 +603,7 @@ const getProperty = (type, attributeId, description) => ({
         attributeId: attributeId
       }
     ];
-    session2().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
+    nextSession().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
       session.read(nodesToRead, function(err, _nodesToRead, results) {
         if (!err) {
           console.log(JSON.stringify(results[0], null, '\t'));   
@@ -631,7 +631,7 @@ const getWholeProperty = (type, attributeId, description) => ({
         attributeId: attributeId
       }
     ];
-    session2().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
+    nextSession().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
       session.read(nodesToRead, function(err, _nodesToRead, results) {
         if (!err) {
           console.log('value:::', JSON.stringify(results[0], null, '\t'));   
@@ -697,7 +697,7 @@ var GraphQLLong = new GraphQLScalarType({
   serialize: Number,
   parseValue: Number,
   parseLiteral: function parseLiteral(ast) {
-    if (ast.kind === graphql.Kind.INT) {
+    if (ast.kind === graphQL.Kind.INT) {
       const num = parseInt(ast.value, 10);
       return num;
     }
@@ -810,7 +810,7 @@ const UANodeType = new GraphQLObjectType({
               nodeClassMask: nodeClasses ? nodeClasses.reduce(((p, c)=>p | c), 0) : 0,
               resultMask: results ? results.reduce(((p, c)=>p | c), 0) : 63
             };
-            session2().take(1).timeout(3000, new Error('Timeout, try later...')).subscribe(session=>
+            nextSession().take(1).timeout(3000, new Error('Timeout, try later...')).subscribe(session=>
               session.browse([browseDescription], function(err, browseResult){
                 if(!err) {
                   resolve(browseResult[0].references.map(r=>{
@@ -935,7 +935,7 @@ const CallUAMethodMutation = mutationWithClientMutationId({
 
     return new Promise(function(resolve, reject){
       try{
-        session2().take(1).timeout(3000, new Error('Timeout, try later....')).subscribe(session=>
+        nextSession().take(1).timeout(3000, new Error('Timeout, try later....')).subscribe(session=>
           session.call(methodsToCall, function(err, results) {
             if(!err) {
               if(results[0].statusCode.value)
@@ -989,7 +989,7 @@ var UpdateUANodeMutation = mutationWithClientMutationId({
     var nodeId = fromGlobalId(id).id;
     return new Promise(function(resolve, reject){
         try{
-          session2().take(1).timeout(3000).subscribe(session=>
+          nextSession().take(1).timeout(3000).subscribe(session=>
             session.writeSingleNode(nodeId, new opcua.Variant({dataType: dataType, value: value}), (err, statusCode) => 
               {
                   if(!err) {

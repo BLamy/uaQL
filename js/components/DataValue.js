@@ -7,6 +7,7 @@ import {createContainer} from 'recompose-relay';
 import {compose,} from 'recompose';
 import {Observable} from 'rx';
 import {observeProps} from 'rx-recompose';
+import socketObservable from '../data/SocketObservable'
 
 
 const DataValue = compose(
@@ -18,6 +19,11 @@ const DataValue = compose(
       fragments: {
         viewer: () => Relay.QL`
           fragment on UANode {  
+            nodeId {
+              identifierType
+              value
+              namespace
+            }
             nodeClass
             dataValue @include(if: $nodeClassIsVariable) {
               ... on IUaDataValue {
@@ -71,23 +77,19 @@ const DataValue = compose(
       const viewer = props$.map(p=>p.viewer)
       return {
         viewer,
-        counter:viewer
-          .map(p=> {
-              if(p.dataValue) {
-                return Observable.interval(200).map(i=> 
-                  i + ':' + p.nodeClass + ':' + p.dataValue.dataType
-                )
-              } else {
-                return Observable.return();
-              }
+        counter:viewer.map(v=>{
+            if(v.dataValue) {
+              return socketObservable(`ns=${v.nodeId.namespace};i=${v.nodeId.value}`);
+            } else {
+              return Observable.return();
             }
-          )
+          })
           .switch()
       };
     }
   )
   )(({viewer, counter})=>
-    <span>{counter}
+    <span>{JSON.stringify(counter, null, '\t')} 
         {viewer.dataValue
           ? <div title='dataValue'>
               {viewer.dataValue.arrayType==='Array'

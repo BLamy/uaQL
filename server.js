@@ -10,7 +10,7 @@ import WebpackDevServer from 'webpack-dev-server';
 import {Schema} from './data/schema';
 import socket from 'socket.io';
 import http from 'http';
-import Room from './Room';
+import NodeSocket from './NodeSocket';
 
 import config from './webpack.config';
 
@@ -22,7 +22,10 @@ const SOCKET_PORT = 3001;
 var graphQLServer = express();
 
 var socketserver = new http.Server(graphQLServer);
-var io = socket(socketserver, {path: '/napi'});
+
+var io = socket(socketserver, {
+  path: '/napi'
+});
 
 
 
@@ -31,44 +34,45 @@ var io = socket(socketserver, {path: '/napi'});
 
 const rooms = {};
 var latestConnection = 0;
-const leaveRoom = (socket, room, myRooms, myConnection)=>{
-  if(!rooms[room]){
-    throw `"${room}" does not exist`;
+const leaveRoom = (socket, nodeId, myRooms, myConnection)=>{
+  if(!rooms[nodeId]){
+    throw `"${nodeId}" does not exist`;
   }
-  if(!myRooms[room]){
-    throw `you are not joined to "${room}"`;
+  if(!myRooms[nodeId]){
+    throw `you are not joined to "${nodeId}"`;
   }
-  delete myRooms[room];
-  delete rooms[room].connections[myConnection];
-  if(!--rooms[room].connectionCount){
-    rooms[room].room.destroy();
-    delete rooms[room];
+  delete myRooms[nodeId];
+  delete rooms[nodeId].connections[myConnection];
+  if(!--rooms[nodeId].connectionCount){
+    rooms[nodeId].node.destroy();
+    delete rooms[nodeId];
   }
-  socket.leave(room);
+  socket.leave(nodeId);
 };
 
 io.on('connection', (mySocket)=> {
   const myRooms = {};
   const myConnection = latestConnection++;
 
-  mySocket.on('join', (room)=> {
-    if(myRooms[room]){
-      throw `you are already joined to "${room}"`;
+  mySocket.on('join', (nodeId)=> {
+    console.log('join:', nodeId)
+    if(myRooms[nodeId]){
+      throw `you are already joined to "${nodeId}"`;
     }
-    myRooms[room] = true;
-    (rooms[room] || (rooms[room] = {
-      room: new Room(room, io), 
+    myRooms[nodeId] = true;
+    (rooms[nodeId] || (rooms[nodeId] = {
+      node: new NodeSocket(nodeId, io), 
       connectionCount: 0, 
       connections: {}})).connections[myConnection] = true;
 
-    rooms[room].connectionCount++;
-    mySocket.join(room);
+    rooms[nodeId].connectionCount++;
+    mySocket.join(nodeId);
   });
-  mySocket.on('leave', (room) => leaveRoom(mySocket, room, myRooms, myConnection));
+  mySocket.on('leave', (nodeId) => leaveRoom(mySocket, nodeId, myRooms, myConnection));
   
   mySocket.on('disconnect', function(){
-    for(const room of Object.keys(myRooms)) {
-      leaveRoom(mySocket, room, myRooms, myConnection);
+    for(const node of Object.keys(myRooms)) {
+      leaveRoom(mySocket, node, myRooms, myConnection);
     }
   });
 });

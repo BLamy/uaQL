@@ -164,7 +164,7 @@ class UASession {
 
 
 const connector = new UASession();
-const session2 = connector.nextSession;
+const nextSession = connector.nextSession;
 const handleError = connector.handleError;
 //export default connector.session;
-export {opcua as opcua, session2 as session2, handleError as handleError};
+export {opcua as opcua, nextSession as nextSession, handleError as handleError};
