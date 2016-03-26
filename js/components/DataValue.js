@@ -5,6 +5,8 @@ import Relay from 'react-relay';
 import VariableBase from './VariableBase';
 import {createContainer} from 'recompose-relay';
 import {compose,} from 'recompose';
+import {Observable} from 'rx';
+import {observeProps} from 'rx-recompose';
 
 
 const DataValue = compose(
@@ -64,9 +66,28 @@ const DataValue = compose(
         }
       }
     ),
-    VariableBase
-  )(({viewer})=>
-    <span>
+    VariableBase,
+    observeProps(props$=>{
+      const viewer = props$.map(p=>p.viewer)
+      return {
+        viewer,
+        counter:viewer
+          .map(p=> {
+              if(p.dataValue) {
+                return Observable.interval(200).map(i=> 
+                  i + ':' + p.nodeClass + ':' + p.dataValue.dataType
+                )
+              } else {
+                return Observable.return();
+              }
+            }
+          )
+          .switch()
+      };
+    }
+  )
+  )(({viewer, counter})=>
+    <span>{counter}
         {viewer.dataValue
           ? <div title='dataValue'>
               {viewer.dataValue.arrayType==='Array'
