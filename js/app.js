@@ -4,7 +4,9 @@
 
 import 'babel-polyfill';
 import App from './components/App';
+import Widget from './components/Widget';
 import AppHomeRoute from './routes/AppHomeRoute';
+import WidgetRoute from './routes/WidgetRoute';
 import NoMatch from './components/NoMatch';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -56,9 +58,25 @@ const queries = {
   `
 };
 
+const widgetqueries = {
+  widgetviewer: () => Relay.QL`
+    query {
+      uaNode(nodeId: $nodeId)
+    }
+  `,
+  root: () => Relay.QL`
+    query {
+      uaNode(nodeId: "ns=0;i=84")
+    }
+  `
+};
+
+
   ReactDOM.render(
   	 <RelayRouter history={browserHistory}>
-  	 	<AppHomeRoute path=':nodeId' component={App} queries={queries}/>
+  	 	<AppHomeRoute path=':nodeId' component={App} queries={queries}>
+        <WidgetRoute path='mimic' component={Widget} queries={widgetqueries}/>
+      </AppHomeRoute>
       <Relay.Route path="*" component={NoMatch}/>
   	 </RelayRouter>
     ,

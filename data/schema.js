@@ -806,7 +806,7 @@ const UANodeType = new GraphQLObjectType({
       },
       resolve:({id}, args)=> new Promise(function(resolve, reject){
         nextSession().take(1).timeout(3000, new Error('Timeout, try later...')).subscribe(session=> {
-          console.log('resolving');
+          console.log('resolving pb', args);
           const bpath= [{
             startingNode: id,
             relativePath: { 
@@ -825,14 +825,18 @@ const UANodeType = new GraphQLObjectType({
           try{
             session.translateBrowsePath(bpath, (err, x) => {
               console.log('aaaa', JSON.stringify(x, null, '\t'));
-              if(x[0]) {
-                if(x[0].targets) {
-                  if(x[0].targets[0])
-                    resolve(getUANode(x[0].targets[0].targetId))
-                    return;
+              if(!err) {
+                if(x[0]) {
+                  if(x[0].targets) {
+                    if(x[0].targets[0])
+                      resolve(getUANode(x[0].targets[0].targetId))
+                      return;
+                  }
                 }
+                resolve(null);
+              } else {
+                reject(err);
               }
-              resolve(null)
             });
           } catch (ex) {
             console.log(ex);

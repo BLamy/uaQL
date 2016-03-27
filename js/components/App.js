@@ -5,13 +5,20 @@
 
 import React from 'react';
 import Relay from 'react-relay';
+import {Link} from 'react-router';
+
 import Comp from './comp';
 import ReferenceLink from './ReferenceLink';
 import NodeName from './NodeName';
+import Widget from './Widget';
 import NodeId from './NodeId';
+import Links from './Links';
 import LocalizedText from './LocalizedText';
 import DataValue from './DataValue';
 import DataType from './DataType';
+import {compose} from 'recompose';
+import {createContainer} from 'recompose-relay';
+
 var value = 0;
 
 
@@ -99,6 +106,7 @@ var onFailure = (transaction) => {
 
 
 class App extends React.Component {
+  
    _handleCount(){
     // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
     Relay.Store.commitUpdate(new UaNodeMutation({viewer: this.props.viewer}), {onFailure});
@@ -159,76 +167,80 @@ class App extends React.Component {
             <li key={arg.index}>{arg.dataType} {arg.value.value}</li>
           )}
         </ul>
+        {JSON.stringify(this.context, null, '\t')}
+        <Link to={`${this.props.params.nodeId}/mimic`}>mimic!</Link>  
+        {this.props.children}
+        <Links {...this.props} path={this.props.params.nodeId}/>
       </div>
     );
   }
 }
-
-
-export default Relay.createContainer(App, {
-  initialVariables: {
-    'nodeClassIsVariable': undefined
-  },
-  prepareVariables: (prevVariables,...args) => {
-    return {
-      ...prevVariables
-      // If devicePixelRatio is `2`, the new size will be `100`.
-    };
-  },
-  fragments: {
-    root: () => Relay.QL`
-      fragment on UANode {
-        browsePath(paths:["Objects", "Server", "NamespaceArray"]) {
-          dataValue { 
-            ... on UaStringArray {value}
-            ... on UaBooleanArray {value}
-            ... on UaIntArray {value}
-            ... on UaDateArray {value}
-            ... on UaQualifiedNameArray {value {name}}
-            ... on UaString {value}
-            ... on UaBoolean {value}
-            ... on UaInt {value}
-            ... on UaDate {value}
-            ... on UaQualifiedName {value {name}}
-          }
-        } 
-      }
-    `,
-    viewer: () => Relay.QL`
-      fragment on UANode {
-        id
-        nodeClass
-        ${Comp.getFragment('viewer')}
-        ${NodeName.getFragment('viewer')}
-        description {
-          ${LocalizedText.getFragment('viewer')}
-        }
-        ${DataValue.getFragment('viewer')}
-        ${DataType.getFragment('viewer')}
-        nodeId {
-          ${NodeId.getFragment('viewer')}
-        }
-        forwardReferences: references(first:100 browseDirection: Forward) {
-          edges {
-            node {
-              ${ReferenceLink.getFragment('viewer')}
-              id
+App.contextTypes = {
+  location: React.PropTypes.object,
+  router: React.PropTypes.object.isRequired
+};
+const Appp = compose(
+  createContainer( {
+    initialVariables: {
+      'nodeClassIsVariable': undefined
+    },
+    prepareVariables: (prevVariables,...args) => {
+      return {
+        ...prevVariables
+        // If devicePixelRatio is `2`, the new size will be `100`.
+      };
+    },
+    fragments: {
+      root: () => Relay.QL`
+        fragment on UANode {
+          ${Links.getFragment('root')}
+          
+          browsePath(paths:["Objects", "Server", "NamespaceArray"]) {
+            dataValue { 
+              ... on UaStringArray {value}
             }
-          }
-        },
-        outputArguments {
-          index
-          dataType
-          arrayType
-          value {
-            ... on BooleanArgumentValue {value}  
-            ... on IntArgumentValue {value}  
-            ... on Int64ArgumentValue {value}  
-            ... on FloatArgumentValue {value}  
-            ... on StringArgumentValue {value}  
-          }  
+          } 
         }
-      }
-    `
-  }
-});
+      `,
+      viewer: () => Relay.QL`
+        fragment on UANode {
+          id
+          nodeClass
+          ${Links.getFragment('viewer')}
+          ${Comp.getFragment('viewer')}
+          ${NodeName.getFragment('viewer')}
+          description {
+            ${LocalizedText.getFragment('viewer')}
+          }
+          ${DataValue.getFragment('viewer')}
+          ${DataType.getFragment('viewer')}
+          nodeId {
+            ${NodeId.getFragment('viewer')}
+          }
+          forwardReferences: references(first:100 browseDirection: Forward) {
+            edges {
+              node {
+                ${ReferenceLink.getFragment('viewer')}
+                id
+              }
+            }
+          },
+          outputArguments {
+            index
+            dataType
+            arrayType
+            value {
+              ... on BooleanArgumentValue {value}  
+              ... on IntArgumentValue {value}  
+              ... on Int64ArgumentValue {value}  
+              ... on FloatArgumentValue {value}  
+              ... on StringArgumentValue {value}  
+            }  
+          }
+        }
+      `
+    }
+  })
+)(App);
+
+export default Appp;

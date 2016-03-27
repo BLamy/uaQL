@@ -15,6 +15,6 @@ export default class extends Relay.Route {
     namespace: {required: false},
     identifierType: {required: false}
   };
-  static routeName = 'AppHomeRoute';
+  static routeName = 'Widget';
 }
 
