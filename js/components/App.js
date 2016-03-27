@@ -178,9 +178,16 @@ export default Relay.createContainer(App, {
   fragments: {
     root: () => Relay.QL`
       fragment on UANode {
-        browsePath(paths:["Objects", "Server", "NamespaceArray"]) {
+        browsePath(paths:[["Objects"], ["Server"], ["NamespaceArray"]]) {
           dataValue { 
             ... on UaStringArray {value}
+            ... on UaBooleanArray {value}
+            ... on UaIntArray {value}
+            ... on UaDateArray {value}
+            ... on UaString {value}
+            ... on UaBoolean {value}
+            ... on UaInt {value}
+            ... on UaDate {value}
           }
         } 
       }

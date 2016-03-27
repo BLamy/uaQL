@@ -778,7 +778,19 @@ const UANodeType = new GraphQLObjectType({
         paths: {
           type: new GraphQLList(GraphQLString),
           defaultValue: []
-        }
+        },
+        types: {
+          type: new GraphQLList(GraphQLString),
+          defaultValue: []
+        },
+        subTypes: {
+          type: new GraphQLList(GraphQLBoolean),
+          defaultValue: []
+        },
+        isInverses: {
+          type: new GraphQLList(GraphQLBoolean),
+          defaultValue: []
+        },
       },
       resolve:({id}, args)=> new Promise(function(resolve, reject){
         nextSession().take(1).timeout(3000, new Error('Timeout, try later...')).subscribe(session=> {
@@ -786,16 +798,14 @@ const UANodeType = new GraphQLObjectType({
           const bpath= [{
             startingNode: id,
             relativePath: { 
-              elements: args.paths.map(p=>({
+              elements: args.paths.map((p,i)=>({
                 targetName: {
                   namespaceIndex: p.split(':')[1] || 0,
                   name: p.split(':')[0]
                 },
-                //"referenceTypeId": undefined,
-                isInverse: false,
-                includeSubtypes: true,
-
-
+                referenceTypeId: args.types[i],
+                isInverse: !!args.isInverses[i],
+                includeSubtypes: true //!!args.subTypes[i],
               }))
             }
           }];
