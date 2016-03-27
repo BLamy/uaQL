@@ -62,6 +62,7 @@ const QualifiedNameType = new GraphQLObjectType({
   }
 });
 
+//const QualifiedNameArrayType = new GraphQLList(QualifiedNameType);
 
 const LocalizedTextType = new GraphQLObjectType({
   name: 'LocalizedText',
@@ -147,8 +148,10 @@ const resolveUaDataType = (value, info) => {
       case 'DateTime': return UaDateArray;
       case 'Guid': return UaStringArray;
       case 'ByteString': return ByteStringTypedArrayValueType;
+
       //will be more to it than this ?? extension point?
       case 'ExtensionObject': return MethodParameterTypedArrayValueType;
+     case 'QualifiedName': return UaQualifiedNameArray;
     }
   } else {
     switch(value.dataType.toString()){
@@ -167,6 +170,7 @@ const resolveUaDataType = (value, info) => {
       case 'DateTime': return UaDate;
       case 'Guid': return UaString;
       case 'ByteString': return ByteStringTypedValueType;
+      case 'QualifiedName': return UaQualifiedName;
     }
   }
 };
@@ -322,7 +326,9 @@ const typedValue = new GraphQLUnionType({
     DateTimeTypedArrayValueType,
     GuidTypedArrayValueType,
     ByteStringTypedArrayValueType,
-    MethodParameterTypedArrayValueType
+    MethodParameterTypedArrayValueType,
+    QualifiedNameType,
+//    QualifiedNameArrayType
   ],
   resolveType(value){
     if(value.arrayType && value.dataType) {
@@ -345,6 +351,7 @@ const typedValue = new GraphQLUnionType({
             case 'ByteString': return ByteStringTypedArrayValueType;
             //will be more to it than this ?? extension point?
             case 'ExtensionObject': return MethodParameterTypedArrayValueType;
+  //          case 'QualifiedName': return QualifiedNameArrayType;
           }
       }
       else {
@@ -364,6 +371,7 @@ const typedValue = new GraphQLUnionType({
             case 'DateTime': return DateTimeTypedValueType;
             case 'Guid': return GuidTypedValueType;
             case 'ByteString': return ByteStringTypedValueType;
+            case 'QualifiedName': return QualifiedNameType;
           }
         }
       }
@@ -706,6 +714,8 @@ var GraphQLLong = new GraphQLScalarType({
 const UaLong = genericValueType(GraphQLLong, 'UaLong', 'Scalar', ['UInt32']);
 const UaLongArray = genericValueType(new GraphQLList(GraphQLLong), 'UaLongArray', 'Array', ['UInt32'], 'Long array.');
 
+const UaQualifiedName = genericValueType(QualifiedNameType, 'UaQualifiedName', 'Scalar', ['QualifiedName']);
+const UaQualifiedNameArray = genericValueType(new GraphQLList(QualifiedNameType), 'UaQualifiedNameArray', 'Array', ['QualifiedName'], 'String array.');
 
 const UaString = genericValueType(GraphQLString, 'UaString', 'Scalar', ['String', 'Guid']);
 const UaStringArray = genericValueType(new GraphQLList(GraphQLString), 'UaStringArray', 'Array', ['String', 'Guid'], 'String array.');
@@ -731,12 +741,14 @@ const TestUnion = new GraphQLUnionType({
     UaDate,
     UaBoolean,
     UaString,
+    UaQualifiedName,
     UaLongArray,
     UaFloatArray,
     UaIntArray,
     UaDateArray,
     UaBooleanArray,
-    UaStringArray
+    UaStringArray,
+    UaQualifiedNameArray
   ],
   resolveType: resolveUaDataType
 });

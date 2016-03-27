@@ -47,6 +47,12 @@ const DataValue = compose(
                 ... on UaString {
                   value
                 }
+                 ... on UaQualifiedName {
+                  value {
+                    name
+                  }
+                }
+               
                 ... on UaLongArray {
                   value
                 }
