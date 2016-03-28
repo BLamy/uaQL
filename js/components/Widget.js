@@ -39,6 +39,11 @@ const Widget = compose(
               ${Pipe.getFragment('viewer')}
              
             }
+            pipe002: browsePath(paths:["PipeX002:4"]) {
+              id
+              ${Pipe.getFragment('viewer')}
+             
+            }
           }
         `
       }
@@ -48,12 +53,14 @@ const Widget = compose(
 )(({widgetviewer, root})=>
   <div>
     <h1>
-      {widgetviewer.pipe001 ? widgetviewer.pipe001.id : 'nah'}
       {widgetviewer.displayName.text}
-    }
     </h1>
     {widgetviewer.pipe001 
-      ? <Pipe viewer={widgetviewer.pipe001}/>
+      ? <Pipe deviceId="001" viewer={widgetviewer.pipe001}/>
+      : null 
+    }
+    {widgetviewer.pipe002 
+      ? <Pipe deviceId="002" viewer={widgetviewer.pipe002}/>
       : null 
     }
     
