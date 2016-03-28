@@ -8,26 +8,28 @@ import {createContainer} from 'recompose-relay';
 import {compose, doOnReceiveProps} from 'recompose';
 import Component from './Component';
 
-const Components = compose(
+const Components = (MyComponent) => compose(
 
   createContainer(
     {
       fragments: {
         viewer: () => Relay.QL`
           fragment on UANode {
-              components: references(first:1000 referenceTypeId: "ns=0;i=47") {
-                edges {
-                  node {
+            ${MyComponent.getFragment('viewer')}
+            components: references(first:1000 referenceTypeId: "ns=0;i=47") {
+              edges {
+                node {
+                  id
+                  displayName {
+                    text
+                  }
+                  uaNode {
                     id
-                    displayName {
-                      text
-                    }
-                    uaNode {
-                      ${Component.getFragment('viewer')}
-                    }
+                    ${MyComponent.getFragment('viewer')}
                   }
                 }
               }
+            }
           }
         `
       }
@@ -36,11 +38,12 @@ const Components = compose(
 )(({viewer, root})=>
   <div> 
     <ul>
+      <MyComponent viewer={viewer}/>
       {viewer.components.edges.map(n=> 
-        <li key={n.node.id}> mmm
+        <li key={n.node.id}>
           {n.node.uaNode
-            ? <Component viewer={n.node.uaNode}/>
-            : undefined
+            ? <MyComponent viewer={n.node.uaNode}/>
+            : 'nothing'
           }
         </li>
       )}

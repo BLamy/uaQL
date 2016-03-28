@@ -34,15 +34,19 @@ const Widget = compose(
             displayName {
               text
             }
-            pipe001: browsePath(paths:["PipeX001:4"]) {
-              id
-              ${Pipe.getFragment('viewer')}
-             
-            }
-            pipe002: browsePath(paths:["PipeX002:4"]) {
-              id
-              ${Pipe.getFragment('viewer')}
-             
+            components: references(first:1000 referenceTypeId: "ns=0;i=47") {
+              edges {
+                node {
+                  id
+                  displayName {
+                    text
+                  }
+                  uaNode {
+                    id
+                    ${Pipe.getFragment('viewer')}
+                  }
+                }
+              }
             }
           }
         `
@@ -55,15 +59,9 @@ const Widget = compose(
     <h1>
       {widgetviewer.displayName.text}
     </h1>
-    {widgetviewer.pipe001 
-      ? <Pipe deviceId="001" viewer={widgetviewer.pipe001}/>
-      : null 
-    }
-    {widgetviewer.pipe002 
-      ? <Pipe deviceId="002" viewer={widgetviewer.pipe002}/>
-      : null 
-    }
-    
+    {widgetviewer.components.edges
+      .map(c=>c.node.uaNode)
+      .map(node=> <Pipe key={node.id} viewer={node}/>)}
   
     <svg>
       <path fill="#999999" d="M50.007,0c-19.92,0-36.068,3.364-36.068,7.514v54.102c0,0.647,0.393,1.276,1.132,1.875l0.644,0.53V100

@@ -8,8 +8,7 @@ import {createContainer} from 'recompose-relay';
 import {compose, doOnReceiveProps} from 'recompose';
 import DataValue from '../DataValue';
 
-
-const FlowTransmitterType = compose(
+const LevelIndicatorType = compose(
 
   createContainer(
     {
@@ -29,7 +28,7 @@ const FlowTransmitterType = compose(
   )
 )(({viewer, root})=>
   <div> {viewer.output 
-    ? <div> FTX!!
+    ? <div> LI!!
         {viewer.output.displayName.text}
         <DataValue viewer={viewer.output}/>
       </div>
@@ -39,4 +38,4 @@ const FlowTransmitterType = compose(
 );
 
 
-export default FlowTransmitterType;
+export default LevelIndicatorType;
