@@ -11,6 +11,7 @@ import DataValue from './DataValue';
 
 
 
+import Components from './Components';
 
 
 
@@ -39,16 +40,7 @@ const Pipe = compose(
                     ${DataValue.getFragment('viewer')}
                   }
                 }
-              components: references(first:1000 referenceTypeId: "ns=0;i=47") {
-                edges {
-                  node {
-                    id
-                    displayName {
-                      text
-                    }
-                  }
-                }
-              }
+              ${Components.getFragment('viewer')}
           }
         `
       }
@@ -67,14 +59,8 @@ const Pipe = compose(
         {viewer.ftx001.output.displayName.text}
         <DataValue viewer={viewer.ftx001.output}/>
       </div>
-    : undefined
-  }
-  
-  <ul>
-     {viewer.components.edges.map(n=> 
-        <li key={n.node.id}>{n.node.displayName.text}</li>
-      )}
-    </ul>
+    : undefined}
+    <Components viewer={viewer}/>
   </div>
 );
 

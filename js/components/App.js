@@ -167,10 +167,9 @@ class App extends React.Component {
             <li key={arg.index}>{arg.dataType} {arg.value.value}</li>
           )}
         </ul>
-        {JSON.stringify(this.context, null, '\t')}
-        <Link to={`${this.props.params.nodeId}/mimic`}>mimic!</Link>  
-        {this.props.children}
         <Links {...this.props} path={this.props.params.nodeId}/>
+        {this.props.children}
+              
       </div>
     );
   }

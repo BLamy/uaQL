@@ -62,7 +62,6 @@ const Links = compose(
           <li key={node.id}>
             <Link to = {`${path}/mimic`}>
               {node.uaNode.displayName.text}
-              {root.serverNamespaces.dataValue.value[node.browseName.namespaceIndex]}
             </Link>
           </li>
         )

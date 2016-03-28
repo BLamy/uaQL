@@ -760,6 +760,10 @@ const UANodeType = new GraphQLObjectType({
   description: 'An OPCUA node',
   fields: ()=>({
     id: globalIdField('UANode'),
+    self: {
+      type: UANodeType,
+      resolve: ({id})=> getUANode(id)
+    },
     nodeId: getProperty(ExpandedNodeIdType, opcua.AttributeIds.NodeId, 'Node id.'), //19,
     nodeClass: getProperty(NodeClassEnumType, opcua.AttributeIds.NodeClass, 'Node class.'), //19,
     browseName: getProperty(QualifiedNameType, opcua.AttributeIds.BrowseName, 'Browse name.'), //3
