@@ -152,6 +152,7 @@ const resolveUaDataType = (value, info) => {
       //will be more to it than this ?? extension point?
       case 'ExtensionObject': return MethodParameterTypedArrayValueType;
      case 'QualifiedName': return UaQualifiedNameArray;
+     case 'LocalizedText': return UaLocalizedTextArray;
     }
   } else {
     switch(value.dataType.toString()){
@@ -171,6 +172,8 @@ const resolveUaDataType = (value, info) => {
       case 'Guid': return UaString;
       case 'ByteString': return ByteStringTypedValueType;
       case 'QualifiedName': return UaQualifiedName;
+      case 'LocalizedText': return UaLocalizedText;
+
     }
   }
 };
@@ -717,6 +720,9 @@ const UaLongArray = genericValueType(new GraphQLList(GraphQLLong), 'UaLongArray'
 const UaQualifiedName = genericValueType(QualifiedNameType, 'UaQualifiedName', 'Scalar', ['QualifiedName']);
 const UaQualifiedNameArray = genericValueType(new GraphQLList(QualifiedNameType), 'UaQualifiedNameArray', 'Array', ['QualifiedName'], 'String array.');
 
+const UaLocalizedText = genericValueType(LocalizedTextType, 'UaLocalizedText', 'Scalar', ['LocalizedText']);
+const UaLocalizedTextArray = genericValueType(new GraphQLList(LocalizedTextType), 'UaLocalizedTextArray', 'Array', ['LocalizedText'], 'String array.');
+
 const UaString = genericValueType(GraphQLString, 'UaString', 'Scalar', ['String', 'Guid']);
 const UaStringArray = genericValueType(new GraphQLList(GraphQLString), 'UaStringArray', 'Array', ['String', 'Guid'], 'String array.');
 
@@ -742,13 +748,15 @@ const TestUnion = new GraphQLUnionType({
     UaBoolean,
     UaString,
     UaQualifiedName,
+    UaLocalizedText,
     UaLongArray,
     UaFloatArray,
     UaIntArray,
     UaDateArray,
     UaBooleanArray,
     UaStringArray,
-    UaQualifiedNameArray
+    UaQualifiedNameArray,
+    UaLocalizedTextArray
   ],
   resolveType: resolveUaDataType
 });

@@ -52,6 +52,11 @@ const DataValue = compose(
                     name
                   }
                 }
+                ... on UaLocalizedText {
+                  value {
+                    text
+                  }
+                }
                
                 ... on UaLongArray {
                   value
@@ -83,7 +88,7 @@ const DataValue = compose(
       const viewer = props$.map(p=>p.viewer)
       return {
         viewer,
-        counter:viewer.map(v=>{
+        value:viewer.map(v=>{
             if(v.dataValue) {
               return socketObservable(`ns=${v.nodeId.namespace};i=${v.nodeId.value}`);
             } else {
@@ -93,9 +98,8 @@ const DataValue = compose(
           .switch()
       };
     }
-  )
-  )(({viewer, counter})=>
-    <span>{JSON.stringify(counter, null, '\t')} 
+  ))(({viewer, value})=>
+    <span>{JSON.stringify(value, null, '\t')} 
         {viewer.dataValue
           ? <div title='dataValue'>
               {viewer.dataValue.arrayType==='Array'

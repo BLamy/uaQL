@@ -18,6 +18,8 @@ import DataValue from './DataValue';
 import DataType from './DataType';
 import {compose} from 'recompose';
 import {createContainer} from 'recompose-relay';
+import Simple from './Simple'; 
+
 
 var value = 0;
 
@@ -133,6 +135,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
+        <Simple/>
         {this.props.root.browsePath.dataValue.value.map(v=>
           <li key={v}>
             {v}

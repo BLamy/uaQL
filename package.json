@@ -41,11 +41,13 @@
     "react-relay": "0.7.3",
     "react-router": "^2.0.1",
     "react-router-relay": "^0.9.4",
+    "react-three-renderer": "^0.1.2",
     "recompose": "^0.15.1",
     "recompose-relay": "^0.1.2",
     "rx": "^4.1.0",
     "rx-recompose": "^0.3.0",
     "socket.io": "^1.4.5",
+    "three": "^0.75.0",
     "util-extend": "^1.0.3",
     "webpack": "1.12.13",
     "webpack-dev-server": "1.14.1"

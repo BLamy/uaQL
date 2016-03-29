@@ -13,30 +13,30 @@ import FlowMeter from '../svg/FlowMeter';
 import socketObservable from '../../data/SocketObservable'
 
 
-const FlowTransmitterType = compose(
+const SimulationType = compose(
 
   createContainer(
     {
       fragments: {
         viewer: () => Relay.QL`
           fragment on UANode {
-            output: browsePath(paths: ["Output:4"], types:["ns=0;i=47"]) {
-              displayName {
-                text
-              }
+            currentState: browsePath(paths: ["CurrentState:0"], types:["ns=0;i=47"]) {
               nodeId {
                 namespace,
                 value
               }
               dataValue {
+                __typename
                 ... on IUaDataValue {
-                  ... on UaFloat {
-                    value
+                  ... on UaLocalizedText {
+                    value {
+                      text
+                    }
                   }
                 }
               }
               
-              ${DataValue.getFragment('viewer')}
+              
             }
           }
         `
@@ -48,8 +48,8 @@ const FlowTransmitterType = compose(
       return {
         viewer,
         value:viewer.map(v=>{
-            if(v.output) {
-              return socketObservable(`ns=${v.output.nodeId.namespace};i=${v.output.nodeId.value}`);
+            if(v.currentState) {
+              return socketObservable(`ns=${v.currentState.nodeId.namespace};i=${v.currentState.nodeId.value}`);
             } else {
               return Observable.return();
             }
@@ -61,10 +61,9 @@ const FlowTransmitterType = compose(
 
 
 )(({viewer, value})=>
-  <div>  OHHHHHH{viewer.output 
-    ? <div> FXXXXX-------- <svg><FlowMeter value={value ? value.value : undefined}/></svg>
-        {viewer.output.displayName.text}
-        <DataValue viewer={viewer.output}/>
+  <div> {viewer.currentState 
+    ? <div>
+        {value && value.value ? value.value.text : null}
       </div>
     : undefined}
   
@@ -72,4 +71,4 @@ const FlowTransmitterType = compose(
 );
 
 
-export default FlowTransmitterType;
+export default SimulationType;

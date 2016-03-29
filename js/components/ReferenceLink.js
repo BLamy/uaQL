@@ -18,6 +18,10 @@ const ReferenceLink = compose(
               id
               ${NodeLink.getFragment('viewer')}
             }
+            browseName {
+              name
+              namespaceIndex
+            }
             referenceTypeId {
               uaNode {
                 ${NodeLink.getFragment('viewer')}
@@ -31,6 +35,7 @@ const ReferenceLink = compose(
 )(({viewer})=>
   <span>
     <NodeLink viewer= {viewer.referenceTypeId.uaNode}/>
+    + {viewer.browseName.namespaceIndex} : {viewer.browseName.name}+
     -
     <NodeLink viewer= {viewer.uaNode}/>
   </span>

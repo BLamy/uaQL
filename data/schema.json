@@ -951,6 +951,11 @@
             },
             {
               "kind": "OBJECT",
+              "name": "UaLocalizedText",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
               "name": "UaLongArray",
               "ofType": null
             },
@@ -982,6 +987,11 @@
             {
               "kind": "OBJECT",
               "name": "UaQualifiedNameArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaLocalizedTextArray",
               "ofType": null
             }
           ]
@@ -1091,6 +1101,16 @@
             {
               "kind": "OBJECT",
               "name": "UaQualifiedNameArray",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaLocalizedText",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UaLocalizedTextArray",
               "ofType": null
             },
             {
@@ -1304,6 +1324,116 @@
                 "ofType": {
                   "kind": "OBJECT",
                   "name": "QualifiedName",
+                  "ofType": null
+                }
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "UaLocalizedText",
+          "description": null,
+          "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "value",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "LocalizedText",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "IUaDataValue",
+              "ofType": null
+            }
+          ],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "UaLocalizedTextArray",
+          "description": "String array.",
+          "fields": [
+            {
+              "name": "dataType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "arrayType",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "value",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "LocalizedText",
                   "ofType": null
                 }
               },
