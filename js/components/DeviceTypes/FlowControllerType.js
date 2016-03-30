@@ -7,6 +7,8 @@ import Relay from 'react-relay';
 import {createContainer} from 'recompose-relay';
 import {compose, doOnReceiveProps} from 'recompose';
 import DataValue from '../DataValue';
+import observeMultiProps from '../util/observeMultiProps';
+import FlowController from '../svg/FlowController';
 
 
 const FlowControllerType = compose(
@@ -20,11 +22,19 @@ const FlowControllerType = compose(
               displayName {
                 text
               }
+              nodeId {
+                namespace,
+                value
+              }
               ${DataValue.getFragment('viewer')}
             }
             setPoint: browsePath(paths: ["SetPoint:4"], types:["ns=0;i=46"]) {
               displayName {
                 text
+              }
+              nodeId {
+                namespace,
+                value
               }
               ${DataValue.getFragment('viewer')}
             }
@@ -32,22 +42,30 @@ const FlowControllerType = compose(
               displayName {
                 text
               }
+              nodeId {
+                namespace,
+                value
+              }
               ${DataValue.getFragment('viewer')}
             }
           }
         `
       }
     }
-  )
-)(({viewer, root})=>
-  <div> {viewer.measurement 
-    ? <div> FC!!
-        <DataValue viewer={viewer.measurement}/>
-        <DataValue viewer={viewer.setPoint}/>
-        <DataValue viewer={viewer.controlOut}/>
-      </div>
-    : undefined}
-  
+  ),
+  observeMultiProps(['measurement', 'setPoint', 'controlOut'])
+
+)(({viewer, measurement, setPoint, controlOut})=>
+  <div>
+    {measurement ? measurement.value : 'no measurement'}
+    <DataValue viewer={viewer.measurement}/>
+    <DataValue viewer={viewer.setPoint}/>
+    <DataValue viewer={viewer.controlOut}/>
+    <svg height={200}>
+      <g transform="scale(3)">
+        <FlowController measurement={measurement ? measurement.value : undefined} setPoint={setPoint ? setPoint.value : undefined} controlOut={controlOut ? controlOut.value : undefined}/>
+      </g>
+    </svg>
   </div>
 );
 

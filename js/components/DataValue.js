@@ -97,8 +97,10 @@ const DataValue = compose(
           })
           .switch()
       };
-    }
-  ))(({viewer, value})=>
+    }),
+    
+
+    )(({viewer, value})=>
     <span>{JSON.stringify(value, null, '\t')} 
         {viewer.dataValue
           ? <div title='dataValue'>

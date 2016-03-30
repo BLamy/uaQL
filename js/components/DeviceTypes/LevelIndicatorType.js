@@ -7,8 +7,11 @@ import Relay from 'react-relay';
 import {createContainer} from 'recompose-relay';
 import {compose, doOnReceiveProps} from 'recompose';
 import DataValue from '../DataValue';
+import observeMultiProps from '../util/observeMultiProps';
+import Level from '../svg/Level';
 
-const LevelIndicatorType = compose(
+
+const composer = compose(
 
   createContainer(
     {
@@ -19,23 +22,39 @@ const LevelIndicatorType = compose(
               displayName {
                 text
               }
+              nodeId {
+                namespace,
+                value
+              }
               ${DataValue.getFragment('viewer')}
             }
           }
         `
       }
     }
-  )
-)(({viewer, root})=>
-  <div> {viewer.output 
-    ? <div> LI!!
-        {viewer.output.displayName.text}
-        <DataValue viewer={viewer.output}/>
-      </div>
-    : undefined}
-  
-  </div>
+  ),
+  observeMultiProps(['output'])
 );
 
 
-export default LevelIndicatorType;
+const LevelIndicatorType = composer
+  (({viewer, output})=>
+    <div> {viewer.output 
+      ? <div> 
+          {viewer.output.displayName.text}
+          <svg height={200}>
+            <g transform="scale(1)">
+              <Level value={output ? output.value : null}/>
+            </g>
+          </svg>
+        </div>
+      : undefined}
+    </div>
+  );
+
+const Svg = composer
+  (({output})=>
+    <Level value={output ? output.value : null}/>
+  );
+
+export {LevelIndicatorType as default, Svg};

@@ -73,7 +73,7 @@ const Widget = compose(
     
 
 
-    <svg viewBox="0 0 700 600" >
+    <svg viewBox="0 0 700 600"  width='600px'>
         <g stroke="#CCCCCC">
           <Tank/>
         </g>

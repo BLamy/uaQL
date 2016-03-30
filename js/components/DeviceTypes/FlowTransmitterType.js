@@ -6,15 +6,11 @@ import React from 'react';
 import Relay from 'react-relay';
 import {createContainer} from 'recompose-relay';
 import {compose, doOnReceiveProps} from 'recompose';
-import {Observable} from 'rx';
-import {observeProps} from 'rx-recompose';
 import DataValue from '../DataValue';
 import FlowMeter from '../svg/FlowMeter';
-import socketObservable from '../../data/SocketObservable'
+import observeMultiProps from '../util/observeMultiProps';
 
-
-const FlowTransmitterType = compose(
-
+const composer = compose(
   createContainer(
     {
       fragments: {
@@ -43,33 +39,22 @@ const FlowTransmitterType = compose(
       }
     }
   ),
-  observeProps(props$=>{
-      const viewer = props$.map(p=>p.viewer)
-      return {
-        viewer,
-        value:viewer.map(v=>{
-            if(v.output) {
-              return socketObservable(`ns=${v.output.nodeId.namespace};i=${v.output.nodeId.value}`);
-            } else {
-              return Observable.return();
-            }
-          })
-          .switch()
-      };
-    }
-  )
+  observeMultiProps(['output'])
+)
 
-
-)(({viewer, value})=>
-  <div>  OHHHHHH{viewer.output 
-    ? <div> FXXXXX-------- <svg><FlowMeter value={value ? value.value : undefined}/></svg>
+const FlowTransmitterType = composer(({viewer, output})=> {
+  return <div>{viewer.output 
+    ? <div>
+        <svg>
+          <FlowMeter value={output ? output.value : undefined}/>
+        </svg>
         {viewer.output.displayName.text}
         <DataValue viewer={viewer.output}/>
       </div>
-    : undefined}
-  
+    : "no output"}
   </div>
-);
+});
 
+const Svg = composer(({output})=> <FlowMeter value={output ? output.value : undefined}/>);
 
-export default FlowTransmitterType;
+export { FlowTransmitterType as default, Svg};
