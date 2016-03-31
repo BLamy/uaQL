@@ -39,18 +39,12 @@ const composer = compose(
 
 const LevelIndicatorType = composer
   (({viewer, output})=>
-    <div> {viewer.output 
-      ? <div> 
-          {viewer.output.displayName.text}
           <svg height={200}>
             <g transform="scale(1)">
               <Level value={output ? output.value : null}/>
             </g>
           </svg>
-        </div>
-      : undefined}
-    </div>
-  );
+      );
 
 const Svg = composer
   (({output})=>

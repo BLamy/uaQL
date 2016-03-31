@@ -6,8 +6,8 @@ import React from 'react';
 import Relay from 'react-relay';
 import {createContainer} from 'recompose-relay';
 import {compose, doOnReceiveProps} from 'recompose';
-import FlowTransmitter from './DeviceTypes/FlowTransmitterType';
-import FlowController from './DeviceTypes/FlowControllerType';
+import {Svg as FlowTransmitter}  from './DeviceTypes/FlowTransmitterType';
+import {Svg as FlowController} from './DeviceTypes/FlowControllerType';
 import LevelIndicator from './DeviceTypes/LevelIndicatorType';
 import Valve from './DeviceTypes/ValveType';
 import Method from './DeviceTypes/MethodType';
@@ -79,11 +79,15 @@ const Component = compose(
   <div>
 
     {viewer.ftx
-      ? <FlowTransmitter viewer={viewer.ftx}/>
+      ? <svg>
+          <FlowTransmitter viewer={viewer.ftx}/>
+        </svg>
       : undefined 
     }
     {viewer.fc
-      ? <FlowController viewer={viewer.fc}/>
+      ? <svg>
+          <FlowController viewer={viewer.fc}/>
+        </svg>
       : undefined 
     }
     {viewer.valve

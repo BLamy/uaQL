@@ -42,18 +42,10 @@ const composer = compose(
   observeMultiProps(['output'])
 )
 
-const FlowTransmitterType = composer(({viewer, output})=> {
-  return <div>{viewer.output 
-    ? <div>
-        <svg>
-          <FlowMeter value={output ? output.value : undefined}/>
-        </svg>
-        {viewer.output.displayName.text}
-        <DataValue viewer={viewer.output}/>
-      </div>
-    : "no output"}
-  </div>
-});
+const FlowTransmitterType = composer(({viewer, output})=> 
+<svg>
+  <FlowMeter value={output ? output.value : undefined}/>
+</svg>);
 
 const Svg = composer(({output})=> <FlowMeter value={output ? output.value : undefined}/>);
 

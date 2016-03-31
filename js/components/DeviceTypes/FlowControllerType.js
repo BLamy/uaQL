@@ -11,8 +11,7 @@ import observeMultiProps from '../util/observeMultiProps';
 import FlowController from '../svg/FlowController';
 
 
-const FlowControllerType = compose(
-
+const composer = compose(
   createContainer(
     {
       fragments: {
@@ -55,19 +54,24 @@ const FlowControllerType = compose(
   ),
   observeMultiProps(['measurement', 'setPoint', 'controlOut'])
 
-)(({viewer, measurement, setPoint, controlOut})=>
-  <div>
-    {measurement ? measurement.value : 'no measurement'}
-    <DataValue viewer={viewer.measurement}/>
-    <DataValue viewer={viewer.setPoint}/>
-    <DataValue viewer={viewer.controlOut}/>
-    <svg height={200}>
-      <g transform="scale(3)">
-        <FlowController measurement={measurement ? measurement.value : undefined} setPoint={setPoint ? setPoint.value : undefined} controlOut={controlOut ? controlOut.value : undefined}/>
-      </g>
-    </svg>
-  </div>
+);
+
+const FlowControllerType = composer(({viewer, measurement, setPoint, controlOut})=>
+  <svg height={200}>
+    <g transform="scale(3)">
+      <FlowController measurement={measurement ? measurement.value : undefined} setPoint={setPoint ? setPoint.value : undefined} controlOut={controlOut ? controlOut.value : undefined}/>
+    </g>
+  </svg>
 );
 
 
-export default FlowControllerType;
+const Svg = composer(({measurement, setPoint, controlOut})=>
+  <FlowController 
+    measurement={measurement ? measurement.value : undefined} 
+    setPoint={setPoint ? setPoint.value : undefined} 
+    controlOut={controlOut ? controlOut.value : undefined}
+  />);
+
+
+
+export {FlowControllerType as default, Svg};
