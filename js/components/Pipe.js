@@ -39,7 +39,9 @@ const Pipe = compose(
     <div>
       {viewer.displayName.text}
     </div>
-    <MyComponents viewer={viewer}/>
+      <svg height={200} style={{background: 'pink'}}>
+        <MyComponents viewer={viewer}/>
+      </svg>
   </div>
 );
 

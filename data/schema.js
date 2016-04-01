@@ -131,6 +131,8 @@ const ExpandedNodeIdType = new GraphQLObjectType({
 
 
 const resolveUaDataType = (value, info) => {
+  if(!value || !value.arrayType)
+    return UaNull;
   if (value.arrayType.toString() === 'Array') {
     switch(value.dataType.toString()){
       case 'Boolean': return UaBooleanArray;
@@ -186,7 +188,11 @@ const IUaDataValue = new GraphQLInterfaceType({
     },
     arrayType : {
       type: GraphQLString
+    },
+    statusCode: {
+      type: StatusCodeType
     }
+
   },
   description:'Data type and array type for data values',
   resolveType: resolveUaDataType
@@ -206,9 +212,12 @@ const genericValueType = (type, name, arrayType, [dataTypes], description)=> new
     },
     value: {
       type: type
+    },
+    statusCode: {
+      type: StatusCodeType
     }
   },
-  istypeof: value => value.arrayType=== arrayType && dataTypes.indexOf(value.dataType) > -1
+  istypeof: value => (!dataTypes.length && !value.dataType)  ||  (value.arrayType=== arrayType && dataTypes.indexOf(value.dataType) > -1)
 });
 
 const genericResultType = (type, name)=> new GraphQLObjectType({
@@ -641,27 +650,34 @@ const getWholeProperty = (type, attributeId, description) => ({
         attributeId: attributeId
       }
     ];
-    nextSession().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=>
-      session.read(nodesToRead, function(err, _nodesToRead, results) {
+    nextSession().take(1).timeout(3000, new Error('Timeout, try later.')).subscribe(session=> {
+      return session.read(nodesToRead, function(err, _nodesToRead, results) {
         if (!err) {
           if(!results[0].statusCode.value) {
-            if(results[0].value.arrayType.toString()=== 'Array')
-            {
-              let arr=[];
-              for(let x of Object.keys(results[0].value.value))
+            if(results[0].value) {
+              if(results[0].value.arrayType.toString()=== 'Array')
               {
-                arr[Number(x)]= results[0].value.value[x];
+                let arr=[];
+                for(let x of Object.keys(results[0].value.value))
+                {
+                  arr[Number(x)]= results[0].value.value[x];
+                }
+                results[0].value.value = arr;
               }
-              results[0].value.value = arr;
+              results[0].value.statusCode= results[0].statusCode 
+              resolve(results[0].value);
+            } else {
+              console.log('no value', description,  attributeId,  JSON.stringify(results, null, '\t'), JSON.stringify(_nodesToRead, null, '\t'));
+              resolve({statusCode:results[0].statusCode});
             }
-            resolve(results[0].value);
           } else {
-            reject(results[0].statusCode);
+            resolve({statusCode:results[0].statusCode});
           }
         } else {
           reject(handleError(session, err));
         }
-      }),
+      })
+    },
       reject
     );
   })
@@ -714,6 +730,9 @@ var GraphQLLong = new GraphQLScalarType({
   }
 });
 
+const UaNull = genericValueType(GraphQLString, 'UaNull', 'Scalar', []);
+
+
 const UaLong = genericValueType(GraphQLLong, 'UaLong', 'Scalar', ['UInt32']);
 const UaLongArray = genericValueType(new GraphQLList(GraphQLLong), 'UaLongArray', 'Array', ['UInt32'], 'Long array.');
 
@@ -737,10 +756,11 @@ const UaIntArray = genericValueType(new GraphQLList(GraphQLInt), 'UaIntArray', '
 const UaDate = genericValueType(GraphQLDate, 'UaDate', 'Scalar', ['DateTime']);
 const UaDateArray = genericValueType(new GraphQLList(GraphQLDate), 'UaDateArray', 'Array', ['DateTime'], 'Date array.');
 const TestUnion = new GraphQLUnionType({
-  name: 'TestUnion',
+  name: 'UaTypes',
   description: 'type of data value',
   interfaces: [IUaDataValue],
   types: [
+    UaNull,
     UaLong,
     UaFloat,
     UaInt,
@@ -784,7 +804,7 @@ const UANodeType = new GraphQLObjectType({
     inverseName: getProperty(LocalizedTextType, opcua.AttributeIds.InverseName), //5,
     containsNoLoops: getProperty(GraphQLBoolean, opcua.AttributeIds.ContainsNoLoops), //11,
     eventNotifier: getProperty(GraphQLInt, opcua.AttributeIds.EventNotifier), //12,
-    dataValue: getWholeProperty(TestUnion, opcua.AttributeIds.DataValue), //13,
+    dataValue: getWholeProperty(TestUnion, opcua.AttributeIds.Value, 'data value!!!'), //13,
     dataType: getProperty(ExpandedNodeIdType, opcua.AttributeIds.DataType), //14,
     valueRank: getProperty(GraphQLInt, opcua.AttributeIds.ValueRank), //15,
     arrayDimensions: getProperty(new GraphQLList(GraphQLInt), opcua.AttributeIds.ArrayDimensions), //16,  IntListResultType

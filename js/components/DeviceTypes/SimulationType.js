@@ -13,7 +13,7 @@ import FlowMeter from '../svg/FlowMeter';
 import socketObservable from '../../data/SocketObservable'
 
 
-const SimulationType = compose(
+const composer = compose(
 
   createContainer(
     {
@@ -60,15 +60,19 @@ const SimulationType = compose(
   )
 
 
-)(({viewer, value})=>
-  <div> {viewer.currentState 
+);
+
+
+const SimulationType = composer(({viewer, value})=>
+  <div> 
+    {viewer.currentState 
     ? <div>
         {value && value.value ? value.value.text : null}
       </div>
     : undefined}
-  
   </div>
 );
 
+const Svg = composer(()=><g/>);
 
-export default SimulationType;
+export {SimulationType as default, Svg};

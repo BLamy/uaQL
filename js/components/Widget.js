@@ -18,6 +18,11 @@ import Temperature from './svg/Temperature';
 
 import Level from './svg/Level';
 
+import Component from './Component';
+import Components from './Components';
+const MyComponents = Components(Component);
+
+
 
 
 
@@ -42,20 +47,7 @@ const Widget = compose(
             displayName {
               text
             }
-            components: references(first:1000 referenceTypeId: "ns=0;i=47") {
-              edges {
-                node {
-                  id
-                  displayName {
-                    text
-                  }
-                  uaNode {
-                    id
-                    ${Pipe.getFragment('viewer')}
-                  }
-                }
-              }
-            }
+            ${MyComponents.getFragment('viewer')}
           }
         `
       }
@@ -67,10 +59,11 @@ const Widget = compose(
     <h1>
       {widgetviewer.displayName.text}
     </h1>
-    {widgetviewer.components.edges
-      .map(c=>c.node.uaNode)
-      .map(node=> <Pipe key={node.id} viewer={node}/>)}
-    
+    <svg height={200} style={{background: 'pink'}}>
+      <MyComponents viewer={widgetviewer}/>
+    </svg>
+
+
 
 
     <svg viewBox="0 0 700 600"  width='600px'>

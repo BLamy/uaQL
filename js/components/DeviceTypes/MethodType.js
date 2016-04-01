@@ -9,7 +9,7 @@ import {compose, doOnReceiveProps} from 'recompose';
 import DataValue from '../DataValue';
 
 
-const MethodType = compose(
+const composer = compose(
 
   createContainer(
     {
@@ -25,11 +25,14 @@ const MethodType = compose(
       }
     }
   )
-)(({viewer, root})=>
-  <div> METHOD!! {viewer.displayName.text}
-  
-  </div>
 );
 
+const MethodType = composer
+  (({viewer})=>
+    <div> METHOD!! {viewer.displayName.text}
+    
+    </div>
+  );
+const Svg = composer(()=><g/>);
 
-export default MethodType;
+export {MethodType as default, Svg};

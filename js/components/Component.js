@@ -8,10 +8,11 @@ import {createContainer} from 'recompose-relay';
 import {compose, doOnReceiveProps} from 'recompose';
 import {Svg as FlowTransmitter}  from './DeviceTypes/FlowTransmitterType';
 import {Svg as FlowController} from './DeviceTypes/FlowControllerType';
-import LevelIndicator from './DeviceTypes/LevelIndicatorType';
-import Valve from './DeviceTypes/ValveType';
-import Method from './DeviceTypes/MethodType';
-import Simulation from './DeviceTypes/SimulationType';
+import {Svg as LevelController} from './DeviceTypes/LevelControllerType';
+import {Svg as LevelIndicator} from './DeviceTypes/LevelIndicatorType';
+import {Svg as Valve} from './DeviceTypes/ValveType';
+import {Svg as Method} from './DeviceTypes/MethodType';
+import {Svg as Simulation} from './DeviceTypes/SimulationType';
 
 const Component = compose(
 
@@ -22,8 +23,10 @@ const Component = compose(
         'valve': false,
         'li': false,
         'fc': false,
+        'lc': false,
         'method': false,
-        'simulation': false
+        'simulation': false,
+        'components': false
       },
       fragments: {
         viewer: () => Relay.QL`
@@ -34,6 +37,9 @@ const Component = compose(
             }
             fc: self @include(if: $fc)  {
               ${FlowController.getFragment('viewer')}  
+            }
+            lc: self @include(if: $lc)  {
+              ${LevelController.getFragment('viewer')}  
             }
             valve: self @include(if: $valve)  {
               ${Valve.getFragment('viewer')}  
@@ -47,7 +53,38 @@ const Component = compose(
             simulation: self @include(if: $simulation)  {
               ${Simulation.getFragment('viewer')}  
             }
-            
+            components: self @include(if: $components)  {
+              references(first:1000 referenceTypeId: "ns=0;i=47") {
+                edges {
+                  node {
+                    id
+                    displayName {
+                      text
+                    }
+                    uaNode {
+                      id
+                      ${Component.getFragment('viewer')}
+                    }
+                  }
+                }
+              }
+            }
+            organises: self @include(if: $components)  {
+              references(first:1000 referenceTypeId: "ns=0;i=35") {
+                edges {
+                  node {
+                    id
+                    displayName {
+                      text
+                    }
+                    uaNode {
+                      id
+                      ${Component.getFragment('viewer')}
+                    }
+                  }
+                }
+              }
+            }
             references(first:1000 referenceTypeId:"ns=0;i=40"){
               edges {
                 node {
@@ -71,44 +108,60 @@ const Component = compose(
       'fc': viewer.references.edges[0].node.browseName.name === "FlowControllerType",
       'valve': viewer.references.edges[0].node.browseName.name === "ValveType",
       'li': viewer.references.edges[0].node.browseName.name === "LevelIndicatorType",
+      'lc': viewer.references.edges[0].node.browseName.name === "LevelControllerType",
       'method': viewer.references.edges[0].node.uaNode.nodeClass === "Method",
-      'simulation': viewer.references.edges[0].node.browseName.name === "BoilerStateMachineType" 
+      'simulation': viewer.references.edges[0].node.browseName.name === "BoilerStateMachineType",
+      'components': true
     });
   })
-)(({viewer})=>
-  <div>
+)(({viewer})=> {
+    if(viewer.ftx) { 
+      return <FlowTransmitter viewer={viewer.ftx}/>;
+    }
+        
+    if(viewer.fc) {
+      return <FlowController viewer={viewer.fc}/>; 
+    }
+    if(viewer.valve) {
+      return <Valve viewer={viewer.valve}/>; 
+    }
+    if(viewer.lc) {
+      return <LevelController viewer={viewer.lc}/>; 
+    }
+    if(viewer.li) {
+      return <LevelIndicator viewer={viewer.li}/>
+    }
+    if(viewer.method) {
+      return  <Method viewer={viewer.method}/>;
+    }
+    if(viewer.simulation) {
+      return <Simulation viewer={viewer.simulation}/>; 
+    }
 
-    {viewer.ftx
-      ? <svg>
-          <FlowTransmitter viewer={viewer.ftx}/>
-        </svg>
-      : undefined 
+    if(viewer.components) {
+
+      return <g> 
+        {viewer.components.references.edges.map(n=> 
+          <g key={n.node.id}>
+            {n.node.uaNode
+              ? <Component viewer={n.node.uaNode}/>
+              : null
+            }
+          </g>
+        )}
+        {viewer.organises.references.edges.map(n=> 
+          <g key={n.node.id}>
+            {n.node.uaNode
+              ? <Component viewer={n.node.uaNode}/>
+              : null
+            }
+          </g>
+        )}
+      </g>
     }
-    {viewer.fc
-      ? <svg>
-          <FlowController viewer={viewer.fc}/>
-        </svg>
-      : undefined 
-    }
-    {viewer.valve
-      ? <Valve viewer={viewer.valve}/>
-      : undefined 
-    }
-    {viewer.li
-      ? <LevelIndicator viewer={viewer.li}/>
-      : undefined 
-    }
-    {viewer.method
-      ? <Method viewer={viewer.method}/>
-      : undefined 
-    }
-    {viewer.simulation
-      ? <Simulation viewer={viewer.simulation}/>
-      : undefined 
-    }
-    
-  </div>
-);
+    return <g/>
+
+});
 
 
 export default Component;

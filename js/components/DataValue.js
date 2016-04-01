@@ -29,6 +29,7 @@ const DataValue = compose(
               ... on IUaDataValue {
                 dataType
                 arrayType      
+                
                 ... on UaLong {
                   value
                 }

@@ -4,24 +4,20 @@
 
 import React from 'react';
 import {compose} from 'recompose';
-import Value from './Value';
 
 
-const FlowMeter = compose(
+const Value = compose(
 
   
 
-)(({value})=> 
+)(({value,x,y})=> 
 
 
 
-  <g viewBox="0 0 100 65.277">
-    <path d="M29.167,22.222c-9.722,0-19.444,4.755-29.167,7.614v11.111c9.722-2.858,19.444-7.614,29.167-7.614  c13.889,0,27.778,9.723,41.667,9.723c9.723,0,19.444-4.757,29.167-7.615V24.33c-9.723,2.858-19.444,7.615-29.167,7.615  C56.944,31.944,43.056,22.222,29.167,22.222z"></path>
-    <path d="M29.167,44.444c-9.722,0-19.444,4.755-29.167,7.614V63.17c9.722-2.859,19.444-7.614,29.167-7.614  c13.889,0,27.778,9.722,41.667,9.722c9.723,0,19.444-4.757,29.167-7.614V46.552c-9.723,2.857-19.444,7.614-29.167,7.614  C56.944,54.166,43.056,44.444,29.167,44.444z"></path>
-    <path d="M70.833,9.722C56.944,9.722,43.056,0,29.167,0C19.444,0,9.722,4.755,0,7.614v11.111c9.722-2.859,19.444-7.615,29.167-7.615  c13.889,0,27.778,9.722,41.667,9.722c9.723,0,19.444-4.756,29.167-7.614V2.108C90.277,4.965,80.556,9.722,70.833,9.722z"></path>
-    <Value x={0} y={90} value={value}/>
-   
-  </g>
+    value && !value.statusCode.value 
+      ? <text x={x} y={y} fontSize="20pt">{value.value ? value.value.value: null}</text>
+      : <text x={x} y={y} fontSize="20pt" style={{color:'red'}}>{value ? value.statusCode.name : '..'}</text>
+  
 );
 
 
@@ -38,6 +34,6 @@ const FlowMeter = compose(
 
 */
 
-export default FlowMeter;
+export default Value;
 
 

@@ -42,7 +42,7 @@ class NodeSocket {
 
 			monitoredItem.on("changed",function(dataValue){
 				console.log('opc change', dataValue);
-			   obs.onNext(dataValue.value.value);
+			   obs.onNext(dataValue);
 			});
 		} catch(ex) {
 			console.log("caught error", ex);
