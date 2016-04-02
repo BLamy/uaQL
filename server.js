@@ -14,6 +14,9 @@ import NodeSocket from './NodeSocket';
 
 import config from './webpack.config';
 
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
+
 const APP_PORT = 3000;
 const GRAPHQL_PORT = 8080;
 const SOCKET_PORT = 3001;
@@ -131,15 +134,28 @@ const app = new WebpackDevServer(webpack(config), {
  // Serve the Relay app
   var compiler = webpack({
     entry: path.resolve(__dirname, 'js', 'app.js'),
+    plugins: [
+      new ExtractTextPlugin('example.css', { allChunks: true }),  // compiled css (single file only)
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify('production')
+      })
+    ],
     module: {
       loaders: [
         {
-          exclude: /node_modules/,
-          loader: 'babel',
-          test: /\.js$/,
+          test: /(\.js|\.jsx)$/,
+          exclude: /(node_modules)/,
+          loaders: ['react-hot', 'babel'],
+          //query: {
+          //   presets:['es2015','react']
+          //}
+        }, {
+          test: /(\.scss|\.css)$/,
+          loader: ExtractTextPlugin.extract('style', 'css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap')
         }
       ]
     },
+    postcss: [autoprefixer],
     output: {filename: 'app.js', path: 'build2/js'}
   });
   //console.log("running compiler");
