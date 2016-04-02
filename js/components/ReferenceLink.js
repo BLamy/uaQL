@@ -15,17 +15,22 @@ const ReferenceLink = compose(
         viewer: () => Relay.QL`
           fragment on ReferenceDescription {
             uaNode {
-              id
-              ${NodeLink.getFragment('viewer')}
-            }
-            browseName {
-              name
-              namespaceIndex
+              nodeClass
+              nodeId {
+                namespace
+                identifierType
+                value
+              }
+              displayName {
+                text
+              }
             }
             referenceTypeId {
               uaNode {
-                ${NodeLink.getFragment('viewer')}
-              }
+                displayName {
+                  text
+                }
+              }  
             }
           }
          `
@@ -33,12 +38,11 @@ const ReferenceLink = compose(
     }
   )
 )(({viewer})=>
-  <span>
-    <NodeLink viewer= {viewer.referenceTypeId.uaNode}/>
-    + {viewer.browseName.namespaceIndex} : {viewer.browseName.name}+
-    -
-    <NodeLink viewer= {viewer.uaNode}/>
-  </span>
+    viewer
+      ? <NodeLink viewer= {viewer}/>
+      : undefined
+    
+    
 );
-
+//<NodeLink viewer= {viewer.referenceTypeId.uaNode}/>
 export default ReferenceLink;

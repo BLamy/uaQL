@@ -85,14 +85,16 @@ const Component = compose(
                 }
               }
             }
-            references(first:1000 referenceTypeId:"ns=0;i=40"){
-              edges {
-                node {
-                  browseName {
-                    name
-                  }
-                  uaNode {
-                    nodeClass
+            myRefs : self @include(if: $components) {
+              references(first:1000 referenceTypeId:"ns=0;i=40") {
+                edges {
+                  node {
+                    browseName {
+                      name
+                    }
+                    uaNode {
+                      nodeClass
+                    }
                   }
                 }
               }
@@ -103,16 +105,23 @@ const Component = compose(
     }
   ),
   doOnReceiveProps(({relay, viewer})=>{
-    relay.setVariables({
-      'ftx': viewer.references.edges[0].node.browseName.name === "FlowTransmitterType",
-      'fc': viewer.references.edges[0].node.browseName.name === "FlowControllerType",
-      'valve': viewer.references.edges[0].node.browseName.name === "ValveType",
-      'li': viewer.references.edges[0].node.browseName.name === "LevelIndicatorType",
-      'lc': viewer.references.edges[0].node.browseName.name === "LevelControllerType",
-      'method': viewer.references.edges[0].node.uaNode.nodeClass === "Method",
-      'simulation': viewer.references.edges[0].node.browseName.name === "BoilerStateMachineType",
-      'components': true
-    });
+    if(viewer.myRefs && viewer.myRefs.references.edges[0]) {
+      relay.setVariables({
+        'ftx': viewer.myRefs.references.edges[0].node.browseName.name === "FlowTransmitterType",
+        'fc': viewer.myRefs.references.edges[0].node.browseName.name === "FlowControllerType",
+        'valve': viewer.myRefs.references.edges[0].node.browseName.name === "ValveType",
+        'li': viewer.myRefs.references.edges[0].node.browseName.name === "LevelIndicatorType",
+        'lc': viewer.myRefs.references.edges[0].node.browseName.name === "LevelControllerType",
+        'method': viewer.myRefs.references.edges[0].node.uaNode.nodeClass === "Method",
+        'simulation': viewer.myRefs.references.edges[0].node.browseName.name === "BoilerStateMachineType",
+        'components': true
+      });
+
+    } else {
+      relay.setVariables({
+         'components': true
+      });      
+    }
   })
 )(({viewer})=> {
     if(viewer.ftx) { 

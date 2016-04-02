@@ -9,6 +9,7 @@ import NodeName from './NodeName';
 
 import {createContainer} from 'recompose-relay';
 import {compose} from 'recompose';
+import FlatButton from 'material-ui/lib/flat-button';
 
 const getId=(id)=> {
   if(id==='STRING') return 's';
@@ -20,37 +21,21 @@ const getId=(id)=> {
 
 
 const NodeLink = compose(
-  createContainer(
-    {
-      fragments: {
-        viewer: () => Relay.QL`
-          fragment on UANode {
-            ${NodeName.getFragment('viewer')}
-            nodeClass
-            nodeId {
-              namespace
-              identifierType
-              value
-            }
-          }
-        `
-      }
-    }
-  )
+
 )(({viewer})=>
-  <span>
+
+<FlatButton
+  containerElement={
     <Link to={'/ns=' 
-      + viewer.nodeId.namespace 
+      + viewer.uaNode.nodeId.namespace 
       + ';' 
-      + getId(viewer.nodeId.identifierType)
-      + '=' + viewer.nodeId.value}>
-       
-      <NodeName viewer={viewer}/>
-    </Link>
-    (
-      {viewer.nodeClass}
-    )
-  </span>
+      + getId(viewer.uaNode.nodeId.identifierType)
+      + '=' + viewer.uaNode.nodeId.value}/>}
+  label={viewer.referenceTypeId.uaNode.displayName.text + ':' +viewer.uaNode.displayName.text}/>
+
+
+    
+  
 );
 
 

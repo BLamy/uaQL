@@ -35,6 +35,7 @@ import extend from 'util-extend';
 var {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     var {type, id} = fromGlobalId(globalId);
+    console.log('type', type, id);
     if (type === 'UANode') {
       return getUANode(id);
     }
@@ -790,7 +791,10 @@ const UANodeType = new GraphQLObjectType({
     id: globalIdField('UANode'),
     self: {
       type: UANodeType,
-      resolve: ({id})=> getUANode(id)
+      resolve: ({id})=> {
+        console.log('nnode', id);
+        return getUANode(id);
+      }
     },
     nodeId: getProperty(ExpandedNodeIdType, opcua.AttributeIds.NodeId, 'Node id.'), //19,
     nodeClass: getProperty(NodeClassEnumType, opcua.AttributeIds.NodeClass, 'Node class.'), //19,

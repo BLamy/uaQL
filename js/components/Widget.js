@@ -20,12 +20,16 @@ import Level from './svg/Level';
 
 import Component from './Component';
 import Components from './Components';
+
+import ForwardList from './ForwardList';
+import BackwardList from './BackwardList';
+
 const MyComponents = Components(Component);
 
 
 
 
-
+const sideStyle= {float:'left'};
 
 
 const Widget = compose(
@@ -47,6 +51,8 @@ const Widget = compose(
             displayName {
               text
             }
+            ${ForwardList.getFragment('widgetviewer')}
+            ${BackwardList.getFragment('widgetviewer')}
             ${MyComponents.getFragment('viewer')}
           }
         `
@@ -56,14 +62,19 @@ const Widget = compose(
 
 )(({widgetviewer, root})=>
   <div>
-    <h1>
-      {widgetviewer.displayName.text}
-    </h1>
-    <svg height={200} style={{background: 'pink'}}>
-      <MyComponents viewer={widgetviewer}/>
-    </svg>
-
-
+    <div>
+      <div style={sideStyle}>
+        <BackwardList  widgetviewer={widgetviewer}/>
+      </div>
+      <div  style={sideStyle}>
+        <svg height={200} style={{background: 'pink'}}>
+          <MyComponents viewer={widgetviewer}/>
+        </svg>
+      </div>
+      <div style={sideStyle}>
+        <ForwardList widgetviewer={widgetviewer}/>
+      </div>
+    </div>
 
 
     <svg viewBox="0 0 700 600"  width='600px'>

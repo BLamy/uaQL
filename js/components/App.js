@@ -19,6 +19,10 @@ import DataType from './DataType';
 import {compose} from 'recompose';
 import {createContainer} from 'recompose-relay';
 import Simple from './Simple'; 
+import RaisedButton from 'material-ui/lib/raised-button';
+import List from 'material-ui/lib/lists/list';
+import ListItem from 'material-ui/lib/lists/list-item';
+import ScrollArea from 'react-scrollbar';
 
 
 var value = 0;
@@ -133,45 +137,40 @@ class App extends React.Component {
     
   }
   render() {
+    let scrollbarStyles = {borderRadius: 5};
+
     return (
       <div>
-        <Simple/>
-        {this.props.root.browsePath.dataValue.value.map(v=>
-          <li key={v}>
-            {v}
-          </li>
-        )}
-        <Comp viewer={this.props.viewer}/>
+        
+
+        <Comp viewer={this.props.viewer} path={this.props.params.nodeId}/>
+        <Links {...this.props} path={this.props.params.nodeId}/>
+        
         <h1>
           <NodeName viewer={this.props.viewer}/>
         </h1>
-        <button onClick={this._handleCount}>Like this</button>
-        <button onClick={this._handleMethod}>Method Call</button>
-        
-        <DataType viewer={this.props.viewer}/>
-        <DataValue viewer={this.props.viewer}/>
-        <h3 title='nodeId'>
-          <NodeId viewer={this.props.viewer.nodeId}/>
-        </h3>
-        <h4 title='nodeClass'>
-          {this.props.viewer.nodeClass}
-        </h4>
         <LocalizedText viewer={this.props.viewer.description}/>
+        <ScrollArea
+            speed={0.8}
+            className="area"
+            contentClassName="content"
+            verticalScrollbarStyle={scrollbarStyles}
+            verticalContainerStyle={scrollbarStyles}
+            horizontalScrollbarStyle={scrollbarStyles}
+            horizontalContainerStyle={scrollbarStyles}
+            smoothScrolling= {true}
+            horizontal={false}
+            > 
+            {this.props.children}
+        </ScrollArea>
+        
 
-        <ul>
-          {this.props.viewer.forwardReferences.edges.map(r=>
-            <li key={r.node.id}>
-              <ReferenceLink viewer={r.node}/>  
-            </li>
-          )}
-        </ul>
         <ul>
           {(this.props.viewer.outputArguments || []).map(arg=>
             <li key={arg.index}>{arg.dataType} {arg.value.value}</li>
           )}
         </ul>
-        <Links {...this.props} path={this.props.params.nodeId}/>
-        {this.props.children}
+        
               
       </div>
     );
@@ -214,19 +213,13 @@ const Appp = compose(
           description {
             ${LocalizedText.getFragment('viewer')}
           }
-          ${DataValue.getFragment('viewer')}
-          ${DataType.getFragment('viewer')}
+          displayName {
+            text
+          }
           nodeId {
             ${NodeId.getFragment('viewer')}
           }
-          forwardReferences: references(first:100 browseDirection: Forward) {
-            edges {
-              node {
-                ${ReferenceLink.getFragment('viewer')}
-                id
-              }
-            }
-          },
+          
           outputArguments {
             index
             dataType

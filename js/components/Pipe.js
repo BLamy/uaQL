@@ -8,10 +8,9 @@ import LocalizedText from './LocalizedText';
 import {createContainer} from 'recompose-relay';
 import {compose, doOnReceiveProps} from 'recompose';
 import DataValue from './DataValue';
+
+
 import Component from './Component';
-
-
-
 import Components from './Components';
 const MyComponents = Components(Component);
 
