@@ -23,6 +23,8 @@ import Components from './Components';
 
 import ForwardList from './ForwardList';
 import BackwardList from './BackwardList';
+import {Grid, Row, Col} from 'react-flexbox-grid/lib';
+
 
 const MyComponents = Components(Component);
 
@@ -61,23 +63,36 @@ const Widget = compose(
   )
 
 )(({widgetviewer, root})=>
-  <div>
-    <div>
-      <div style={sideStyle}>
-        <BackwardList  widgetviewer={widgetviewer}/>
-      </div>
-      <div  style={sideStyle}>
-        <svg height={200} style={{background: 'pink'}}>
-          <MyComponents viewer={widgetviewer}/>
-        </svg>
-      </div>
-      <div style={sideStyle}>
-        <ForwardList widgetviewer={widgetviewer}/>
-      </div>
-    </div>
 
 
-    <svg viewBox="0 0 700 600"  width='600px'>
+
+
+
+      <Grid fluid>
+   
+        <Row>
+          <Col xs={12} sm={4} md={3} lg={2}>
+            <BackwardList  widgetviewer={widgetviewer}/>
+          </Col>
+          <Col xs>
+            <svg width="100%" height="400px" style={{background: 'pink'}}>
+              <MyComponents viewer={widgetviewer}/>
+            </svg>
+          </Col>
+          <Col xs={12} sm={4} md={3} lg={2}>
+            <ForwardList widgetviewer={widgetviewer}/>
+          </Col>
+        </Row>
+      </Grid>
+
+      
+        
+);
+
+
+/*
+
+<svg viewBox="0 0 700 600"  width='600px'>
         <g stroke="#CCCCCC">
           <Tank/>
         </g>
@@ -110,11 +125,6 @@ const Widget = compose(
         </g>
     </svg>
 
-      
-        
-    
-  </div>
-);
-
+*/
 
 export default Widget;

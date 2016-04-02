@@ -141,7 +141,7 @@ class App extends React.Component {
 
     return (
       <div>
-        
+      
 
         <Comp viewer={this.props.viewer} path={this.props.params.nodeId}/>
         <Links {...this.props} path={this.props.params.nodeId}/>
@@ -150,20 +150,8 @@ class App extends React.Component {
           <NodeName viewer={this.props.viewer}/>
         </h1>
         <LocalizedText viewer={this.props.viewer.description}/>
-        <ScrollArea
-            speed={0.8}
-            className="area"
-            contentClassName="content"
-            verticalScrollbarStyle={scrollbarStyles}
-            verticalContainerStyle={scrollbarStyles}
-            horizontalScrollbarStyle={scrollbarStyles}
-            horizontalContainerStyle={scrollbarStyles}
-            smoothScrolling= {true}
-            horizontal={false}
-            > 
-            {this.props.children}
-        </ScrollArea>
         
+        {this.props.children}
 
         <ul>
           {(this.props.viewer.outputArguments || []).map(arg=>
