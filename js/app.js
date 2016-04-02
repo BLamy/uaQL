@@ -7,7 +7,7 @@ import App from './components/App';
 import Widget from './components/Widget';
 import ForwardList from './components/ForwardList';
 import BackwardList from './components/BackwardList';
-import Value from './components/_Value';
+import Value from './components/Value';
 import AppHomeRoute from './routes/AppHomeRoute';
 import WidgetRoute from './routes/WidgetRoute';
 import ListRoute from './routes/ListRoute';
