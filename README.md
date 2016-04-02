@@ -5,7 +5,9 @@ uses https://github.com/node-opcua/node-opcua to expose an opc ua server as a gr
 
 ## demo
 
-[here](https://ua-ql.herokuapp.com "demo")
+[here](https://ua-ql.herokuapp.com/ns=5;i=1/mimic "demo")
+
+(if it says application error it's probably because I am too stingy to pay for it so it switches off 6 hours a day..)
 
 
 ## browsing..

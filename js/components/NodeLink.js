@@ -31,7 +31,7 @@ const NodeLink = compose(
       + ';' 
       + getId(viewer.uaNode.nodeId.identifierType)
       + '=' + viewer.uaNode.nodeId.value}/>}
-  label={viewer.referenceTypeId.uaNode.displayName.text + ':' +viewer.uaNode.displayName.text}/>
+  label={viewer.referenceTypeId.uaNode.displayName.text + ': ' +viewer.uaNode.displayName.text}/>
 
 
     
