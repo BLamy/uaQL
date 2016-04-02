@@ -6,7 +6,7 @@ import React from 'react';
 import Relay from 'react-relay';
 import {createContainer} from 'recompose-relay';
 import {compose, doOnReceiveProps} from 'recompose';
-import {Observable} from 'rx';
+import {Observable} from 'rx-lite';
 import {observeProps} from 'rx-recompose';
 import DataValue from '../DataValue';
 import FlowMeter from '../svg/FlowMeter';

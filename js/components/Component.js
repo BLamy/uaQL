@@ -13,6 +13,7 @@ import {Svg as LevelIndicator} from './DeviceTypes/LevelIndicatorType';
 import {Svg as Valve} from './DeviceTypes/ValveType';
 import {Svg as Method} from './DeviceTypes/MethodType';
 import {Svg as Simulation} from './DeviceTypes/SimulationType';
+import Tank from './svg/Tank';
 
 const Component = compose(
 
@@ -124,34 +125,39 @@ const Component = compose(
     }
   })
 )(({viewer})=> {
+
+    var component = null;
+
     if(viewer.ftx) { 
-      return <FlowTransmitter viewer={viewer.ftx}/>;
+      component = <FlowTransmitter viewer={viewer.ftx}/>;
     }
         
     if(viewer.fc) {
-      return <FlowController viewer={viewer.fc}/>; 
+      component =  <FlowController viewer={viewer.fc}/>; 
     }
     if(viewer.valve) {
-      return <Valve viewer={viewer.valve}/>; 
+      component = <Valve viewer={viewer.valve}/>; 
     }
     if(viewer.lc) {
-      return <LevelController viewer={viewer.lc}/>; 
+      component =  <LevelController viewer={viewer.lc}/>; 
     }
     if(viewer.li) {
-      return <LevelIndicator viewer={viewer.li}/>
+      component =  <LevelIndicator viewer={viewer.li}/>
     }
     if(viewer.method) {
-      return  <Method viewer={viewer.method}/>;
+      component =   <Method viewer={viewer.method}/>;
     }
     if(viewer.simulation) {
-      return <Simulation viewer={viewer.simulation}/>; 
+      component =  <Simulation viewer={viewer.simulation}/>; 
     }
-
+    if(viewer.myRefs && viewer.myRefs.references.edges[0] && viewer.myRefs.references.edges[0].node.browseName.name === "BoilerType") {
+      component = <Tank/>;
+    }
     if(viewer.components) {
-
-      return <g> 
-        {viewer.components.references.edges.map(n=> 
-          <g key={n.node.id}>
+      component = <g> 
+        {component}
+        {viewer.components.references.edges.map((n, i)=> 
+          <g key={n.node.id} transform={`translate(${(i%2)*150}, ${Math.floor(i/2)*150})`}>
             {n.node.uaNode
               ? <Component viewer={n.node.uaNode}/>
               : null
@@ -168,7 +174,7 @@ const Component = compose(
         )}
       </g>
     }
-    return <g/>
+    return component || <g/>;
 
 });
 

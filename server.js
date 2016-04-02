@@ -138,7 +138,12 @@ const app = new WebpackDevServer(webpack(config), {
       new ExtractTextPlugin('example.css', { allChunks: true }),  // compiled css (single file only)
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production')
-      })
+      }),
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            warnings: false
+        }
+    })
     ],
     module: {
       loaders: [
@@ -160,7 +165,7 @@ const app = new WebpackDevServer(webpack(config), {
   });
   //console.log("running compiler");
   compiler.run((err, stats)=> {
-    //console.log("compile complete", err, stats);
+    console.log("compile complete", err, stats);
   });
 
   graphQLServer.use('/graphql', graphQLHTTP({

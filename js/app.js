@@ -2,8 +2,10 @@
 
 'use strict';
 
+
 import 'babel-polyfill';
 import App from './components/App';
+
 import Widget from './components/Widget';
 import ForwardList from './components/ForwardList';
 import BackwardList from './components/BackwardList';
@@ -20,26 +22,12 @@ import { RelayRouter } from 'react-router-relay';
 import {browserHistory} from 'react-router';
 import socketObservable from './data/SocketObservable';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import rx from 'rx';
+
+
+import rx from 'rx-lite';
 
 
 injectTapEventPlugin();
-//var socket = io.connect('/', {path: '/napi/socket.io'});
-//socket.on('connect', ()=>{
-//	socket.emit('join', 'ns=2;i=10844');
-//});
-//socket.on('update', (data)=>
-//    document.getElementById('io').innerText = data.value);
-
-
-/*
-socketObservable('ns=2;i=10845')
-  .subscribe(s=>console.log("we have a socket2....", s));
-
-socketObservable('ns=2;i=10844')
-  .subscribe(s=>console.log("we have a socket....", s));
-
-*/
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;

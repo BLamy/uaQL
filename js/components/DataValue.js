@@ -5,7 +5,7 @@ import Relay from 'react-relay';
 import VariableBase from './VariableBase';
 import {createContainer} from 'recompose-relay';
 import {compose,} from 'recompose';
-import {Observable} from 'rx';
+import {Observable} from 'rx-lite';
 import {observeProps} from 'rx-recompose';
 import socketObservable from '../data/SocketObservable'
 

@@ -75,7 +75,7 @@ const Widget = compose(
             <BackwardList  widgetviewer={widgetviewer}/>
           </Col>
           <Col xs>
-            <svg width="100%" height="400px" style={{background: 'pink'}}>
+            <svg width="100%" height="800px" >
               <MyComponents viewer={widgetviewer}/>
             </svg>
           </Col>

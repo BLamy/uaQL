@@ -27,6 +27,17 @@ import ListItem from 'material-ui/lib/lists/list-item';
 import ReferenceLink from './ReferenceLink';
 
 const MyComponents = Components(Component);
+import ReferenceTypeIcon from './ReferenceTypeIcon';
+import ActionGrade from 'material-ui/lib/svg-icons/action/grade';
+
+
+import Table from 'material-ui/lib/table/table';
+import TableHeaderColumn from 'material-ui/lib/table/table-header-column';
+import TableRow from 'material-ui/lib/table/table-row';
+import TableHeader from 'material-ui/lib/table/table-header';
+import TableRowColumn from 'material-ui/lib/table/table-row-column';
+import TableBody from 'material-ui/lib/table/table-body';
+
 
 
 
@@ -45,7 +56,9 @@ const ForwardList = compose(
               edges {
                 node {
                   ${ReferenceLink.getFragment('viewer')}
+                  ${ReferenceTypeIcon.getFragment('viewer')}
                   id
+
                 }
               }
             }
@@ -56,13 +69,17 @@ const ForwardList = compose(
   )
 
 )(({widgetviewer})=>
-  <List>
-    {widgetviewer.forwardReferences.edges.map(r=>
-      <ListItem key={r.node.id}>
-        <ReferenceLink viewer={r.node}/>  
-      </ListItem>
-    )}
-  </List>
+
+  <Table selectable={false}>
+    <TableBody displayRowCheckbox={false}>
+      {widgetviewer.forwardReferences.edges.map(r=>
+        <TableRow>
+          <TableRowColumn style={{width:'20px', padding:'0px'}}><ReferenceTypeIcon viewer={r.node}/></TableRowColumn>
+          <TableRowColumn><ReferenceLink viewer={r.node}/></TableRowColumn>
+        </TableRow>
+      )}
+    </TableBody>
+  </Table>
 );
 
 

@@ -26,12 +26,12 @@ const NodeLink = compose(
 
 <FlatButton
   containerElement={
-    <Link to={'/ns=' 
+    <Link  title={viewer.referenceTypeId.uaNode.displayName.text} to={'/ns=' 
       + viewer.uaNode.nodeId.namespace 
       + ';' 
       + getId(viewer.uaNode.nodeId.identifierType)
       + '=' + viewer.uaNode.nodeId.value}/>}
-  label={viewer.referenceTypeId.uaNode.displayName.text + ': ' +viewer.uaNode.displayName.text}/>
+  label={viewer.uaNode.displayName.text}/>
 
 
     

@@ -1,6 +1,6 @@
 // @flow
 
-import {Observable} from 'rx';
+import {Observable} from 'rx-lite';
 import {opcua, nextSession, handleError} from './data/opcua';
 
 class NodeSocket {

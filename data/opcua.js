@@ -1,7 +1,7 @@
 'use strict';
 import opcua from 'node-opcua';
 import async from 'async';
-import Rx from 'rx';
+import Rx from 'rx-lite';
 
 const endpointUrl = 'opc.tcp://opcua.demo-this.com:51210/UA/SampleServer';
 

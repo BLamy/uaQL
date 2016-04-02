@@ -1,6 +1,6 @@
 // @flow
 
-import rx, {Observable} from 'rx';
+import rx, {Observable} from 'rx-lite';
 import io from 'socket.io-client';
 
 

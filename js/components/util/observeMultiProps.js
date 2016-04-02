@@ -5,7 +5,7 @@
 import React from 'react';
 import Relay from 'react-relay';
 import {compose, doOnReceiveProps} from 'recompose';
-import {Observable} from 'rx';
+import {Observable} from 'rx-lite';
 import {observeProps} from 'rx-recompose';
 import socketObservable from '../../data/SocketObservable'
 import merge from 'merge';
