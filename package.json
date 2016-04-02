@@ -33,6 +33,7 @@
     "css-layout": "^1.1.1",
     "express": "4.13.4",
     "express-graphql": "0.4.9",
+    "extract-text-webpack-plugin": "^0.9.1",
     "flexboxgrid": "^6.3.0",
     "graphql": "0.4.17",
     "graphql-custom-datetype": "^0.2.1",
