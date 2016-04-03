@@ -157,7 +157,7 @@ const Component = compose(
       component = <g> 
         {component}
         {viewer.components.references.edges.map((n, i)=> 
-          <g key={n.node.id} transform={`translate(${(i%2)*150}, ${Math.floor(i/2)*150})`}>
+          <g key={n.node.id} transform={`translate(${50 + (i%3)*150}, ${Math.floor(i/3)*150})`}>
             {n.node.uaNode
               ? <Component viewer={n.node.uaNode}/>
               : null

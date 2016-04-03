@@ -70,8 +70,16 @@ io.on('connection', (mySocket)=> {
       connectionCount: 0, 
       connections: {}})).connections[myConnection] = true;
 
-    rooms[nodeId].connectionCount++;
     mySocket.join(nodeId);
+    
+    rooms[nodeId].connectionCount++;
+    
+    if(rooms[nodeId].node.lastValue){
+      console.log('sending update...');
+      mySocket.emit('update', rooms[nodeId].node.lastValue );
+    }
+
+    
   });
   mySocket.on('leave', (nodeId) => leaveRoom(mySocket, nodeId, myRooms, myConnection));
   

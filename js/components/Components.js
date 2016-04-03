@@ -22,7 +22,6 @@ const Components = (MyComponent) => compose(
     }
   )
 )(({viewer, root})=> {
-  const CC = Components(MyComponent);
   return <g>
     <MyComponent viewer={viewer}/>
     

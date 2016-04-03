@@ -38,7 +38,13 @@ const composer = compose(
       }
     }
   ),
-  observeMultiProps(['input'])
+  observeMultiProps([
+    {
+      name: 'input',
+      attributeId: 'Value',
+      property: 'input'
+    }
+  ])
 );
 
 

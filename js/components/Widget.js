@@ -21,8 +21,6 @@ import Level from './svg/Level';
 import Component from './Component';
 import Components from './Components';
 
-import ForwardList from './ForwardList';
-import BackwardList from './BackwardList';
 import {Grid, Row, Col} from 'react-flexbox-grid/lib';
 
 
@@ -53,8 +51,6 @@ const Widget = compose(
             displayName {
               text
             }
-            ${ForwardList.getFragment('widgetviewer')}
-            ${BackwardList.getFragment('widgetviewer')}
             ${MyComponents.getFragment('viewer')}
           }
         `
@@ -68,23 +64,10 @@ const Widget = compose(
 
 
 
-      <Grid fluid>
-   
-        <Row>
-          <Col xs={12} sm={4} md={3} lg={2}>
-            <BackwardList  widgetviewer={widgetviewer}/>
-          </Col>
-          <Col xs>
-            <svg width="100%" height="800px" >
-              <MyComponents viewer={widgetviewer}/>
-            </svg>
-          </Col>
-          <Col xs={12} sm={4} md={3} lg={2}>
-            <ForwardList widgetviewer={widgetviewer}/>
-          </Col>
-        </Row>
-      </Grid>
+      <svg  viewBox="0 0 600 400">
 
+        <MyComponents viewer={widgetviewer}/>
+      </svg>
       
         
 );

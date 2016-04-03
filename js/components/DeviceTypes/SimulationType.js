@@ -10,7 +10,7 @@ import {Observable} from 'rx-lite';
 import {observeProps} from 'rx-recompose';
 import DataValue from '../DataValue';
 import FlowMeter from '../svg/FlowMeter';
-import socketObservable from '../../data/SocketObservable'
+import observeMultiProps from '../util/observeMultiProps';
 
 
 const composer = compose(
@@ -43,21 +43,13 @@ const composer = compose(
       }
     }
   ),
-  observeProps(props$=>{
-      const viewer = props$.map(p=>p.viewer)
-      return {
-        viewer,
-        value:viewer.map(v=>{
-            if(v.currentState) {
-              return socketObservable(`ns=${v.currentState.nodeId.namespace};i=${v.currentState.nodeId.value}`);
-            } else {
-              return Observable.return();
-            }
-          })
-          .switch()
-      };
+  observeMultiProps([
+    {
+      name: 'currentState',
+      attributeId: 'Value',
+      property: 'currentState'
     }
-  )
+  ])
 
 
 );
@@ -73,6 +65,14 @@ const SimulationType = composer(({viewer, value})=>
   </div>
 );
 
-const Svg = composer(()=><g/>);
+const Svg = composer(({viewer, currentState})=>
+  <g>
+    {currentState && currentState.value 
+      ? <text x="20" y="20" fontSize="20pt">{currentState.value.value.value.text}</text>
+      : null
+    }
+
+  </g>
+);
 
 export {SimulationType as default, Svg};

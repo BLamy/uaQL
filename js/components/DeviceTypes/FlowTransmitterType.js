@@ -39,7 +39,13 @@ const composer = compose(
       }
     }
   ),
-  observeMultiProps(['output'])
+  observeMultiProps([
+    {
+      name: 'output',
+      attributeId: 'Value',
+      property: 'output'
+    }
+  ])
 )
 
 const FlowTransmitterType = composer(({viewer, output})=> 

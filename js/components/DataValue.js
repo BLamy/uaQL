@@ -91,7 +91,7 @@ const DataValue = compose(
         viewer,
         value:viewer.map(v=>{
             if(v.dataValue) {
-              return socketObservable(`ns=${v.nodeId.namespace};i=${v.nodeId.value}`);
+              return socketObservable(`Value:ns=${v.nodeId.namespace};i=${v.nodeId.value}`);
             } else {
               return Observable.return();
             }

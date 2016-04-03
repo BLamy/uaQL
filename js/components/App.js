@@ -10,7 +10,6 @@ import {Link} from 'react-router';
 import Comp from './comp';
 import ReferenceLink from './ReferenceLink';
 import NodeName from './NodeName';
-import Widget from './Widget';
 import NodeId from './NodeId';
 import Links from './Links';
 import LocalizedText from './LocalizedText';
@@ -24,8 +23,10 @@ import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 import ScrollArea from 'react-scrollbar';
 
+import ForwardList from './ForwardList';
+import BackwardList from './BackwardList';
+import {Grid, Row, Col} from 'react-flexbox-grid/lib';
 
-var value = 0;
 
 
 class UaNodeMutation extends Relay.Mutation {
@@ -57,8 +58,8 @@ class UaNodeMutation extends Relay.Mutation {
   static fragments = {
     viewer: () => Relay.QL`
       fragment on UANode {
-        dataValue{
-          value{
+        dataValue {
+          value {
             dataType
           }
         }
@@ -67,41 +68,9 @@ class UaNodeMutation extends Relay.Mutation {
   };
 }
 
-class CallUAMethodMutation extends Relay.Mutation {
-  getMutation() {
-    return Relay.QL`mutation {callUAMethod}`;
-  }
-  getVariables() {
-    return {
-      id: this.props.viewer.id,
-      parent: this.props.viewer.parent.edges[0].node.uaNode.id
-    };
-  }
-  getFatQuery() {
-    return Relay.QL`
-      fragment on CallUAMethodPayload {
-        uaNode {outputArguments}
-      }
-    `;
-  }
-  getConfigs() {
-    return [{
-      type: 'FIELDS_CHANGE',
-      fieldIDs: {
-        uaNode: this.props.viewer.id
-      }
-    }];
-  }
+
   
- /* static fragments = {
-    viewer: () => Relay.QL`
-      fragment on UANode {
-        id
-      }
-    `
-  };
-*/
-}
+
 
 
 var onFailure = (transaction) => {
@@ -118,24 +87,7 @@ class App extends React.Component {
     Relay.Store.commitUpdate(new UaNodeMutation({viewer: this.props.viewer}), {onFailure});
     value++;
   }
-  _handleMethod(){
-    // To perform a mutation, pass an instance of one to `Relay.Store.commitUpdate`
-    Relay.Store.commitUpdate(new CallUAMethodMutation({viewer: this.props.viewer}), {onFailure});
-  }
-  componentWillMount() {
-    
-    this.props.relay.setVariables({
-      'nodeClassIsVariable': this.props.viewer.nodeClass ==='Variable'
-    });
-  }
-  componentWillReceiveProps(nextProps) {
-    if(this.props.viewer.nodeClass !== nextProps.viewer.nodeClass) {
-      this.props.relay.setVariables({
-        'nodeClassIsVariable': nextProps.viewer.nodeClass ==='Variable'
-      });
-    }
-    
-  }
+  
   render() {
     let scrollbarStyles = {borderRadius: 5};
 
@@ -146,12 +98,30 @@ class App extends React.Component {
         <Comp viewer={this.props.viewer} path={this.props.params.nodeId}/>
         <Links {...this.props} path={this.props.params.nodeId}/>
         
-        <h1>
-          <NodeName viewer={this.props.viewer}/>
-        </h1>
-        <LocalizedText viewer={this.props.viewer.description}/>
         
-        {this.props.children}
+
+      <Grid fluid>   
+        <Row>
+          <Col xs={12} sm={3} md={3} lg={3}>
+            <BackwardList  widgetviewer={this.props.viewer}/>
+          </Col>
+          <Col xs>
+            <h1>
+              <NodeName viewer={this.props.viewer}/>
+            </h1>
+            <div>
+              <LocalizedText viewer={this.props.viewer.description}/>
+            </div>
+            {this.props.children}
+          </Col>
+          <Col xs={12} sm={3} md={3} lg={3}>
+            <ForwardList widgetviewer={this.props.viewer}/>
+          </Col>
+        </Row>
+      </Grid>
+
+
+        
 
         <ul>
           {(this.props.viewer.outputArguments || []).map(arg=>
@@ -164,21 +134,8 @@ class App extends React.Component {
     );
   }
 }
-App.contextTypes = {
-  location: React.PropTypes.object,
-  router: React.PropTypes.object.isRequired
-};
 const Appp = compose(
   createContainer( {
-    initialVariables: {
-      'nodeClassIsVariable': undefined
-    },
-    prepareVariables: (prevVariables,...args) => {
-      return {
-        ...prevVariables
-        // If devicePixelRatio is `2`, the new size will be `100`.
-      };
-    },
     fragments: {
       root: () => Relay.QL`
         fragment on UANode {
@@ -195,6 +152,7 @@ const Appp = compose(
         fragment on UANode {
           id
           nodeClass
+          
           ${Links.getFragment('viewer')}
           ${Comp.getFragment('viewer')}
           ${NodeName.getFragment('viewer')}
@@ -204,10 +162,18 @@ const Appp = compose(
           displayName {
             text
           }
+          parent {
+            id
+            uaNode {
+              id
+            }
+          }
+
           nodeId {
             ${NodeId.getFragment('viewer')}
           }
-          
+          ${ForwardList.getFragment('widgetviewer')}
+          ${BackwardList.getFragment('widgetviewer')}
           outputArguments {
             index
             dataType

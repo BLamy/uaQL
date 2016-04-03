@@ -15,8 +15,8 @@ const Value = compose(
 
 
     value && !value.statusCode.value 
-      ? <text x={x} y={y} fontSize="20pt">{value.value ? value.value.value: null}</text>
-      : <text x={x} y={y} fontSize="20pt" style={{color:'red'}}>{value ? value.statusCode.name : '..'}</text>
+      ? <text x={x} y={y} fontSize="20pt">{value.value ? Math.round((value.value.value + 0.00001) * 100) / 100 : null}</text>
+      : <text x={x} y={y} fontSize="20pt" style={{color:'red'}}>{value ? value.statusCode.name : ':('}</text>
   
 );
 

@@ -52,7 +52,23 @@ const composer = compose(
       }
     }
   ),
-  observeMultiProps(['measurement', 'setPoint', 'controlOut'])
+  observeMultiProps([
+    {
+      name: 'measurement',
+      attributeId: 'Value',
+      property: 'measurement'
+    },
+    {
+      name: 'setPoint',
+      attributeId: 'Value',
+      property: 'setPoint'
+    }, 
+    {
+      name: 'controlOut',
+      attributeId: 'Value',
+      property: 'controlOut'
+    }
+  ])
 
 );
 

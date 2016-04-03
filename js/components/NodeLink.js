@@ -19,6 +19,7 @@ const getId=(id)=> {
   return id;
 }
 
+const space =  (string) => string.replace(/([A-Z])/g, ' $1');
 
 const NodeLink = compose(
 
@@ -31,7 +32,7 @@ const NodeLink = compose(
       + ';' 
       + getId(viewer.uaNode.nodeId.identifierType)
       + '=' + viewer.uaNode.nodeId.value}/>}
-  label={viewer.uaNode.displayName.text}/>
+  label={space(viewer.uaNode.displayName.text)}/>
 
 
     

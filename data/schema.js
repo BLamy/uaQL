@@ -35,7 +35,6 @@ import extend from 'util-extend';
 var {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     var {type, id} = fromGlobalId(globalId);
-    console.log('type', type, id);
     if (type === 'UANode') {
       return getUANode(id);
     }
@@ -668,7 +667,6 @@ const getWholeProperty = (type, attributeId, description) => ({
               results[0].value.statusCode= results[0].statusCode 
               resolve(results[0].value);
             } else {
-              console.log('no value', description,  attributeId,  JSON.stringify(results, null, '\t'), JSON.stringify(_nodesToRead, null, '\t'));
               resolve({statusCode:results[0].statusCode});
             }
           } else {
@@ -792,7 +790,6 @@ const UANodeType = new GraphQLObjectType({
     self: {
       type: UANodeType,
       resolve: ({id})=> {
-        console.log('nnode', id);
         return getUANode(id);
       }
     },
@@ -820,6 +817,30 @@ const UANodeType = new GraphQLObjectType({
     userExecutable: getProperty(GraphQLBoolean, opcua.AttributeIds.UserExecutable), //22,
     
     outputArguments: {type: new GraphQLList(ArgumentValueType)},
+    //wrng??
+    parent: {
+      type: ReferenceDescriptionType,
+      resolve: ({id}) => new Promise(function(resolve, reject){
+        console.log("resolving pRENT");
+        nextSession().take(1).timeout(3000, new Error('Timeout, try later...'))
+          .subscribe(session=> {
+            session.browse(id, function(err, browseResult){
+              if(!err) {
+                resolve(browseResult[0].references
+                  .filter(r=>!r.isForward)
+                  .map(r=>{
+                    r.id = r.nodeId.toString();
+                    return r;
+                  })[0]
+                );
+              }
+              else {
+                reject(err);
+              }
+            });
+          })
+      })
+    },
     browsePath: {
       type: UANodeType,
       args: {
@@ -842,7 +863,6 @@ const UANodeType = new GraphQLObjectType({
       },
       resolve:({id}, args)=> new Promise(function(resolve, reject){
         nextSession().take(1).timeout(3000, new Error('Timeout, try later...')).subscribe(session=> {
-          console.log('resolving pb', args);
           const bpath= [{
             startingNode: id,
             relativePath: { 
@@ -857,10 +877,8 @@ const UANodeType = new GraphQLObjectType({
               }))
             }
           }];
-          console.log('resolving go!', JSON.stringify(bpath, null, '\t'));
           try{
             session.translateBrowsePath(bpath, (err, x) => {
-              console.log('aaaa', JSON.stringify(x, null, '\t'));
               if(!err) {
                 if(x[0]) {
                   if(x[0].targets) {
@@ -877,7 +895,7 @@ const UANodeType = new GraphQLObjectType({
           } catch (ex) {
             console.log(ex);
           }
-          console.log('resolved go!', JSON.stringify(bpath, null, '\t'));
+          
         }, reject);
       })
     },
@@ -1041,19 +1059,19 @@ const CallUAMethodMutation = mutationWithClientMutationId({
     const methodsToCall = [ {
       objectId: fromGlobalId(parent).id,
       methodId: fromGlobalId(id).id,
-      inputArguments: [
-        new opcua.Variant(JSON.parse('{"dataType": "Boolean", "value": false}')),
-        new opcua.Variant({dataType: opcua.DataType.SByte, value: 10}),
-        new opcua.Variant({dataType: opcua.DataType.Byte, value: 9}),
-        new opcua.Variant({dataType: opcua.DataType.Int16, value: 8}),
-        new opcua.Variant({dataType: opcua.DataType.UInt16, value: 7}),
-        new opcua.Variant({dataType: opcua.DataType.Int32, value: 6}),
-        new opcua.Variant({dataType: opcua.DataType.UInt32, value: 5}),
-        new opcua.Variant({dataType: opcua.DataType.Int64, value: 4}),
-        new opcua.Variant({dataType: opcua.DataType.UInt64, value: 3}),
-        new opcua.Variant({dataType: opcua.DataType.Float, value: 2}),
-        new opcua.Variant({dataType: opcua.DataType.Double, value: 1000}),
-      ]    
+      //inputArguments: [
+      //  new opcua.Variant(JSON.parse('{"dataType": "Boolean", "value": false}')),
+      //  new opcua.Variant({dataType: opcua.DataType.SByte, value: 10}),
+      //  new opcua.Variant({dataType: opcua.DataType.Byte, value: 9}),
+      //  new opcua.Variant({dataType: opcua.DataType.Int16, value: 8}),
+      //  new opcua.Variant({dataType: opcua.DataType.UInt16, value: 7}),
+      //  new opcua.Variant({dataType: opcua.DataType.Int32, value: 6}),
+      //  new opcua.Variant({dataType: opcua.DataType.UInt32, value: 5}),
+      //  new opcua.Variant({dataType: opcua.DataType.Int64, value: 4}),
+      //  new opcua.Variant({dataType: opcua.DataType.UInt64, value: 3}),
+      //  new opcua.Variant({dataType: opcua.DataType.Float, value: 2}),
+      //  new opcua.Variant({dataType: opcua.DataType.Double, value: 1000}),
+      //]    
     }];
 
     return new Promise(function(resolve, reject){

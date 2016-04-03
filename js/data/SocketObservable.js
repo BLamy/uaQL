@@ -31,6 +31,10 @@ const socketObserve= (socket: any, data: any, nodeId : string)=>{
   return rx.Observable.create(subscribe=>{
     console.log('subscribed');
     const sub = data
+      .filter(n=> {
+        console.log('nid', JSON.stringify(n));
+        return true;
+      })
       .filter(n=>n.nodeId===nodeId)
     	.subscribe((x)=> {
         subscribe.onNext(x);
