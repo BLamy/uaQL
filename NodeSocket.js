@@ -24,7 +24,7 @@ class NodeSocket {
 			}).on("keepalive",function(){
 			    //console.log("subscription - keepalive", subscription.subscriptionId);
 			}).on("terminated",function(){
-			    //console.log("subscription - keepalive", subscription.subscriptionId);
+			    console.log("subscription - terminated", subscription.subscriptionId, nodeId);
 			});
 			// install monitored item
 			//console.log('monitoring', nodeId);
@@ -39,7 +39,7 @@ class NodeSocket {
 			},
 			opcua.read_service.TimestampsToReturn.Both
 			);
-			console.log("-------------------------------------");
+			console.log("-monitoring",  subscription.subscriptionId, nodeId);
 
 			monitoredItem.on("changed",function(dataValue){
 				console.log('opc change', dataValue);
