@@ -59,23 +59,23 @@ const forwardQueries = {
   `
 };
 
-  ReactDOM.render(
-  	 <RelayRouter history={browserHistory}>
+ReactDOM.render(
+	 <RelayRouter history={browserHistory}>
 
-  	 	<Route path=':nodeId' component={App} queries={queries}>
-        <IndexRoute 
-          component={NodeMenu} 
-          queries={{viewer: queries.viewer}}
-          />
-        <Route path='mimic' component={Widget} queries={{widgetviewer: queries.viewer}}/>
-        <Route path='value' component={Value} queries={{widgetviewer: queries.viewer}}/>
-        <Route path='execute' component={Execute} queries={forwardQueries}/>
-      </Route>
+	 	<Route path=':nodeId' component={App} queries={queries}>
+      <IndexRoute 
+        component={NodeMenu} 
+        queries={{viewer: queries.viewer}}
+        />
+      <Route path='mimic' component={Widget} queries={{widgetviewer: queries.viewer}}/>
+      <Route path='value' component={Value} queries={{widgetviewer: queries.viewer}}/>
+      <Route path='execute' component={Execute} queries={forwardQueries}/>
+    </Route>
 
-        
-      <Route path="*" component={NoMatch}/>
-  	 </RelayRouter>
-    ,
-    document.getElementById('root')
-  );
+      
+    <Route path="*" component={NoMatch}/>
+	 </RelayRouter>
+  ,
+  document.getElementById('root')
+);
 
