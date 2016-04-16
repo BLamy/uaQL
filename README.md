@@ -9,6 +9,12 @@ uses https://github.com/node-opcua/node-opcua to expose an opc ua server as a gr
 
 (if it says application error it's probably because I am too stingy to pay for it so it switches off 6 hours a day..)
 
+## docker
+
+````
+docker run -p 49161:80 -d gilesbradshaw/uaql
+open localhost:49161
+````
 
 ## browsing..
 

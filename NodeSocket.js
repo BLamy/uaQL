@@ -42,7 +42,6 @@ class NodeSocket {
 			console.log("-monitoring",  subscription.subscriptionId, nodeId);
 
 			monitoredItem.on("changed",function(dataValue){
-				console.log('opc change', dataValue);
 			   	obs.onNext(dataValue);
 			});
 		} catch(ex) {
