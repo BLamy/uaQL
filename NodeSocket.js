@@ -33,7 +33,7 @@ class NodeSocket {
 			    attributeId: opcua.AttributeIds[nodeId.split(':')[0]]
 			},
 			{
-			    samplingInterval: 100,
+			    samplingInterval: 5000,
 			    discardOldest: true,
 			    queueSize: 10
 			},
