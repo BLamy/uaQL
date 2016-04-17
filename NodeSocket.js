@@ -22,7 +22,7 @@ class NodeSocket {
 			subscription.on('started',function(){
 			    //console.log(`subscription started - subscriptionId=`,subscription.subscriptionId);
 			}).on("keepalive",function(){
-			    //console.log("subscription - keepalive", subscription.subscriptionId);
+			    console.log("subscription - keepalive", subscription.subscriptionId);
 			}).on("terminated",function(){
 			    console.log("subscription - terminated", subscription.subscriptionId, nodeId);
 			});
