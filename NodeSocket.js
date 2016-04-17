@@ -9,7 +9,7 @@ class NodeSocket {
   	const _this=this;
   	const timer = nextSession().select(session => Observable.create((obs)=> {
   		const subscription = new opcua.ClientSubscription(session,{
-		    requestedPublishingInterval: 1000,
+		    requestedPublishingInterval: 5000,
 		    requestedLifetimeCount: 10,
 		    requestedMaxKeepAliveCount: 2,
 		    maxNotificationsPerPublish: 10,
