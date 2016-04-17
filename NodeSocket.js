@@ -42,7 +42,7 @@ class NodeSocket {
 			console.log("-monitoring",  subscription.subscriptionId, nodeId);
 
 			monitoredItem.on("changed",function(dataValue){
-			   	//obs.onNext(dataValue);
+			   	obs.onNext(dataValue);
 				console.log(JSON.stringify(dataValue,null, '\t'));
 			});
 		} catch(ex) {
