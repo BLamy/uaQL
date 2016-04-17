@@ -9,7 +9,7 @@ class NodeSocket {
   	const _this=this;
   	const timer = nextSession().select(session => Observable.create((obs)=> {
   		const subscription = new opcua.ClientSubscription(session,{
-		    requestedPublishingInterval: 5000,
+		    requestedPublishingInterval: 60000,
 		    requestedLifetimeCount: 10,
 		    requestedMaxKeepAliveCount: 2,
 		    maxNotificationsPerPublish: 10,
@@ -33,7 +33,7 @@ class NodeSocket {
 			    attributeId: opcua.AttributeIds[nodeId.split(':')[0]]
 			},
 			{
-			    samplingInterval: 5000,
+			    samplingInterval: 60000,
 			    discardOldest: true,
 			    queueSize: 10
 			},
