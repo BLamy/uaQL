@@ -29,14 +29,14 @@ function logAllEmitterEvents(eventEmitter)
 //opc.tcp://demo.ascolab.com:4841
 
 const pinger = (session, handle)=> {
-  session.browse('', function(err, browseResult){
+  /*session.browse('', function(err, browseResult){
     if(!err){
       setTimeout(()=>pinger(session, handle), 10000);
     }
     else {
       handle(session,err);
     }
-  });
+  });*/
 }
 
 class UASession {
