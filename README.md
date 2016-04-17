@@ -12,7 +12,7 @@ uses https://github.com/node-opcua/node-opcua to expose an opc ua server as a gr
 ## docker
 
 ````
-docker run -p 49161:80 -d gilesbradshaw/uaql
+docker run -p 49161:80 -d gilesbradshaw/uaql:latest
 open localhost:49161
 ````
 
