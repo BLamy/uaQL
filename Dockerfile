@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package.json /usr/src/app/
-RUN npm install
+RUN npm install --production
 
 # Bundle app source
 COPY . /usr/src/app
@@ -14,4 +14,4 @@ COPY . /usr/src/app
 ENV NODE_ENV production
 ENV PORT 80
 
-CMD ["npm", "start" ]
+CMD ["npm", "run", "startProduction" ]
