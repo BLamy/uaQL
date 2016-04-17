@@ -43,6 +43,7 @@ class NodeSocket {
 
 			monitoredItem.on("changed",function(dataValue){
 			   	obs.onNext(dataValue);
+				console.log(JSON.stringify(dataValue,null, '\t'));
 			});
 		} catch(ex) {
 			console.log("caught error", ex);
