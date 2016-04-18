@@ -1,11 +1,13 @@
 // @flow
 
-import {Observable} from 'rx-lite';
+import {Observable, ReplaySubject} from 'rx-lite';
 import {opcua, nextSession, handleError} from './data/opcua';
 
-var sub = nextSession().select(session => {
-	console.log('new sub....');
-	return new opcua.ClientSubscription(session,{
+
+var sub = new ReplaySubject(1);
+
+nextSession().subscribe(session=>sub.onNext(
+	new opcua.ClientSubscription(session,{
 		requestedPublishingInterval: 1000,
 		requestedLifetimeCount: 10,
 		requestedMaxKeepAliveCount: 2,
@@ -13,9 +15,9 @@ var sub = nextSession().select(session => {
 		publishingEnabled: true,
 		priority: 10
 	})
-}
-	
-);
+));
+    
+
 //sub = Observable.return(1).concat(Observable.never());
 //var sub = nextSession().select(session=>1);
 class NodeSocket {
