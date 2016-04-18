@@ -22,7 +22,7 @@ class NodeSocket {
   		console.log('erewego', nodeId);
   		try {
 	  		
-			  setInterval(()=>obs.onNext(
+			  setTimeout(()=>obs.onNext(
 				  
 				  {
 					"value": {
