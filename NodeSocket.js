@@ -9,7 +9,7 @@ class NodeSocket {
   	const _this=this;
   	const timer = nextSession().select(session => Observable.create((obs)=> {
   		const subscription = new opcua.ClientSubscription(session,{
-		    requestedPublishingInterval: 60000,
+		    requestedPublishingInterval: 10000,
 		    requestedLifetimeCount: 10,
 		    requestedMaxKeepAliveCount: 2,
 		    maxNotificationsPerPublish: 10,
@@ -30,10 +30,10 @@ class NodeSocket {
 			//console.log('monitoring', nodeId);
 			let monitoredItem  = subscription.monitor({
 			    nodeId: opcua.resolveNodeId(nodeId.split(':').slice(1).join()),
-			    attributeId: opcua.AttributeIds[nodeId.split(':')[0]]
+			    attributeId: 13,// opcua.AttributeIds[nodeId.split(':')[0]]
 			},
 			{
-			    samplingInterval: 60000,
+			    samplingInterval: 10000,
 			    discardOldest: true,
 			    queueSize: 10
 			},
