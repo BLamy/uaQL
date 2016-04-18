@@ -18,8 +18,8 @@ class NodeSocket {
   destroy: Function;
   constructor(nodeId : string, io : any){
   	const _this=this;
-  	const timer = Observable.create((obs)=> {
-  		
+  	const timer = sub.select(subscription => Observable.create((obs)=> {
+  		console.log('erewego', nodeId);
   		try {
 	  		
 			  setInterval(()=>obs.onNext(
@@ -42,11 +42,11 @@ class NodeSocket {
 				}
 
 				  
-			  ), 20000);
-			
+			  ), 5000);
+			/*
 			// install monitored item
 			//console.log('monitoring', nodeId);
-/*			let monitoredItem  = subscription.monitor({
+			let monitoredItem  = subscription.monitor({
 			    nodeId: opcua.resolveNodeId(nodeId.split(':').slice(1).join()),
 			    attributeId: 13,// opcua.AttributeIds[nodeId.split(':')[0]]
 			},
@@ -61,16 +61,18 @@ class NodeSocket {
 
 			monitoredItem.on("changed",function(dataValue){
 			   	obs.onNext(dataValue);
-			}); */
+			});
+			*/
 		} catch(ex) {
 			console.log("caught error", ex);
 			obs.onError(ex);
 		}
-  		return ()=>{};//subscription.terminate();
-  	} )/*.switch()*/.subscribe(x => {
+  		return ()=>{}; //subscription.terminate();
+  	} )).switch().subscribe(x => {
   		_this.lastValue = {
-	      nodeId: nodeId,
-	      value: x};
+	      	nodeId: nodeId,
+	      	value: x
+		};
 
   		io.to(nodeId).emit('update', _this.lastValue );
   		});
