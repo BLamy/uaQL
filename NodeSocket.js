@@ -3,8 +3,9 @@
 import {Observable} from 'rx-lite';
 import {opcua, nextSession, handleError} from './data/opcua';
 
-var sub = nextSession().select(session =>
-	new opcua.ClientSubscription(session,{
+var sub = nextSession().select(session => {
+	console.log('new sub....');
+	return new opcua.ClientSubscription(session,{
 		requestedPublishingInterval: 1000,
 		requestedLifetimeCount: 10,
 		requestedMaxKeepAliveCount: 2,
@@ -12,9 +13,11 @@ var sub = nextSession().select(session =>
 		publishingEnabled: true,
 		priority: 10
 	})
+}
+	
 );
-sub = Observable.return(1).concat(Observable.never());
-var sub = nextSession().select(session=>1);
+//sub = Observable.return(1).concat(Observable.never());
+//var sub = nextSession().select(session=>1);
 class NodeSocket {
   destroy: Function;
   constructor(nodeId : string, io : any){
