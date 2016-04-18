@@ -16,8 +16,8 @@ var sub = nextSession().select(session => {
 }
 	
 );
-//sub = Observable.return(1).concat(Observable.never());
-//var sub = nextSession().select(session=>1);
+sub = Observable.return(1).concat(Observable.never());
+var sub = nextSession().select(session=>1);
 class NodeSocket {
   destroy: Function;
   constructor(nodeId : string, io : any){
