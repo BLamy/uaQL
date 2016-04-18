@@ -22,13 +22,7 @@ class NodeSocket {
   		
   		try {
 	  		
-			subscription.on('started',function(){
-			    //console.log(`subscription started - subscriptionId=`,subscription.subscriptionId);
-			}).on("keepalive",function(){
-			    console.log("subscription - keepalive", subscription.subscriptionId);
-			}).on("terminated",function(){
-			    console.log("subscription - terminated", subscription.subscriptionId, nodeId);
-			});
+			
 			// install monitored item
 			//console.log('monitoring', nodeId);
 			let monitoredItem  = subscription.monitor({
