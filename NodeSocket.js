@@ -13,13 +13,13 @@ const sub = nextSession().select(session =>
 		priority: 10
 	})
 );
-
+sub = Observable.return(1).concat(Observable.never());
 class NodeSocket {
   destroy: Function;
   constructor(nodeId : string, io : any){
   	const _this=this;
   	const timer = sub.select(subscription => Observable.create((obs)=> {
-  		console.log('erewego', nodeId);
+  		console.log('erewego', nodeId, sub);
   		try {
 	  		
 			  setTimeout(()=>obs.onNext(
