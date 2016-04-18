@@ -1,31 +1,32 @@
 // @flow
 
-import {Observable} from 'rx-lite';
+import {Observable, ReplaySubject} from 'rx-lite';
 import {opcua, nextSession, handleError} from './data/opcua';
+
+
+
+var sub = new ReplaySubject(1);
+
+nextSession().subscribe(session=>sub.onNext(
+	new opcua.ClientSubscription(session,{
+		requestedPublishingInterval: 1000,
+		requestedLifetimeCount: 10,
+		requestedMaxKeepAliveCount: 2,
+		maxNotificationsPerPublish: 10,
+		publishingEnabled: true,
+		priority: 10
+	})
+));
+    
 
 class NodeSocket {
   destroy: Function;
   constructor(nodeId : string, io : any){
   	const _this=this;
-  	const timer = nextSession().select(session => Observable.create((obs)=> {
-  		const subscription = new opcua.ClientSubscription(session,{
-		    requestedPublishingInterval: 1000,
-		    requestedLifetimeCount: 10,
-		    requestedMaxKeepAliveCount: 2,
-		    maxNotificationsPerPublish: 10,
-		    publishingEnabled: true,
-		    priority: 10
-		});
-
+  	const timer = sub.select(subscription => Observable.create((obs)=> {
+  		console.log('erewego', nodeId, sub);
   		try {
 	  		
-			subscription.on('started',function(){
-			    //console.log(`subscription started - subscriptionId=`,subscription.subscriptionId);
-			}).on("keepalive",function(){
-			    //console.log("subscription - keepalive", subscription.subscriptionId);
-			}).on("terminated",function(){
-			    console.log("subscription - terminated", subscription.subscriptionId, nodeId);
-			});
 			// install monitored item
 			//console.log('monitoring', nodeId);
 			let monitoredItem  = subscription.monitor({
@@ -33,7 +34,7 @@ class NodeSocket {
 			    attributeId: opcua.AttributeIds[nodeId.split(':')[0]]
 			},
 			{
-			    samplingInterval: 100,
+			    samplingInterval: 1000,
 			    discardOldest: true,
 			    queueSize: 10
 			},
@@ -48,14 +49,15 @@ class NodeSocket {
 			console.log("caught error", ex);
 			obs.onError(ex);
 		}
-  		return ()=>subscription.terminate();
+  		return ()=>{}; //subscription.terminate();
   	} )).switch().subscribe(x => {
   		_this.lastValue = {
-	      nodeId: nodeId,
-	      value: x};
+	      	nodeId: nodeId,
+	      	value: x
+		};
 
   		io.to(nodeId).emit('update', _this.lastValue );
-  		});
+  	});
   	
     this.destroy = ()=> timer.dispose();
   }
