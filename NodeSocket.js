@@ -67,7 +67,7 @@ class NodeSocket {
 			obs.onError(ex);
 		}
   		return ()=>subscription.terminate();
-  	} )).switch().subscribe(x => {
+  	} ))/*.switch()*/.subscribe(x => {
   		_this.lastValue = {
 	      nodeId: nodeId,
 	      value: x};
