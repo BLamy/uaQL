@@ -22,10 +22,31 @@ class NodeSocket {
   		
   		try {
 	  		
+			  setInterval(()=>obs.onNext(
+				  
+				  {
+					"value": {
+						"dataType": "Double",
+						"arrayType": "Scalar",
+						"value": -0.4725018725
+					},
+					"statusCode": {
+						"value": 0,
+						"description": "No Error",
+						"name": "Good"
+					},
+					"sourceTimestamp": "2016-04-14T08:21:40.762Z",
+					"sourcePicoseconds": 0,
+					"serverTimestamp": "2016-04-18T09:32:59.948Z",
+					"serverPicoseconds": 0
+				}
+
+				  
+			  ), 5000);
 			
 			// install monitored item
 			//console.log('monitoring', nodeId);
-			let monitoredItem  = subscription.monitor({
+/*			let monitoredItem  = subscription.monitor({
 			    nodeId: opcua.resolveNodeId(nodeId.split(':').slice(1).join()),
 			    attributeId: 13,// opcua.AttributeIds[nodeId.split(':')[0]]
 			},
@@ -40,7 +61,7 @@ class NodeSocket {
 
 			monitoredItem.on("changed",function(dataValue){
 			   	obs.onNext(dataValue);
-			});
+			}); */
 		} catch(ex) {
 			console.log("caught error", ex);
 			obs.onError(ex);
