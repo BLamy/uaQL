@@ -8,6 +8,33 @@ var client = new opcua.OPCUAClient();
 var endpointUrl ='opc.tcp://opcua.demo-this.com:51210/UA/SampleServer';
 var the_subscription = null;
 var the_session = null;
+
+
+function testMonitor(id){
+    
+    var monitoredItem  = the_subscription.monitor({
+            nodeId: opcua.resolveNodeId(id),
+            attributeId: 13
+          //, dataEncoding: { namespaceIndex: 0, name:null }
+        },
+        { 
+            samplingInterval: 100,
+            discardOldest: true,
+            queueSize: 10 
+        });
+        console.log("-------------------------------------");
+
+        // subscription.on("item_added",function(monitoredItem){
+        //xx monitoredItem.on("initialized",function(){ });
+        //xx monitoredItem.on("terminated",function(value){ });
+        
+
+        monitoredItem.on("changed",function(value){
+           console.log(id, " New Value = ",value.toString());
+        });
+
+}
+
 async.series([
 
 
@@ -59,31 +86,26 @@ async.series([
         setTimeout(function(){
             //the_subscription.terminate();
         },10000);
-
-
-        // install monitored item
-        //
-        var monitoredItem  = the_subscription.monitor({
-            nodeId: opcua.resolveNodeId("ns=5;i=18"),
-            attributeId: 13
-          //, dataEncoding: { namespaceIndex: 0, name:null }
-        },
-        { 
-            samplingInterval: 100,
-            discardOldest: true,
-            queueSize: 10 
-        });
-        console.log("-------------------------------------");
-
-        // subscription.on("item_added",function(monitoredItem){
-        //xx monitoredItem.on("initialized",function(){ });
-        //xx monitoredItem.on("terminated",function(value){ });
         
-
-        monitoredItem.on("changed",function(value){
-           console.log(" New Value = ",value.toString());
-        });
-
+        testMonitor("ns=5;i=1");
+        testMonitor("ns=5;i=2");
+        testMonitor("ns=5;i=3");
+        testMonitor("ns=5;i=4");
+        testMonitor("ns=5;i=5");
+        testMonitor("ns=5;i=6");
+        testMonitor("ns=5;i=7");
+        testMonitor("ns=5;i=8");
+        testMonitor("ns=5;i=9");
+        testMonitor("ns=5;i=10");
+        testMonitor("ns=5;i=11");
+        testMonitor("ns=5;i=12");
+        testMonitor("ns=5;i=13");
+        testMonitor("ns=5;i=14");
+        testMonitor("ns=5;i=15");
+        testMonitor("ns=5;i=16");
+        testMonitor("ns=5;i=17");
+        testMonitor("ns=5;i=18");
+        
     },
 
     // ------------------------------------------------
