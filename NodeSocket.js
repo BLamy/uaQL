@@ -3,7 +3,7 @@
 import {Observable} from 'rx-lite';
 import {opcua, nextSession, handleError} from './data/opcua';
 
-const sub = nextSession().select(session =>
+var sub = nextSession().select(session =>
 	new opcua.ClientSubscription(session,{
 		requestedPublishingInterval: 1000,
 		requestedLifetimeCount: 10,
