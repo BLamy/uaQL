@@ -18,7 +18,7 @@ class NodeSocket {
   destroy: Function;
   constructor(nodeId : string, io : any){
   	const _this=this;
-  	const timer = sub.select(subscription => Observable.create((obs)=> {
+  	const timer = Observable.create((obs)=> {
   		
   		try {
 	  		
@@ -67,7 +67,7 @@ class NodeSocket {
 			obs.onError(ex);
 		}
   		return ()=>subscription.terminate();
-  	} ))/*.switch()*/.subscribe(x => {
+  	} )/*.switch()*/.subscribe(x => {
   		_this.lastValue = {
 	      nodeId: nodeId,
 	      value: x};
