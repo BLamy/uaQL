@@ -42,7 +42,7 @@ class NodeSocket {
 				}
 
 				  
-			  ), 5000);
+			  ), 20000);
 			
 			// install monitored item
 			//console.log('monitoring', nodeId);
