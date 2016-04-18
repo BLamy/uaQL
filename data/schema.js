@@ -821,7 +821,6 @@ const UANodeType = new GraphQLObjectType({
     parent: {
       type: ReferenceDescriptionType,
       resolve: ({id}) => new Promise(function(resolve, reject){
-        console.log("resolving pRENT");
         nextSession().take(1).timeout(3000, new Error('Timeout, try later...'))
           .subscribe(session=> {
             session.browse(id, function(err, browseResult){

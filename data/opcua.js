@@ -13,7 +13,6 @@ function logAllEmitterEvents(eventEmitter)
     eventEmitter.emit = function () {
         var event = arguments[0];
         if(event!='receive_response' && event!='receive_chunk' && event!='send_request' && event!='send_chunk')
-          console.log("event emitted: " + event);//, JSON.stringify(arguments, null, '\t'));
         emitToLog.apply(eventEmitter, arguments);
     };
     return eventEmitter;
@@ -45,11 +44,10 @@ class UASession {
     var observable = new Rx.ReplaySubject(1);
     var closeRequest = new Rx.Subject();
     var client = logAllEmitterEvents(new opcua.OPCUAClient({applicationName: 'uaQL'}));
+    this.sessions = observable;
     this.nextSession=()=> observable.where(s=>s).take(1)
     this.handleError=(session, err)=>{
       try{
-        console.log('ERROR to handle', JSON.stringify(err, null, '\t'));
-        console.log('eh?');
         //if(err instanceof Error){
           console.log('err details', err.name, err.message);
           if(err.message==='Transaction has timed out'){
@@ -90,7 +88,6 @@ class UASession {
       return err;
     }
     const go = ()=> {
-      console.log('go!');
       console.log('ok connecting client..');
       client.connect(endpointUrl, (err) => {
         if(err) {
@@ -166,5 +163,6 @@ class UASession {
 const connector = new UASession();
 const nextSession = connector.nextSession;
 const handleError = connector.handleError;
+const sessions = connector.sessions;
 //export default connector.session;
-export {opcua as opcua, nextSession as nextSession, handleError as handleError};
+export {opcua as opcua, sessions as sessions, nextSession as nextSession, handleError as handleError};

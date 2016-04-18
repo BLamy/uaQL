@@ -30,14 +30,6 @@ var io = socket(socketserver, {
   path: '/napi'
 });
 
-
-
-setInterval(function(){
-  global.gc();
-  console.log('GC done')
-}, 1000*30);
-
-
 const rooms = {};
 var latestConnection = 0;
 const leaveRoom = (socket, nodeId, myRooms, myConnection)=>{
