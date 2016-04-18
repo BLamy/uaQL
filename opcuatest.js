@@ -18,7 +18,7 @@ function testMonitor(id){
           //, dataEncoding: { namespaceIndex: 0, name:null }
         },
         { 
-            samplingInterval: 100,
+            samplingInterval: 10000,
             discardOldest: true,
             queueSize: 10 
         });
@@ -69,7 +69,7 @@ async.series([
     function(callback) {
 
         the_subscription=new opcua.ClientSubscription(the_session,{
-            requestedPublishingInterval: 1000,
+            requestedPublishingInterval: 10000,
             requestedLifetimeCount: 10,
             requestedMaxKeepAliveCount: 2,
             maxNotificationsPerPublish: 10,
