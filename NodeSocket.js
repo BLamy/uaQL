@@ -4,6 +4,7 @@ import {Observable, ReplaySubject} from 'rx-lite';
 import {opcua, nextSession, handleError} from './data/opcua';
 
 
+
 var sub = new ReplaySubject(1);
 
 nextSession().subscribe(session=>sub.onNext(

@@ -9,10 +9,16 @@ var endpointUrl ='opc.tcp://opcua.demo-this.com:51210/UA/SampleServer';
 var the_subscription = null;
 var the_session = null;
 
-
 function testMonitor(id){
-    
-    var monitoredItem  = the_subscription.monitor({
+    var newSub = new opcua.ClientSubscription(the_session,{
+            requestedPublishingInterval: 10000,
+            requestedLifetimeCount: 10,
+            requestedMaxKeepAliveCount: 2,
+            maxNotificationsPerPublish: 10,
+            publishingEnabled: true,
+            priority: 10
+        });
+    var monitoredItem  = newSub.monitor({
             nodeId: opcua.resolveNodeId(id),
             attributeId: 13
           //, dataEncoding: { namespaceIndex: 0, name:null }
@@ -68,6 +74,7 @@ async.series([
     // create subscription
     function(callback) {
 
+       
         the_subscription=new opcua.ClientSubscription(the_session,{
             requestedPublishingInterval: 10000,
             requestedLifetimeCount: 10,
