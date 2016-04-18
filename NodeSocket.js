@@ -72,7 +72,7 @@ class NodeSocket {
 	      nodeId: nodeId,
 	      value: x};
 
-  		//io.to(nodeId).emit('update', _this.lastValue );
+  		io.to(nodeId).emit('update', _this.lastValue );
   		});
   	
     this.destroy = ()=> timer.dispose();
