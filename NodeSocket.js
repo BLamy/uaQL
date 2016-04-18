@@ -3,20 +3,23 @@
 import {Observable} from 'rx-lite';
 import {opcua, nextSession, handleError} from './data/opcua';
 
+const sub = nextSession().select(session =>
+	new opcua.ClientSubscription(session,{
+		requestedPublishingInterval: 1000,
+		requestedLifetimeCount: 10,
+		requestedMaxKeepAliveCount: 2,
+		maxNotificationsPerPublish: 10,
+		publishingEnabled: true,
+		priority: 10
+	})
+);
+
 class NodeSocket {
   destroy: Function;
   constructor(nodeId : string, io : any){
   	const _this=this;
-  	const timer = nextSession().select(session => Observable.create((obs)=> {
-  		const subscription = new opcua.ClientSubscription(session,{
-		    requestedPublishingInterval: 10000,
-		    requestedLifetimeCount: 10,
-		    requestedMaxKeepAliveCount: 2,
-		    maxNotificationsPerPublish: 10,
-		    publishingEnabled: true,
-		    priority: 10
-		});
-
+  	const timer = sub.select(subscription => Observable.create((obs)=> {
+  		
   		try {
 	  		
 			subscription.on('started',function(){
@@ -33,7 +36,7 @@ class NodeSocket {
 			    attributeId: 13,// opcua.AttributeIds[nodeId.split(':')[0]]
 			},
 			{
-			    samplingInterval: 10000,
+			    samplingInterval: 1000,
 			    discardOldest: true,
 			    queueSize: 10
 			},
@@ -43,7 +46,6 @@ class NodeSocket {
 
 			monitoredItem.on("changed",function(dataValue){
 			   	obs.onNext(dataValue);
-				console.log(JSON.stringify(dataValue,null, '\t'));
 			});
 		} catch(ex) {
 			console.log("caught error", ex);
