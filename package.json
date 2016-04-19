@@ -40,7 +40,7 @@
     "graphql-relay": "0.3.6",
     "material-ui": "^0.15.0-alpha.2",
     "merge": "^1.2.0",
-    "node-opcua": "0.0.52",
+    "node-opcua": "0.0.54",
     "react": "0.14.8",
     "react-dom": "0.14.7",
     "react-flexbox-grid": "^0.9.5",

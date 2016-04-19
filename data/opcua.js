@@ -27,16 +27,6 @@ function logAllEmitterEvents(eventEmitter)
 //opc.tcp://opcua.demo-this.com:51212/UA/SampleServer opclabs
 //opc.tcp://demo.ascolab.com:4841
 
-const pinger = (session, handle)=> {
-  session.browse('', function(err, browseResult){
-    if(!err){
-      setTimeout(()=>pinger(session, handle), 10000);
-    }
-    else {
-      handle(session,err);
-    }
-  });
-}
 
 class UASession {
   constructor(){
@@ -104,7 +94,6 @@ class UASession {
               go();
             }
             else {
-              pinger(session, _this.handleError);
               console.log('session created');
               observable.onNext(session);
             
