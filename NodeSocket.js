@@ -24,35 +24,66 @@ sessions.subscribe(session=>{
 		sub.onNext(null);
 	}
 });
-    
+
+let requiredPolls = [];
+let currentSubscription;
+sub.subscribe(subscription => currentSubscription=subscription);
+let poll = ()=>{
+	if(!currentSubscription){
+		setTimeout(poll, 1000);
+	} else {
+		let nodesToRead = requiredPolls.map(p=>p);
+		currentSubscription.session.read(nodesToRead.map(p=>p.nodeDefinition), null, (err,nodes, dataValues)=>{
+			if(err) {
+				nodesToRead.forEach((node)=> node.obs.onNext(null));
+			} else {
+				dataValues.forEach((dv,i)=>nodesToRead[i].obs.onNext(dv));
+			}
+			setTimeout(poll, 1000);
+		});
+	}
+};
+poll();
 
 class NodeSocket {
   destroy: Function;
   constructor(nodeId : string, io : any){
   	const _this=this;
-  	const timer = sub.select(subscription => Observable.create(
+  	const myMonitor = sub.select(subscription => Observable.create(
 			obs=> {
 				if(subscription) {
 					try {
+						let nodeDefinition = {
+							nodeId: opcua.resolveNodeId(nodeId.split(':').slice(1).join()),
+							attributeId: opcua.AttributeIds[nodeId.split(':')[0]]
+						};
+						if(nodeId.split(':')[0] !== 'Executable') {
+							// install monitored item
+							//console.log('monitoring', nodeId);
+							let monitoredItem  = subscription.monitor(nodeDefinition,
+							{
+									samplingInterval: 1000,
+									discardOldest: true,
+									queueSize: 10
+							},
+							opcua.read_service.TimestampsToReturn.Both
+							);
 							
-						// install monitored item
-						//console.log('monitoring', nodeId);
-						let monitoredItem  = subscription.monitor({
-								nodeId: opcua.resolveNodeId(nodeId.split(':').slice(1).join()),
-								attributeId: opcua.AttributeIds[nodeId.split(':')[0]]
-						},
-						{
-								samplingInterval: 1000,
-								discardOldest: true,
-								queueSize: 10
-						},
-						opcua.read_service.TimestampsToReturn.Both
-						);
+							monitoredItem.on("changed",function(dataValue){
+									obs.onNext(dataValue);
+							});
+							console.log("-monitoring",  subscription.subscriptionId, nodeId);
+							return ()=>monitoredItem.terminate();	
+						} else {
+							let requiredPoll = {
+								obs,
+								nodeDefinition
+							};
+							requiredPolls.push(requiredPoll);
+							
+							return ()=>requiredPolls.splice(requiredPolls.indexOf(requiredPoll), 1);
+						}
 						
-						monitoredItem.on("changed",function(dataValue){
-								obs.onNext(dataValue);
-						});
-						console.log("-monitoring",  subscription.subscriptionId, nodeId);
 
 					} catch(ex) {
 						console.log("caught error", ex);
@@ -61,7 +92,7 @@ class NodeSocket {
 				} else {
 					obs.onNext(null);
 				}
-				return ()=>{};
+				
 			} 
 		)).switch().subscribe(x => {
   		_this.lastValue = {
@@ -71,7 +102,7 @@ class NodeSocket {
   		io.to(nodeId).emit('update', _this.lastValue );
   	});
   	
-    this.destroy = ()=> timer.dispose();
+    this.destroy = ()=> myMonitor.dispose();
   }
 }
 
