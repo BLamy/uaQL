@@ -35,9 +35,24 @@ let poll = ()=>{
 		let nodesToRead = requiredPolls.map(p=>p);
 		currentSubscription.session.read(nodesToRead.map(p=>p.nodeDefinition), null, (err,nodes, dataValues)=>{
 			if(err) {
-				nodesToRead.forEach((node)=> node.obs.onNext(null));
+				nodesToRead.forEach((node)=> {
+					delete node.value;
+					node.obs.onNext(null);
+				});
 			} else {
-				dataValues.forEach((dv,i)=>nodesToRead[i].obs.onNext(dv));
+				dataValues.forEach((dv,i)=>{
+					if(dv && dv.value && dv.value.value !== nodesToRead.value) {
+						nodesToRead[i].value = dv.value.value;
+						nodesToRead[i].obs.onNext(dv);	
+					} else {
+						if(!dv || !dv.value) {
+							nodesToRead[i].value=undefined;
+							nodesToRead[i].obs.onNext(dv);
+						}
+					}
+					
+					
+				});
 			}
 			setTimeout(poll, 1000);
 		});
