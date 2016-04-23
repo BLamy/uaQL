@@ -75,20 +75,31 @@ class NodeSocket {
 						if(nodeId.split(':')[0] !== 'Executable') {
 							// install monitored item
 							//console.log('monitoring', nodeId);
-							let monitoredItem  = subscription.monitor(nodeDefinition,
-							{
-									samplingInterval: 1000,
-									discardOldest: true,
-									queueSize: 10
-							},
-							opcua.read_service.TimestampsToReturn.Both
-							);
 							
-							monitoredItem.on("changed",function(dataValue){
+							let monitoredPromise =  new Promise((resolve, reject)=>{
+								let monitoredItem  = subscription.monitor(nodeDefinition,
+									{
+											samplingInterval: 1000,
+											discardOldest: true,
+											queueSize: 10
+									},
+									opcua.read_service.TimestampsToReturn.Both,
+									(err)=>{
+										if(err) {
+											reject(err);
+										} else {
+											resolve(monitoredItem);
+										}
+									}
+								);	
+								
+								monitoredItem.on("changed",function(dataValue){
 									obs.onNext(dataValue);
+								});
+								console.log("-monitoring",  subscription.subscriptionId, nodeId);	
 							});
-							console.log("-monitoring",  subscription.subscriptionId, nodeId);
-							return ()=>monitoredItem.terminate();	
+							return ()=>
+								monitoredPromise.then((item)=>item.terminate());
 						} else {
 							let requiredPoll = {
 								obs,

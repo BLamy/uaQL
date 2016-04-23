@@ -73,11 +73,21 @@ io.on('connection', (mySocket)=> {
 
     
   });
-  mySocket.on('leave', (nodeId) => leaveRoom(mySocket, nodeId, myRooms, myConnection));
+  mySocket.on('leave', (nodeId) => {
+    console.log('leave:' , nodeId);
+    leaveRoom(mySocket, nodeId, myRooms, myConnection);
+  });
+   
   
   mySocket.on('disconnect', function(){
+    console.log('disconnecting...');
     for(const node of Object.keys(myRooms)) {
-      leaveRoom(mySocket, node, myRooms, myConnection);
+      try {
+        leaveRoom(mySocket, node, myRooms, myConnection);  
+      } catch(ex){
+        
+      }
+      
     }
   });
 });
