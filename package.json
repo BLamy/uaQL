@@ -38,7 +38,7 @@
     "graphql": "0.4.17",
     "graphql-custom-datetype": "^0.2.1",
     "graphql-relay": "0.3.6",
-    "material-ui": "^0.15.0-alpha.2",
+    "material-ui": "^0.14.4",
     "merge": "^1.2.0",
     "node-opcua": "0.0.54",
     "react": "0.14.8",

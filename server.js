@@ -12,7 +12,7 @@ import socket from 'socket.io';
 import http from 'http';
 import NodeSocket from './NodeSocket';
 
-//import config from './webpack.config';
+import config from './webpack.config';
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
